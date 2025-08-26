@@ -1,5 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local GuiTemplate = require(ReplicatedStorage.Modules.UI.GuiTemplate)
+local GuiTemplate = require(ReplicatedStorage.Modules.UI.AnimatedGuiTemplate)
 
 local ConfirmationPromptGui = {}
 
