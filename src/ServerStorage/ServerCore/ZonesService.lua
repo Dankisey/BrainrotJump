@@ -37,6 +37,7 @@ function ZonesService:RemovePlayer(player: Player)
 	signGui.Likes.Visible = false
     signGui.EmptyTextLabel.Visible = true
 
+	self.ZoneCleared:Invoke(player, zone)
 	table.insert(self._emptyZones, zone)
 end
 
@@ -78,13 +79,21 @@ function ZonesService:RegisterPlayer(player: Player)
     signGui.PlayerIcon.Image = profileImage
     signGui.PlayerTextLabel.Visible = true
     signGui.PlayerTextLabel.Text = string.format("%s's Place", player.Name)
-	signGui.EmptyTextLabel.Visible = false    
+	signGui.EmptyTextLabel.Visible = false
+
+	self.ZoneOccupied:Invoke(player, zone)
 end
 
 function ZonesService:Initialize()
     for _, zone in pairs(ZonesFolder:GetChildren()) do
         table.insert(self._emptyZones, zone)
     end
+end
+
+function ZonesService:InjectUtils(utils)
+	self.ZoneOccupied = utils.Event.new()
+	self.ZoneCleared = utils.Event.new()
+	self._utils = utils
 end
 
 function ZonesService.new()

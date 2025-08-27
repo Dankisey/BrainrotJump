@@ -7,10 +7,9 @@ local ServiceTemplate = require(script.Parent.Parent.ServiceTemplate)
 local RewardService = {} :: ServiceTemplate.Type
 
 local rewardsFunctions = {
-	Cash = function(player: Player, data: {any}, self: ServiceTemplate.Type)
-		player.Currencies.Cash.Value += data.Amount
-		player.TotalStats.TotalCash.Value += data.Amount
-		--self._services.Analytics:LogCurrencyIncome(player, "Cash", data.Amount, data.TransactionType, data.Sku)
+	Food = function(player: Player, amount: number, self: ServiceTemplate.Type)
+		player.Currencies.Food.Value += amount
+		player.TotalStats.TotalFood.Value += amount
 	end;
 }
 

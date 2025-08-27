@@ -76,24 +76,7 @@ function InputController:AfterPlayerLoaded(player)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			local tool = self._player.Character:FindFirstChildOfClass("Tool")
 
-            if not tool then
-                local screenRay = self:GetClickScreenRay() :: Ray
-                local result = workspace:Raycast(screenRay.Origin, screenRay.Direction) :: RaycastResult
-
-                if not result then
-                    self._controllers.GuiController.ObjectGui:Disable()
-                    return
-                end
-
-                local model = result.Instance:FindFirstAncestorOfClass("Model")
-
-                if not model or not model:GetAttribute("Key") then
-                    self._controllers.GuiController.ObjectGui:Disable()
-                else
-                    self.ObjectClicked:Invoke(model)
-                    self._controllers.GuiController.ObjectGui:Enable()
-                end
-            else
+            if tool then
                 self._controllers.ToolsController:ActivateTool(tool)
             end
 		end

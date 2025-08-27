@@ -2,9 +2,9 @@ local random = Random.new()
 
 local function getChancedRewardIndex(rewardsConfig)
 	local randomNumber = random:NextNumber()
-	local rewardIndex = 0
+	local rewardIndex = nil
 
-	for i, reward in ipairs(rewardsConfig) do
+	for i, reward in pairs(rewardsConfig) do
 		rewardIndex = i
 
 		if randomNumber - reward.Chance <= 0 then

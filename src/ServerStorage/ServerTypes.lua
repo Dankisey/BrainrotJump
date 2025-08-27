@@ -9,6 +9,21 @@ export type Analytics = {
 
 } & ServiceTemplate
 
+export type InventoryService = {
+    TryAddItem: (InventoryService, player: Player, categoryName: string, itemName: string) -> boolean;
+    HasItem: (InventoryService, player: Player, categoryName: string, itemName: string) -> boolean;
+    RestoreEquippedItems: (InventoryService, player: Player) -> nil;
+
+    LoadSave: (InventoryService, player: Player, savedInventory: SharedTypes.InventorySave?) -> nil;
+    UnloadSave: (InventoryService, player: Player) -> SharedTypes.InventorySave;
+
+    _equippedItemModels : {[Player]: {
+        Basket: Model?;
+    }};
+    _playersSaves : {[Player]: SharedTypes.InventorySave};
+    _debounces : {[Players]: boolean};
+} & ServiceTemplate
+
 export type Monetization = {
     new: () -> Monetization;
 
@@ -50,12 +65,17 @@ export type ZonesService = {
     GetPlayerZone: (ZonesService, player: Player) -> Model?;
     RegisterPlayer: (ZonesService, player: Player) -> nil;
     RemovePlayer: (ZonesService, player: Player) -> nil;
+
+    ZoneOccupied: UtilsTypes.Event;
+    ZoneCleared: UtilsTypes.Event;
 } & ServiceTemplate
 
 --[[========================================================================================]]
 
 export type Services = {
     Analytics: Analytics;
+    InventoryService: InventoryService;
+    Monetization: Monetization;
     RewardService: RewardService;
     SavesLoader: SavesLoader;
     ServerMessagesSender: ServerMessagesSender;

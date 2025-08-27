@@ -17,6 +17,14 @@ local isUsingEmptySave = script:GetAttribute("UseEmptySave") and RunService:IsSt
 
 local SavesLoader = {} :: ServiceTemplate.Type
 
+--[[Order is imprtant]]
+local saveLoadableServices = {
+	[1] = {
+		ServiceName = "InventoryService";
+		DataName = "InventorySave";
+	};
+}
+
 local playersUsedCodes = {}
 
 local function onPlayerAdded(self: ServiceTemplate.Type, player: Player)
@@ -78,6 +86,10 @@ local function onPlayerAdded(self: ServiceTemplate.Type, player: Player)
 	self._services.ZonesService:RegisterPlayer(player)
 	self._services.LeaderboardService:UpdateTotals(player)
 
+	for i = 1, #saveLoadableServices do
+		self._services[saveLoadableServices[i].ServiceName]:LoadSave(player, data[saveLoadableServices[i].DataName])
+	end
+
 	player:SetAttribute("IsLoaded", true)
 	self._loadedPlayers[player.Name] = true
 end
@@ -107,6 +119,10 @@ local function onPlayerRemoving(self: ServiceTemplate.Type, player: Player)
 	local joinTime = player:GetAttribute("JoinTime") or os.time()
 	local playedTime = os.time() - joinTime
 	data.TotalStats.TotalPlaytime += playedTime
+
+	for i = #saveLoadableServices, 1, -1 do
+		data[saveLoadableServices[i].DataName] = self._services[saveLoadableServices[i].ServiceName]:UnloadSave(player)
+	end
 
 	self._services.LeaderboardService:UpdateTotals(player)
 
