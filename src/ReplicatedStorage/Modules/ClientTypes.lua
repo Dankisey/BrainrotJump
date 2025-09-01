@@ -4,6 +4,23 @@ local Types = {}
 
 --[[========================================================================================]]
 
+export type ArcData = {
+    MovingInstance: BasePart | Model;
+	StartPosition: Vector3;
+	Target: BasePart;
+	Duration: number;
+    MidPoint: Vector3;
+	ElapsedTime: number;
+	OnCompleteCallback: () -> nil?;
+}
+
+export type ArcBuilder = {
+    AddArc: (ArcBuilder, movingInstance: BasePart | Model, startPosition: Vector3, endPart: BasePart, duration : number,  arcLength: number, angleOffset: number, completeCallback: () -> nil?) -> nil;
+
+    _endedArcs: {ArcData};
+    _arcs: {ArcData};
+} & ControllerTemplate
+
 export type ButtonsInteractionsConnector = {
     new: () -> ButtonsInteractionsConnector;
 
@@ -140,6 +157,7 @@ export type GuiController = {
 --[[========================================================================================]]
 
 export type Controllers = {
+    ArcBuilder: ArcBuilder;
     ButtonsInteractionsConnector: ButtonsInteractionsConnector;
     CharacterMovementController: CharacterMovementController;
     ClientMessagesSender: ClientMessagesSender;

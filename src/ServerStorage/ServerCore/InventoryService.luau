@@ -5,6 +5,7 @@ local GetInventory = Remotes.GetInventory
 local ItemAdded = Remotes.ItemAdded
 
 local Assets = ReplicatedStorage.Assets
+local BasketPivotWeld = Assets.BasketPivotWeld
 local Configs = ReplicatedStorage.Configs
 local BasketsConfig = require(Configs.BasketsConfig)
 
@@ -15,21 +16,37 @@ local InventoryService = {} :: ServerTypes.InventoryService
 
 local equipFunctions = {
     Baskets = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
+        local character = player.Character or player.CharacterAdded:Wait()
+
+        if not self._equippedItemModels[player].BasketPivot then
+            local basketPivot = Instance.new("Part")
+            basketPivot.Size = Vector3.one * .1
+            basketPivot.CanCollide = false
+            basketPivot.Transparency = 1
+            basketPivot.Name = "BasketPivot"
+            self._equippedItemModels[player].BasketPivot = basketPivot
+            self._equippedItemModels[player].BasketPivot.Parent = character
+
+            local weld = BasketPivotWeld:Clone()
+            weld.Parent = basketPivot
+            weld.Part0 = character:WaitForChild("RightHand")
+            weld.Part1 = basketPivot
+            weld.Enabled = true
+        end
+
 		if self._equippedItemModels[player].Basket then
 			self._equippedItemModels[player].Basket:Destroy()
 			self._equippedItemModels[player].Basket = nil
 		end
 
         player.Equipment.Basket.Value = itemName;
-		local character = player.Character or player.CharacterAdded:Wait()
-		local torso = character:WaitForChild("UpperTorso")
 		local model = Assets.Baskets[itemName]:Clone() :: Model
 
 		local weld = Instance.new("Weld")
-		weld.Parent = model.PrimaryPart
-		weld.Part0 = model.PrimaryPart
-		weld.Part1 = torso
-		weld.C1 = CFrame.new(0, -.6, -2)
+		weld.Parent = self._equippedItemModels[player].BasketPivot
+		weld.Part0 = self._equippedItemModels[player].BasketPivot
+		weld.Part1 = model.PrimaryPart
+		weld.C1 = CFrame.fromEulerAnglesYXZ(0, 0, 0)
 
 		model.Parent = character
 		self._equippedItemModels[player].Basket = model
@@ -47,6 +64,7 @@ end
 
 local function onEquipmentChanged(player: Player)
     player:SetAttribute("CollectingRadius", 20)
+    player:SetAttribute("CollectingPiles", 1)
     player:SetAttribute("FoodCapacity", BasketsConfig.Items[player.Equipment.Basket.Value].FoodCapacity)
 end
 
@@ -84,6 +102,8 @@ function InventoryService:TryAddItem(player: Player, categoryName: string, itemN
 end
 
 function InventoryService:RestoreEquippedItems(player: Player)
+    self._equippedItemModels[player].BasketPivot = nil
+
 	for _, obj: StringValue in pairs(player.Equipment:GetChildren()) do
 		equipFunctions[obj.Name .. "s"](self, player, obj.Value)
 	end

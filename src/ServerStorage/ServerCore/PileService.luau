@@ -71,14 +71,31 @@ function PileService:Initialize()
         self._occupiedZonesData[zone] = nil
     end)
 
-    FoodCollected.OnServerEvent:Connect(function(player: Player, spot: Part)
-        local foodLeft = spot:GetAttribute("FoodLeft") or 0
-        spot:SetAttribute("FoodLeft", foodLeft - 1)
-        self._services.RewardService:GiveReward(player, {FunctionName = "Food", Data = 1})
+    FoodCollected.OnServerEvent:Connect(function(player: Player, spots: {Part})
+        local totalCollectedFood = 0
 
-        if foodLeft <= 0 then
-            startRespawnCycle(self, spot)
+        for _, spot in pairs(spots) do
+            local foodLeft = spot:GetAttribute("FoodLeft") or 0
+            local collectingAmount = 5
+            local claimingFoodAmount = if collectingAmount > foodLeft then foodLeft else collectingAmount
+            spot:SetAttribute("FoodLeft", foodLeft - claimingFoodAmount)
+            foodLeft -= claimingFoodAmount
+
+            if foodLeft <= 0 then
+                startRespawnCycle(self, spot)
+            end
+
+            totalCollectedFood += claimingFoodAmount
         end
+
+        local foodLimit = player:GetAttribute("FoodCapacity") or 0
+        local currentFoodAmount = player.Currencies.Food.Value
+        local amountToGive = if currentFoodAmount + totalCollectedFood > foodLimit then math.max(foodLimit - currentFoodAmount, 0) else totalCollectedFood
+
+        --if amountToGive > 0 then
+            FoodCollected:FireClient(player, spots, amountToGive)
+            self._services.RewardService:GiveReward(player, {FunctionName = "Food", Data = amountToGive})
+        --end
     end)
 end
 

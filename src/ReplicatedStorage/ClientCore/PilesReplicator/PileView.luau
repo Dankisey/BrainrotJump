@@ -71,21 +71,51 @@ local function initialize(self)
     self._scaleValue = Instance.new("NumberValue")
     self._scaleValue.Value = 1
 
-    self._scaleValue.Changed:Connect(function(value)
+    self._scaleObjectConnection = self._scaleValue.Changed:Connect(function(value)
         if self._currentView then
             self._currentView:ScaleTo(value)
         end
     end)
 
-    self._spot:GetAttributeChangedSignal("CurrentPile"):Connect(function()
+    self._pileTypeConnection = self._spot:GetAttributeChangedSignal("CurrentPile"):Connect(function()
         onTypeChanged(self)
     end)
 
-    self._spot:GetAttributeChangedSignal("FoodLeft"):Connect(function()
+    self._pileFoodConnection = self._spot:GetAttributeChangedSignal("FoodLeft"):Connect(function()
+        if self._spot:GetAttribute("CurrentPile") ~= "None" and (not self._currentView) then
+            onTypeChanged(self)
+        end
+
         onAmountChanged(self)
     end)
 
     onTypeChanged(self)
+end
+
+function PileView:Destroy()
+    stopAnimations(self)
+
+    if self._pileTypeConnection then
+        self._pileTypeConnection:Disconnect()
+    end
+
+    if self._pileFoodConnection then
+        self._pileFoodConnection:Disconnect()
+    end
+
+    if self._scaleObjectConnection then
+        self._scaleObjectConnection:Disconnect()
+    end
+
+    if self._scaleValue then
+        self._scaleValue:Destroy()
+    end
+
+    if self._currentView then
+        self._currentView:Destroy()
+    end
+
+    table.clear(self)
 end
 
 function PileView.new(spot: Part)

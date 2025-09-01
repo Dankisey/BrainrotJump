@@ -18,6 +18,7 @@ export type InventoryService = {
     UnloadSave: (InventoryService, player: Player) -> SharedTypes.InventorySave;
 
     _equippedItemModels : {[Player]: {
+        BasketPivot: Part?;
         Basket: Model?;
     }};
     _playersSaves : {[Player]: SharedTypes.InventorySave};
