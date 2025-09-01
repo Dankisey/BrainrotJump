@@ -5,7 +5,7 @@ local FoodCollected = ReplicatedStorage.Remotes.Piles.FoodCollected
 
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 local FoodCollectingController = {} :: ControllerTemplate.Type
-local collectingTickTime = .5
+local collectingTickTime = 1
 
 local function getPilesWithFoodInRange(self)
     local playerPosition = self._player.Character:GetPivot().Position :: Vector3
@@ -59,18 +59,6 @@ function FoodCollectingController:AfterPlayerLoaded(player: Player)
     self._collectingTickTime = collectingTickTime
     self._collectingPiles = self._player:GetAttribute("CollectingPiles") or 1
     self._currentRadius = self._player:GetAttribute("CollectingRadius")
-
-    if not self._currentRadius then
-        self._player:GetAttributeChangedSignal("CollectingRadius"):Wait()
-        self._currentRadius = self._player:GetAttribute("CollectingRadius")
-    end
-
-    self._ring:AdjustSize(self._currentRadius)
-
-    self._player:GetAttributeChangedSignal("CollectingRadius"):Connect(function()
-        self._currentRadius = self._player:GetAttribute("CollectingRadius")
-        self._ring:AdjustSize(self._currentRadius)
-    end)
 
     self._player:GetAttributeChangedSignal("CollectingPiles"):Connect(function()
         self._collectingPiles = self._player:GetAttribute("CollectingPiles")

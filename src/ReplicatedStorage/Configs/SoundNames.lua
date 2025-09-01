@@ -6,6 +6,7 @@ local SoundNames = {
 	Hover = "HoverSound";
 	Impact = "UndertaleImpact";
 	Reward = "RewardSound";
+	FoodIncome = "FoodIncomeSound"
 }
 
 return SoundNames

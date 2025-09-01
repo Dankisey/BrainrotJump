@@ -4,7 +4,7 @@ local ServiceTemplate = require(script.Parent.Parent.ServiceTemplate)
 local PlayerDeathsDetector = {} :: ServiceTemplate.Type
 
 local function onPlayerDeath(self: ServiceTemplate.Type, player: Player)
-
+    self._services.InventoryService:RestoreEquippedItems(player)
 end
 
 local function onPlayerAdded(self: ServiceTemplate.Type, player: Player)

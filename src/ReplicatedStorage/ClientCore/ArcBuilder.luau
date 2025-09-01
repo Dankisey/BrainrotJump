@@ -2,8 +2,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ClientTypes = require(ReplicatedStorage.Modules.ClientTypes)
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 
-local RunService = game:GetService("RunService")
-
 local ArcBuilder = {} :: ClientTypes.ArcBuilder
 
 local function endArc(self: ClientTypes.ArcBuilder, arcData: ClientTypes.ArcData)
@@ -78,9 +76,11 @@ function ArcBuilder:AddArc(movingInstance, startPosition, endPart, duration,  ar
 end
 
 function ArcBuilder:Initialize()
-    RunService.Heartbeat:Connect(function(deltaTime)
-	    updateAll(self, deltaTime)
-    end)
+	task.spawn(function()
+		while true do
+			updateAll(self, task.wait(.03))
+		end
+	end)
 end
 
 function ArcBuilder.new()

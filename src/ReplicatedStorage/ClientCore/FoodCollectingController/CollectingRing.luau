@@ -5,26 +5,36 @@ local Asset = ReplicatedStorage.Assets.Food.CollectingRing
 local CollectingRing = {}
 local ringHeight = .01
 
-local function spawnRing(self, character)
+local function spawnRing(self, character: Model)
     self._ring = Asset:Clone()
     self._ring.Parent = character
 
     local rootPart = character:WaitForChild("HumanoidRootPart")
-    local height = character:GetExtentsSize().Y
+    local centerCframe, size = character:GetBoundingBox()
+    local heightDifference = (centerCframe.Position.Y - rootPart.Position.Y)
 
     local weld = Instance.new("Weld")
     weld.Parent = self._ring
     weld.Part0 = rootPart
     weld.Part1 = self._ring
-    weld.C0 = CFrame.new(-Vector3.yAxis * (height * .24))
+    weld.C0 = CFrame.new(-Vector3.yAxis * (size.Y * .4 - heightDifference))
 end
 
 local function initialize(self)
     local character = self._player.Character or self._player.CharacterAdded:Wait()
+    self._currentRadius = self._player:GetAttribute("CollectingRadius") or 1
     spawnRing(self, character)
+
+    self._player:GetAttributeChangedSignal("CollectingRadius"):Connect(function()
+        self._currentRadius = self._player:GetAttribute("CollectingRadius")
+        self:AdjustSize(self._currentRadius)
+    end)
+
+    self:AdjustSize(self._currentRadius)
 
     self._player.CharacterAdded:Connect(function(character: Model)
         spawnRing(self, character)
+        self:AdjustSize(self._currentRadius)
     end)
 end
 

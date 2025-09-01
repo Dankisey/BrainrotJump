@@ -84,8 +84,10 @@ function PilesReplicator:AfterPlayerLoaded(player: Player)
             vfx.Gui.Icon.Image = PilesConfig.Piles[spawnData.PileType].Icon
             vfx.Parent = workspace.Debris
 
-            self._controllers.ArcBuilder:AddArc(vfx, spawnData.Spawn.Position, self._currentBasketPivot,
-                arcData.Duration, arcData.Length, self._random:NextInteger(arcData.Angles.Min, arcData.Angles.Max))
+            self._controllers.ArcBuilder:AddArc(vfx, spawnData.Spawn.Position, self._currentBasketPivot, arcData.Duration, arcData.Length, self._random:NextInteger(arcData.Angles.Min, arcData.Angles.Max), function()
+                self._controllers.FoodCounter:AddFood(amountPerPile)
+                self._controllers.SoundPlayer:PlaySound("FoodIncomeSound")
+            end)
         end
     end)
 end
