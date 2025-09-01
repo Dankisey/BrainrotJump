@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
-local Asset = ReplicatedStorage.Assets.CollectingRing
+local Asset = ReplicatedStorage.Assets.Food.CollectingRing
 
 local CollectingRing = {}
 local ringHeight = .01

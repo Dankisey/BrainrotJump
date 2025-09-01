@@ -5,7 +5,7 @@ local GetInventory = Remotes.GetInventory
 local ItemAdded = Remotes.ItemAdded
 
 local Assets = ReplicatedStorage.Assets
-local BasketPivotWeld = Assets.BasketPivotWeld
+local BasketPivotWeld = Assets.Food.BasketPivotWeld
 local Configs = ReplicatedStorage.Configs
 local BasketsConfig = require(Configs.BasketsConfig)
 

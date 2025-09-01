@@ -4,7 +4,7 @@ local PileView = require(script.PileView)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PilesConfig = require(ReplicatedStorage.Configs.PilesConfig)
 local FoodCollected = ReplicatedStorage.Remotes.Piles.FoodCollected
-local FoodVfx = ReplicatedStorage.Assets.FoodVfx
+local FoodVfx = ReplicatedStorage.Assets.Food.FoodVfx
 
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 
