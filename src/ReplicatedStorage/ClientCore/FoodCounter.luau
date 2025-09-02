@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local FoodCollectingConfig = require(ReplicatedStorage.Configs.FoodCollectingConfig)
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 local FoodCounterAsset = ReplicatedStorage.Assets.Food.FoodCounter
 
@@ -6,14 +7,12 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
 local FoodCounter = {} :: ControllerTemplate.Type
-local DefaultDuration = 3
-local FollowingSpeed = 2
 
 local function onCharacterAdded(self, character: Model)
     self._character = character
     local rootPart = self._character:WaitForChild("HumanoidRootPart")
     self._counter.CFrame = rootPart.CFrame * CFrame.new(0, 2, 3)
-    self._lifeTime = DefaultDuration
+    self._lifeTime = FoodCollectingConfig.CounterLifetime
     self._counter.Gui.Enabled = false
     self._currentShowingFoodAmount = 0
 end
@@ -39,7 +38,12 @@ function FoodCounter:AddFood(amount: number)
     self._counter.Gui.Enabled = true
     self._lifeTime = 0
 
-    self._counter.Gui.Frame.CountLabel.Text = "+" .. self._utils.FormatNumber(self._currentShowingFoodAmount)
+    if amount > 0 then
+        self._counter.Gui.Frame.CountLabel.Text = "+" .. self._utils.FormatNumber(self._currentShowingFoodAmount)
+    else
+        self._counter.Gui.Frame.CountLabel.Text = "Max"
+    end
+
     self:TweenPop()
 end
 
@@ -61,10 +65,10 @@ function FoodCounter:AfterPlayerLoaded(player: Player)
         local rootPart: Part = self._character.HumanoidRootPart
         local targetPosition = (rootPart.CFrame * CFrame.new(0, 2, 3)).Position
         local currentPosition = self._counter.Position
-        self._counter.Position = currentPosition:Lerp(targetPosition, FollowingSpeed * deltaTime)
+        self._counter.Position = currentPosition:Lerp(targetPosition, FoodCollectingConfig.CounterFollowingSpeed * deltaTime)
         self._lifeTime += deltaTime
 
-        if self._lifeTime >= DefaultDuration then
+        if self._lifeTime >= FoodCollectingConfig.CounterLifetime then
             self._currentShowingFoodAmount = 0
             self._counter.Gui.Enabled = false
             self._lifeTime = 0

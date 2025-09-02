@@ -91,11 +91,11 @@ function PileService:Initialize()
         local foodLimit = player:GetAttribute("FoodCapacity") or 0
         local currentFoodAmount = player.Currencies.Food.Value
         local amountToGive = if currentFoodAmount + totalCollectedFood > foodLimit then math.max(foodLimit - currentFoodAmount, 0) else totalCollectedFood
+        FoodCollected:FireClient(player, spots, amountToGive)
 
-        --if amountToGive > 0 then
-            FoodCollected:FireClient(player, spots, amountToGive)
+        if amountToGive > 0 then
             self._services.RewardService:GiveReward(player, {FunctionName = "Food", Data = amountToGive})
-        --end
+        end
     end)
 end
 

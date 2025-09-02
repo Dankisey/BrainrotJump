@@ -78,7 +78,7 @@ end
 function ArcBuilder:Initialize()
 	task.spawn(function()
 		while true do
-			updateAll(self, task.wait(.03))
+			updateAll(self, task.wait(.02))
 		end
 	end)
 end
