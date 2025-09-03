@@ -82,8 +82,6 @@ function BaseFrame:UpdateInfoFrame(newSelectedItem: string)
 end
 
 function BaseFrame:AfterPlayerLoaded(player: Player)
-    print(self)
-
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.CloseButton, function()
         self._controllers.GuiController.BasketsGui:Disable()
     end)
