@@ -82,6 +82,14 @@ function BaseFrame:UpdateInfoFrame(newSelectedItem: string)
 end
 
 function BaseFrame:AfterPlayerLoaded(player: Player)
+    print(self)
+
+    self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.CloseButton, function()
+        self._controllers.GuiController.BasketsGui:Disable()
+    end)
+
+    fillItems(self)
+
     self._currentBasket = player:WaitForChild("Equipment"):WaitForChild("Basket") :: StringValue
     self:UpdateInfoFrame(self._currentBasket.Value)
 
@@ -102,14 +110,6 @@ function BaseFrame:AfterPlayerLoaded(player: Player)
     self._currentBasket.Changed:Connect(function()
         updateDescritionView(self)
     end)
-end
-
-function BaseFrame:Initialize()
-    self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.CloseButton, function()
-        self._controllers.GuiController.BasketsGui:Disable()
-    end)
-
-    fillItems(self)
 end
 
 function BaseFrame.new(frame: Frame)

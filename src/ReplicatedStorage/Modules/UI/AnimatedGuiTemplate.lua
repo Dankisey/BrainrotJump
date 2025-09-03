@@ -2,7 +2,6 @@ local TweenService = game:GetService("TweenService")
 local GuiTemplate = require(script.Parent.GuiTemplate)
 
 local AnimatedGuiTemplate = setmetatable({}, {__index = GuiTemplate})
-AnimatedGuiTemplate.__index = AnimatedGuiTemplate
 
 function AnimatedGuiTemplate:Enable(isForced)
     self:CancelAnimations()

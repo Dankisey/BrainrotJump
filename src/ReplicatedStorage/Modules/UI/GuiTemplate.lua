@@ -39,9 +39,7 @@ function GuiTemplate:InjectConfigs(configs)
 	self._configs = configs
 
 	for _, module in pairs(self._frames) do
-		if module.InjectConfigs then
-			module:InjectConfigs(configs)
-		end
+		module:InjectConfigs(configs)
 	end
 end
 
@@ -49,9 +47,7 @@ function GuiTemplate:InjectUtils(utils)
 	self._utils = utils
 
 	for _, module in pairs(self._frames) do
-		if module.InjectUtils then
-			module:InjectUtils(utils)
-		end
+		module:InjectUtils(utils)
 	end
 
 	self.Disabled = utils.Event.new()
@@ -62,14 +58,12 @@ function GuiTemplate:InjectControllers(controllers)
 	self._controllers = controllers
 
 	for _, module in pairs(self._frames) do
-		if module.InjectControllers then
-			module:InjectControllers(controllers)
-		end
+		module:InjectControllers(controllers)
 	end
 end
 
 function GuiTemplate:CreateChildren(guiName, modules)
-	local gui = Player.PlayerGui:WaitForChild(guiName, 10)
+	local gui = Player.PlayerGui:WaitForChild(guiName)
 
 	if not gui then
 		warn("There is no GUI with name " .. guiName .. " in PlayerGui")
@@ -80,20 +74,18 @@ function GuiTemplate:CreateChildren(guiName, modules)
 	self.Name = guiName
 	self.Gui = gui
 	self._frames = {}
-	
+
 	for _, module in pairs(modules) do
-		task.spawn(function()
-			local frame = gui:FindFirstChild(module.Name)
+		local frame = gui:FindFirstChild(module.Name)
 
-			if not frame then
-				warn("There is no objects with name " .. module.Name .. " in " .. guiName)
+		if not frame then
+			warn("There is no objects with name " .. module.Name .. " in " .. guiName)
 
-				return
-			end
+			return
+		end
 
-			self[module.Name] = require(module).new(frame)
-			self._frames[module.Name] = self[module.Name]
-		end)
+		self[module.Name] = require(module).new(frame)
+		self._frames[module.Name] = self[module.Name]
 	end
 end
 
