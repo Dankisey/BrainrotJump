@@ -8,10 +8,11 @@ local function updateBasketFillView(self)
     local basketModel = character:WaitForChild("Basket")
 
     local currentFillers = BasketFillers:WaitForChild(self._basket.Value)
-    local foodPerFillerLevel = self._currentBasketCapacity / #currentFillers:GetChildren()
+    local fillersAmount = #currentFillers:GetChildren()
+    local foodPerFillerLevel = self._currentBasketCapacity / fillersAmount
     local currentFillerIndex = math.ceil(self._food.Value / foodPerFillerLevel)
+    currentFillerIndex = math.min(currentFillerIndex, fillersAmount)
 
-    print(currentFillerIndex, self._currentBasketCapacity)
     if self._lastViewIndex == currentFillerIndex then return end
 
     self._lastViewIndex = currentFillerIndex
