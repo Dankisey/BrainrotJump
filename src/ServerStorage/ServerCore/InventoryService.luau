@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Remotes = ReplicatedStorage.Remotes.Inventory
+local ItemUnlockAttempted = Remotes.ItemUnlockAttempted
 local ItemEquipped = Remotes.ItemEquipped
 local GetInventory = Remotes.GetInventory
 local ItemAdded = Remotes.ItemAdded
@@ -13,6 +14,20 @@ local ServerTypes = require(script.Parent.Parent.ServerTypes)
 local ServiceTemplate = require(script.Parent.Parent.ServiceTemplate)
 
 local InventoryService = {} :: ServerTypes.InventoryService
+
+local unlockingFunctions = {
+    Baskets = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
+        local basketInfo = BasketsConfig.Items[itemName]
+
+        if basketInfo.ProductId then
+            self._services.Monetization:PromptProduct(player, basketInfo.ProductId)
+        else
+            if self._services.SoftCurrencyService:TrySpentCurrency(player, "Cash", basketInfo.PriceInCash, "Gameplay", itemName) then
+                self:TryAddItem(player, "Equipment", "Baskets", itemName)
+            end
+        end
+    end
+}
 
 local equipFunctions = {
     Baskets = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
@@ -57,7 +72,7 @@ local function validateSave(save)
     save = save or {}
 
 	save.Equipment = save.Equipment or {}
-    save.Equipment.Baskets = save.Equipment.Baskets or {"Default"}
+    save.Equipment.Baskets = save.Equipment.Baskets or {Default = true}
 
     return save
 end
@@ -68,14 +83,14 @@ local function onEquipmentChanged(player: Player)
     player:SetAttribute("FoodCapacity", BasketsConfig.Items[player.Equipment.Basket.Value].FoodCapacity)
 end
 
-local function isValidInventoryRequest(self: ServerTypes.InventoryService, player: Player, categoryName: string)
+local function isValidInventoryRequest(self: ServerTypes.InventoryService, player: Player, itemType: string, categoryName: string)
     if not self._playersSaves[player] then
         warn("Player", player, "has no save record")
 
         return false
     end
 
-    if not self._playersSaves[player].Equipment[categoryName] then
+    if not self._playersSaves[player][itemType][categoryName] then
         warn("There is no category with name", categoryName, "in save table")
 
         return false
@@ -84,19 +99,19 @@ local function isValidInventoryRequest(self: ServerTypes.InventoryService, playe
     return true
 end
 
-function InventoryService:HasItem(player: Player, categoryName: string, itemName: string) : boolean
-    if not isValidInventoryRequest(self, player, categoryName) then return false end
+function InventoryService:HasItem(player: Player, itemType, categoryName: string, itemName: string) : boolean
+    if not isValidInventoryRequest(self, player, itemType, categoryName) then return false end
 
-    return self._playersSaves[player].Equipment[categoryName][itemName] ~= nil
+    return self._playersSaves[player][itemType][categoryName][itemName] ~= nil
 end
 
-function InventoryService:TryAddItem(player: Player, categoryName: string, itemName: string) : boolean
-    if not isValidInventoryRequest(self, player, categoryName) then return false end
+function InventoryService:TryAddItem(player: Player, itemType, categoryName: string, itemName: string) : boolean
+    if not isValidInventoryRequest(self, player, itemType, categoryName) then return false end
 
-    if self:HasItem(player, categoryName, itemName) then return false end
+    if self:HasItem(player, itemType, categoryName, itemName) then return false end
 
-    self._playersSaves[player].Equipment[categoryName][itemName] = true
-    ItemAdded:FireClient(player, categoryName, itemName)
+    self._playersSaves[player][itemType][categoryName][itemName] = true
+    ItemAdded:FireClient(player, itemType, categoryName, itemName)
 
     return true
 end
@@ -138,14 +153,28 @@ function InventoryService:Initialize()
 
         self._debounces[player] = true
 
-        if self:HasItem(player, categoryName, itemName) then
+        task.delay(.5, function()
+            self._debounces[player] = nil
+        end)
+
+        if self:HasItem(player, "Equipment", categoryName, itemName) then
             equipFunctions[categoryName](self, player, itemName)
             onEquipmentChanged(player)
         end
+    end)
+
+    ItemUnlockAttempted.OnServerEvent:Connect(function(player: Player, categoryName: string, itemName: string)
+        if self._debounces[player] then return end
+
+        self._debounces[player] = true
 
         task.delay(.5, function()
             self._debounces[player] = nil
         end)
+
+        if unlockingFunctions[categoryName] then
+            unlockingFunctions[categoryName](self, player, itemName)
+        end
     end)
 end
 

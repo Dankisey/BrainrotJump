@@ -77,6 +77,17 @@ export type InputController = {
     GetControllType: (InputController) -> "Console"|"Mobile"|"Desktop";
 } & ControllerTemplate
 
+export type InventoryController = {
+    new: () -> InventoryController;
+    RequestItemUnlocking: (InventoryController, categoryName: string, itemName: string) -> nil;
+    TryEquipItem: (InventoryController, category: string, itemName: string) -> boolean;
+    HasEquipment: (InventoryController, category: string, itemName: string) -> boolean;
+
+    Updated: UtilsTypes.Event;
+
+    _inventory: SharedTypes.InventorySave;
+} & ControllerTemplate
+
 export type SoundPlayer = {
     new: () -> SoundPlayer;
 
@@ -165,6 +176,7 @@ export type Controllers = {
     GuiController: GuiController;
     GuideBeamController: GuideBeamController;
     InputController: InputController;
+    InventoryController: InventoryController;
     SoundPlayer: SoundPlayer;
     ToolsController: ToolsController;
     TooltipsController: TooltipsController;

@@ -15,6 +15,7 @@ local function onCharacterAdded(self, character: Model)
     self._lifeTime = FoodCollectingConfig.CounterLifetime
     self._counter.Gui.Enabled = false
     self._currentShowingFoodAmount = 0
+    self.Disabled:Invoke()
 end
 
 function FoodCounter:TweenPop()
@@ -69,11 +70,20 @@ function FoodCounter:AfterPlayerLoaded(player: Player)
         self._lifeTime += deltaTime
 
         if self._lifeTime >= FoodCollectingConfig.CounterLifetime then
+            if self._counter.Gui.Enabled then
+                self.Disabled:Invoke()
+            end
+
             self._currentShowingFoodAmount = 0
             self._counter.Gui.Enabled = false
             self._lifeTime = 0
         end
     end)
+end
+
+function FoodCounter:InjectUtils(utils)
+    self.Disabled = utils.Event.new()
+    self._utils = utils
 end
 
 function FoodCounter.new()

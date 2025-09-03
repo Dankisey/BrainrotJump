@@ -30,7 +30,7 @@ function GuiTemplate:Initialize(player: Player)
 
 	for _, module in pairs(self._frames) do
 		if module.Initialize then
-			task.spawn(module.Initialize, module, player)
+			module:Initialize(player)
 		end
 	end
 end

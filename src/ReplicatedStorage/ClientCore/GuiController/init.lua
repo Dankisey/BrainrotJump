@@ -75,8 +75,14 @@ function GuiController:AfterPlayerLoaded(player: Player)
 end
 
 function GuiController:Initialize(player: Player)
+	local guiModuleNames = self._utils.GetKeys(self._guiModules)
+	local initializedGuiModules = {}
+
 	for name, guiModule in pairs(self._guiModules) do
-		task.spawn(guiModule.Initialize, guiModule, player)
+		task.spawn(function()
+			guiModule:Initialize(player)
+			table.insert(initializedGuiModules, name)
+		end)
 
 		if self._configs.ConflictingGuisConfig[name] then
 			guiModule.Disabled:Subscribe(self, function()
@@ -90,6 +96,8 @@ function GuiController:Initialize(player: Player)
 			end)
 		end
 	end
+
+	repeat task.wait() until #initializedGuiModules == #guiModuleNames
 end
 
 function GuiController:InjectConfigs(configs)

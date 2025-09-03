@@ -10,8 +10,8 @@ export type Analytics = {
 } & ServiceTemplate
 
 export type InventoryService = {
-    TryAddItem: (InventoryService, player: Player, categoryName: string, itemName: string) -> boolean;
-    HasItem: (InventoryService, player: Player, categoryName: string, itemName: string) -> boolean;
+    TryAddItem: (InventoryService, player: Player, itemType: string, categoryName: string, itemName: string) -> boolean;
+    HasItem: (InventoryService, player: Player, itemType: string, categoryName: string, itemName: string) -> boolean;
     RestoreEquippedItems: (InventoryService, player: Player) -> nil;
 
     LoadSave: (InventoryService, player: Player, savedInventory: SharedTypes.InventorySave?) -> nil;

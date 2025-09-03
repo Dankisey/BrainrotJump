@@ -97,6 +97,12 @@ function Monetization:PromptPass(player: Player, passId: number)
 end
 
 function Monetization:Initialize()
+	for basketName, id in pairs(DevProductsConfig.Baskets) do
+		productFunctions[id] = function(self: ServiceTemplate.Type, player: Player)
+			return self._services.InventoryService:TryAddItem(player, "Equipment", "Baskets", basketName)
+		end
+	end
+
 	local function processReceipt(receiptInfo)
 		self:ProcessReciept(receiptInfo)
 	end

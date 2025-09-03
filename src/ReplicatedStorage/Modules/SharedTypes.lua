@@ -1,7 +1,9 @@
 local SharedTypes = {}
 
 export type InventorySave = {
-    Baskets: {[string]: boolean};
+    Equipment: {
+        Baskets: {[string]: boolean};
+    };
 }
 
 return SharedTypes

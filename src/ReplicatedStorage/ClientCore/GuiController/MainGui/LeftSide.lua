@@ -1,10 +1,42 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 local LeftSide = {} :: ControllerTemplate.Type
 
-function LeftSide:AfterPlayerLoaded(player: Player)
+local function updateFoodCounter(self: ControllerTemplate.Type)
+    self._foodCounterLabel.Text = string.format("%s/%s", self._utils.FormatNumber(self._foodValueObject.Value), self._utils.FormatNumber(self._currentFoodCapacity))
+    local tweenInfo = TweenInfo.new(0.05, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local tweenUp = TweenService:Create(self._foodCounterLabel, tweenInfo, {Size = UDim2.fromScale(.8, 1.1)})
+    local tweenDown = TweenService:Create(self._foodCounterLabel, tweenInfo, {Size = UDim2.fromScale(.7, 1)})
 
+    tweenUp:Play()
+    tweenUp.Completed:Wait()
+	tweenDown:Play()
+    tweenDown.Completed:Wait()
+end
+
+function LeftSide:AfterPlayerLoaded(player: Player)
+    self._foodValueObject = player:WaitForChild("Currencies"):WaitForChild("Food")
+    self._currentFoodCapacity = player:GetAttribute("FoodCapacity") or 1
+    self._foodCounterLabel = self._frame.FoodCounter.CounterLabel
+
+    local buttons = self._frame.Buttons
+
+    self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.BasketsButton, function()
+        self._controllers.GuiController.BasketsGui:Enable(true)
+    end)
+
+    player:GetAttributeChangedSignal("FoodCapacity"):Connect(function()
+        self._currentFoodCapacity = player:GetAttribute("FoodCapacity")
+        updateFoodCounter(self)
+    end)
+
+    self._controllers.FoodCounter.Disabled:Subscribe(self, function()
+        updateFoodCounter(self)
+    end)
+
+    updateFoodCounter(self)
 end
 
 function LeftSide.new(frame: Frame)

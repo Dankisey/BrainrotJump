@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Player = game:GetService("Players").LocalPlayer
 
 local ClientCore = {}
+local InitializingMaxTime = 20
 
 function ClientCore:Start()
 	local controllers = {}
@@ -74,6 +75,11 @@ function ClientCore:Start()
 	print("Injecting completed")
 
 	print("Initializing client modules")
+	local controllerNames = utils.GetKeys(controllers)
+	local controllersWithoutInitializing = {}
+	local initializedControllerNames = {}
+	local elapsedInitializingTime = 0
+
 	for name, controller in controllers do
 		task.spawn(function()
 			if controller.Initialize then
@@ -81,11 +87,30 @@ function ClientCore:Start()
 
 				if not success then
 					warn("Error occured while initializing controller " .. name ..":", value)
+				else
+					table.insert(initializedControllerNames, name)
 				end
+			else
+				table.insert(controllersWithoutInitializing, name)
 			end
 		end)
 	end
-	print("Client modules were initialized")
+
+	repeat
+		elapsedInitializingTime += task.wait()
+	until (#initializedControllerNames == #controllerNames - #controllersWithoutInitializing) or (elapsedInitializingTime >= InitializingMaxTime)
+
+	if #initializedControllerNames ~= #controllerNames - #controllersWithoutInitializing then
+		warn("Unitialized controllers:")
+
+		for _, controllerName in pairs(controllerNames) do
+			if (not table.find(initializedControllerNames, controllerName)) and (not table.find(controllersWithoutInitializing, controllerName)) then
+				warn(controllerName)
+			end
+		end
+	end
+
+	print("Client modules initializing ended")
 
 	local totalTime = tick() - startTime
 	print("Client modules takes " .. totalTime .. " to start")
