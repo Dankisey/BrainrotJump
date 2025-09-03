@@ -22,7 +22,7 @@ BasketsConfig.Items = {
         Icon = "rbxassetid://92190724973951";
         FoodCapacity = 500;
         ProductId = DevProductsConfig.Baskets.RobuxBasket;
-        PriceInCash = 9999999999;
+        PriceInCash = 9999999999; --for ordering needs only
     };
 }
 
