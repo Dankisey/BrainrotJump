@@ -64,6 +64,7 @@ local equipFunctions = {
 		weld.C1 = CFrame.fromEulerAnglesYXZ(0, 0, 0)
 
 		model.Parent = character
+        model.Name = "Basket"
 		self._equippedItemModels[player].Basket = model
 	end;
 }
