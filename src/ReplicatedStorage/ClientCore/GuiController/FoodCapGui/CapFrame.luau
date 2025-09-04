@@ -10,7 +10,7 @@ function CapFrame:AfterPlayerLoaded()
     end)
 
     self._controllers.FoodCounter.CapReached:Subscribe(self, function()
-        if self._isDelayActive then return end
+        if self._isDelayActive or self._controllers.GuiController.FoodCapGui.Gui.Enabled then return end
 
         self._delayLeftTime = FoodCollectingConfig.CapGuiShowingDelay
         self._isDelayActive = true
@@ -34,6 +34,8 @@ function CapFrame:AfterPlayerLoaded()
 
     task.spawn(function()
         while task.wait(1) do
+            if self._controllers.GuiController.FoodCapGui.Gui.Enabled then continue end
+
             if self._isDelayActive and self._delayLeftTime <= 0 then
                 self._isDelayActive = false
                 self._delayLeftTime = 0
