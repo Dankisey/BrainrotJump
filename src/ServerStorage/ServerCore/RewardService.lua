@@ -11,6 +11,10 @@ local rewardsFunctions = {
 		player.Currencies.Food.Value += amount
 		player.TotalStats.TotalFood.Value += amount
 	end;
+
+	Pet = function(player: Player, petName: string, self: ServiceTemplate.Type)
+		self._services.PetService:GivePet(player, petName, "Normal")
+	end;
 }
 
 function RewardService:GiveMultipleRewards(player: Player, rewards)

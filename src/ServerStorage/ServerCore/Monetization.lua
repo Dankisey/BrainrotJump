@@ -6,6 +6,7 @@ local GamepassesConfig = require(Configs.GamepassesConfig)
 local Remotes = ReplicatedStorage.Remotes.Monetization
 local GamepassRequested = Remotes.GamepassRequested
 local DevProductRequested = Remotes.DevProductRequested
+local GamepassPurchased = Remotes.GamepassPurchased
 
 local DataStoreService = game:GetService("DataStoreService")
 local PurchasesHistoryStore = DataStoreService:GetDataStore("PurchasesHistory")
@@ -20,6 +21,7 @@ local Monetization = {} :: ServiceTemplate.Type
 
 local productFunctions = {}
 local gamepassFunctions = {}
+local extraGamepassFunctions = {}
 
 function Monetization:ProcessReciept(receiptInfo)
 	local playerProductKey = receiptInfo.PlayerId .. "_" .. receiptInfo.PurchaseId
@@ -66,6 +68,36 @@ function Monetization:ProcessReciept(receiptInfo)
 	end
 end
 
+extraGamepassFunctions[GamepassesConfig.Attributes.Plus1Pet.GamepassId] = function(self, player: Player)
+	self._services.PetService:IncreaseEquippedPets(player, 1)
+
+	return true
+end
+
+extraGamepassFunctions[GamepassesConfig.Attributes.Plus4Pet.GamepassId] = function(self, player: Player)
+	self._services.PetService:IncreaseEquippedPets(player, 4)
+
+	return true
+end
+
+extraGamepassFunctions[GamepassesConfig.Attributes.Plus8Pet.GamepassId] = function(self, player: Player)
+	self._services.PetService:IncreaseEquippedPets(player, 8)
+
+	return true
+end
+
+extraGamepassFunctions[GamepassesConfig.Attributes.Plus50Storage.GamepassId] = function(self, player: Player)
+	self._services.PetService:IncreaseStorageSpace(player, 50)
+
+	return true
+end
+
+extraGamepassFunctions[GamepassesConfig.Attributes.Plus100Storage.GamepassId] = function(self, player: Player)
+	self._services.PetService:IncreaseStorageSpace(player, 100)
+
+	return true
+end
+
 local function onGamepassPurchaseCompleted(self, player: Player, gamePassId: number)
 	if not gamepassFunctions[gamePassId] then
 		warn("Function for pass id " .. gamePassId .. " was not found!")
@@ -100,6 +132,56 @@ function Monetization:Initialize()
 	for basketName, id in pairs(DevProductsConfig.Baskets) do
 		productFunctions[id] = function(self: ServiceTemplate.Type, player: Player)
 			return self._services.InventoryService:TryAddItem(player, "Equipment", "Baskets", basketName)
+		end
+	end
+
+	for gamepass, info in GamepassesConfig.Attributes do
+		gamepassFunctions[info.GamepassId] = function(_, player, gamePassId)
+			if gamePassId == info.GamepassId then
+				player:SetAttribute(info.AttributeName, true)
+
+				if table.find(GamepassesConfig.AttributesWithExtraFunctions, gamepass) then
+					extraGamepassFunctions[info.GamepassId](self, player)
+				end
+
+				GamepassPurchased:FireClient(player, info.AttributeName)
+			end
+
+			return true
+		end
+	end
+
+	for eggId, devProductId in DevProductsConfig.Eggs do
+		productFunctions[devProductId] = function(_, player: Player)
+			if not self._services.WorldsService:IsWorldUnlocked(player, self._configs.EggConfig[eggId].World) then
+				print("World for this egg is locked")
+				return false
+			end
+
+			if not self._services.PetService:CheckAvailableStorage(player, 1) then
+				return false
+			end
+
+			self._services.HatchEggService:OpenEgg(player, eggId, false, false)
+
+			return true
+		end
+	end
+
+	for eggId, devProductId in DevProductsConfig.TripleEggs do
+		productFunctions[devProductId] = function(_, player: Player)
+			if not self._services.WorldsService:IsWorldUnlocked(player, self._configs.EggConfig[eggId].World) then
+				print("World for this egg is locked")
+				return false
+			end
+
+			if not self._services.PetService:CheckAvailableStorage(player, 3) then
+				return false
+			end
+
+			self._services.HatchEggService:OpenEgg(player, eggId, true, false)
+
+			return true
 		end
 	end
 

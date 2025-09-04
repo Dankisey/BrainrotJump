@@ -85,6 +85,9 @@ local function onPlayerAdded(self: ServiceTemplate.Type, player: Player)
 	self._services.Analytics:AddPlayer(player)
 	self._services.ZonesService:RegisterPlayer(player)
 	self._services.LeaderboardService:UpdateTotals(player)
+	self._services.PetService:LoadPets(player, data.Pets)
+	self._services.PetService:CountStorageSpaces(player)
+	self._services.PetIndexService:LoadSave(player, data.PetIndex)
 
 	for i = 1, #saveLoadableServices do
 		self._services[saveLoadableServices[i].ServiceName]:LoadSave(player, data[saveLoadableServices[i].DataName])
@@ -113,6 +116,8 @@ local function onPlayerRemoving(self: ServiceTemplate.Type, player: Player)
 		player[folder.Name]:Destroy()
 	end
 
+	data.Pets = self._services.PetService:RemovePlayer(player)
+	data.PetIndex = self._services.PetIndexService:UnloadSave(player)
 	data.UsedCodes = playersUsedCodes[player]
 	playersUsedCodes[player] = nil
 
