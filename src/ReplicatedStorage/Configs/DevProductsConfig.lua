@@ -1,15 +1,15 @@
 local DevProductsConfig = {}
 
 DevProductsConfig.Eggs = {
-	SkyEgg = 3309429425;
-	GoldEgg = 3328861036;
-	ShinyEgg = 3328860927;
+	SkyEgg = 3394085229;
+	GoldEgg = 3394085646;
+	ShinyEgg = 3394085452;
 }
 
 DevProductsConfig.TripleEggs = {
-	SkyEgg = 3309429730;
-	GoldEgg = 3328861159;
-	ShinyEgg = 3328861279;
+	SkyEgg = 3394086952;
+	GoldEgg = 3394086397;
+	ShinyEgg = 3394086733;
 }
 
 DevProductsConfig.Baskets = {

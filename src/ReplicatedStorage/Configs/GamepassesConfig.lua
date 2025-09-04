@@ -3,44 +3,44 @@ local Gamepasses = {}
 Gamepasses.Attributes = {
     Plus1Pet = {
 		AttributeName = "Plus1Pet";
-		GamepassId = 1252149437;
+		GamepassId = 1443973579;
 	};
     Plus4Pet = {
 		AttributeName = "Plus4Pet";
-		GamepassId = 1252475085;
+		GamepassId = 1443183776;
 	};
     Plus8Pet = {
 		AttributeName = "Plus8Pet";
-		GamepassId = 1253095300;
+		GamepassId = 1440837836;
 	};
     Plus50Storage = {
 		AttributeName = "Plus50Storage";
-		GamepassId = 1255073827;
+		GamepassId = 1441613638;
 	};
     Plus100Storage = {
 		AttributeName = "Plus100Storage";
-		GamepassId = 1253220736;
+		GamepassId = 1444181543;
 	};
 
 	TripleHatch = {
 		AttributeName = "TripleHatch";
-		GamepassId = 1262759661;
+		GamepassId = 1442770004;
 	};
 	AutoHatch = {
 		AttributeName = "AutoHatch";
-		GamepassId = 1263081056;
+		GamepassId = 1441277757;
 	};
 	Luck = {
 		AttributeName = "Luck";
-		GamepassId = 1262677656;
+		GamepassId = 1442021544;
 	};
 	MegaLuck = {
 		AttributeName = "MegaLuck";
-		GamepassId = 1262997408;
+		GamepassId = 1440465873;
 	};
 	UltraLuck = {
 		AttributeName = "UltraLuck";
-		GamepassId = 1263144298;
+		GamepassId = 1441373636;
 	};
 }
 
