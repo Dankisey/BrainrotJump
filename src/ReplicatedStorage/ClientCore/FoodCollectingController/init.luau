@@ -39,6 +39,12 @@ local function tryCollectFood(self)
     local availablePiles = getPilesWithFoodInRange(self) :: {Part}
     local collectedSpots = {}
 
+    if #availablePiles > 0 and self._food.Value == self._currentBasketCapacity then
+        self.CapReached:Invoke()
+
+        return
+    end
+
     table.sort(availablePiles, function(partA: Part, partB: Part)
         return (partA.Position - playerPosition).Magnitude > (partB.Position - playerPosition).Magnitude
     end)
@@ -67,12 +73,23 @@ function FoodCollectingController:AfterPlayerLoaded(player: Player)
     end)
 
     self._pileSpots = self._controllers.ZoneController:GetZone().FoodPileSpots:GetChildren()
+    self._currentBasketCapacity = self._player:GetAttribute("FoodCapacity") or 1
+    self._food = self._player:WaitForChild("Currencies"):WaitForChild("Food")
+
+    self._player:GetAttributeChangedSignal("FoodCapacity"):Connect(function()
+        self._currentBasketCapacity = self._player:GetAttribute("FoodCapacity")
+    end)
 
     task.spawn(function()
         while task.wait(self._collectingTickTime) do
             tryCollectFood(self)
         end
     end)
+end
+
+function FoodCollectingController:InjectUtils(utils)
+    self.CapReached = utils.Event.new()
+    self._utils = utils
 end
 
 function FoodCollectingController.new()

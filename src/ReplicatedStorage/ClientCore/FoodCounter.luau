@@ -43,7 +43,6 @@ function FoodCounter:AddFood(amount: number)
         self._counter.Gui.Frame.CountLabel.Text = "+" .. self._utils.FormatNumber(self._currentShowingFoodAmount)
     else
         self._counter.Gui.Frame.CountLabel.Text = "Max"
-        self.CapReached:Invoke()
     end
 
     self:TweenPop()
@@ -83,7 +82,6 @@ function FoodCounter:AfterPlayerLoaded(player: Player)
 end
 
 function FoodCounter:InjectUtils(utils)
-    self.CapReached = utils.Event.new()
     self.Disabled = utils.Event.new()
     self._utils = utils
 end

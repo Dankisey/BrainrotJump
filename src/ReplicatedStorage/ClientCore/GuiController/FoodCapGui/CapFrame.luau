@@ -9,7 +9,7 @@ function CapFrame:AfterPlayerLoaded()
         self._controllers.GuiController.FoodCapGui:Disable()
     end)
 
-    self._controllers.FoodCounter.CapReached:Subscribe(self, function()
+    self._controllers.FoodCollectingController.CapReached:Subscribe(self, function()
         if self._isDelayActive or self._controllers.GuiController.FoodCapGui.Gui.Enabled then return end
 
         self._delayLeftTime = FoodCollectingConfig.CapGuiShowingDelay
