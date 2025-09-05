@@ -25,19 +25,26 @@ local function updateView(self: BasketButtonView)
     self._frame.Button.Icon.Image = if self._isOwned then BasketsConfig.Items[self._name].Icon else "rbxassetid://125352837907619"
 
     if self._isEquipped then
-        self._frame.Button.CostLabel.Text = "Equipped"
+        self._frame.Button.StatusLabel.Text = "Equipped"
+        self._frame.Button.StatusLabel.Visible = true
+        self._frame.Button.Cost.Visible = false
     elseif self._isOwned then
-        self._frame.Button.CostLabel.Text = "Owned"
+        self._frame.Button.StatusLabel.Text = "Owned"
+        self._frame.Button.StatusLabel.Visible = true
+        self._frame.Button.Cost.Visible = false
     else
-        self._frame.Button.CostLabel.Text = self._cashText
+        self._frame.Button.Cost.Visible = true
+        self._frame.Button.StatusLabel.Visible = false
     end
 end
 
 local function initialize(self: BasketButtonView)
     if self._robuxPrice then
-        self._cashText = "" .. self._robuxPrice
+        self._frame.Button.Cost.Icon.Image = "rbxasset://textures/ui/common/robux@3x.png"
+        self._frame.Button.Cost.Label.Text = self._robuxPrice
     else
-        self._cashText = "$" .. self._utils.FormatNumber(BasketsConfig.Items[self._name].PriceInCash)
+        self._frame.Button.Cost.Icon.Image = "rbxassetid://80513201967002"
+        self._frame.Button.Cost.Label.Text = self._utils.FormatNumber(BasketsConfig.Items[self._name].PriceInCash)
     end
 
     self._frame.Button.NameLabel.Text = BasketsConfig.Items[self._name].PublicName
