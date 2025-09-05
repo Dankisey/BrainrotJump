@@ -27,6 +27,14 @@ local saveLoadableServices = {
 		ServiceName = "WorldsService";
 		DataName = "WorldsSave";
 	};
+	[3] = {
+		ServiceName = "PetIndexService";
+		DataName = "PetIndex";
+	};
+	-- [4] ={
+	-- 	ServiceName = "BrainrotService";
+	-- 	DataName = "BrainrotSave";
+	-- };
 }
 
 local playersUsedCodes = {}
@@ -91,7 +99,6 @@ local function onPlayerAdded(self: ServiceTemplate.Type, player: Player)
 	self._services.LeaderboardService:UpdateTotals(player)
 	self._services.PetService:LoadPets(player, data.Pets)
 	self._services.PetService:CountStorageSpaces(player)
-	self._services.PetIndexService:LoadSave(player, data.PetIndex)
 
 	for i = 1, #saveLoadableServices do
 		self._services[saveLoadableServices[i].ServiceName]:LoadSave(player, data[saveLoadableServices[i].DataName])
@@ -121,7 +128,6 @@ local function onPlayerRemoving(self: ServiceTemplate.Type, player: Player)
 	end
 
 	data.Pets = self._services.PetService:RemovePlayer(player)
-	data.PetIndex = self._services.PetIndexService:UnloadSave(player)
 	data.UsedCodes = playersUsedCodes[player]
 	playersUsedCodes[player] = nil
 
