@@ -112,6 +112,25 @@ export type TooltipsController = {
     DefaultTooltipDisabled: UtilsTypes.Event;
 } & ControllerTemplate
 
+export type WorldsController = {
+    new: () -> WorldsController;
+    RequestWorldUnlock: (WorldsController, worldIndex: number) -> nil;
+    RequestWorldChange: (WorldsController, worldIndex: number) -> nil;
+    IsWorldUnlocked: (WorldsController, worldIndex: number) -> boolean;
+    GetCurrentWorldIndex: (WorldsController) -> number;
+
+    GuiOpenZoneEntered: UtilsTypes.Event;
+    WorldChanged: UtilsTypes.Event;
+    Updated: UtilsTypes.Event;
+
+    _isPlayerInRing: boolean;
+    _currentViewFolder: Folder;
+    _baseplateTexture: Texture;
+    _worldIndex: IntValue;
+    _save: SharedTypes.WorldsSave;
+    _player: Player;
+} & ControllerTemplate
+
 export type ZoneController = {
     new: () -> ZoneController;
 
@@ -190,6 +209,7 @@ export type Controllers = {
     SoundPlayer: SoundPlayer;
     ToolsController: ToolsController;
     TooltipsController: TooltipsController;
+    WorldsController: WorldsController;
     ZoneController: ZoneController;
 }
 

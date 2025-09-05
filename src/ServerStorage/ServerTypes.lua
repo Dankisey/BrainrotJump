@@ -59,6 +59,16 @@ export type SoftCurrencyService = {
     TrySpentCurrency: (SoftCurrencyService, player: Player, currencyName: string, spentAmount: number, transactionType: Enum.AnalyticsEconomyTransactionType | string, itemSku: string?) -> boolean;
 } & ServiceTemplate
 
+export type WorldsService = {
+    new: () -> WorldsService;
+
+    LoadSave: (WorldsService, player: Player, savedInventory: SharedTypes.WorldsSave?) -> nil;
+    UnloadSave: (WorldsService, player: Player) -> SharedTypes.WorldsSave;
+
+    _playersSaves: {[Player]: SharedTypes.WorldsSave};
+    _debounces : {[Players]: boolean};
+} & ServiceTemplate
+
 export type ZonesService = {
     new: () -> ZonesService;
 
@@ -81,6 +91,7 @@ export type Services = {
     SavesLoader: SavesLoader;
     ServerMessagesSender: ServerMessagesSender;
     SoftCurrencyService: SoftCurrencyService;
+    WorldsService: WorldsService;
     ZonesService: ZonesService;
 }
 

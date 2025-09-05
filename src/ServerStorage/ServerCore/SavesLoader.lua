@@ -23,6 +23,10 @@ local saveLoadableServices = {
 		ServiceName = "InventoryService";
 		DataName = "InventorySave";
 	};
+	[2] = {
+		ServiceName = "WorldsService";
+		DataName = "WorldsSave";
+	};
 }
 
 local playersUsedCodes = {}

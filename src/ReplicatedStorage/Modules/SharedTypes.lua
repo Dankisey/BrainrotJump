@@ -6,4 +6,9 @@ export type InventorySave = {
     };
 }
 
+export type WorldsSave = {
+    CurrentWorld: number;
+    UnlockedWorlds: {[number]: boolean}
+}
+
 return SharedTypes
