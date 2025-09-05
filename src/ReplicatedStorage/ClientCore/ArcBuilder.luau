@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ClientTypes = require(ReplicatedStorage.Modules.ClientTypes)
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 
+local arcsUpdatingTime = .01
 local ArcBuilder = {} :: ClientTypes.ArcBuilder
 
 local function endArc(self: ClientTypes.ArcBuilder, arcData: ClientTypes.ArcData)
@@ -13,12 +14,12 @@ local function endArc(self: ClientTypes.ArcBuilder, arcData: ClientTypes.ArcData
 		end
 	end
 
-	if arcData.OnCompleteCallback then
-		arcData.OnCompleteCallback()
-	end
-
 	if arcData.MovingInstance then
-        arcData.MovingInstance:Destroy()
+		if arcData.OnCompleteCallback then
+			arcData.OnCompleteCallback(arcData.MovingInstance)
+		else
+        	arcData.MovingInstance:Destroy()
+		end
 	end
 end
 
@@ -32,11 +33,7 @@ local function tryUpdateArc(arcData: ClientTypes.ArcData, deltaTime: number) : b
         2 * (1 - normalizedTime) * normalizedTime * arcData.MidPoint +
         normalizedTime ^ 2 * arcData.Target.Position
 
-	if arcData.MovingInstance:IsA("Model") then
-		arcData.MovingInstance:PivotTo(CFrame.new(currentPosition))
-	else
-		arcData.MovingInstance.Position = currentPosition
-	end
+	arcData.MovingInstance:PivotTo(CFrame.new(currentPosition))
 
     return true
 end
@@ -58,7 +55,7 @@ local function updateAll(self: ClientTypes.ArcBuilder, deltaTime: number)
 end
 
 function ArcBuilder:AddArc(movingInstance, startPosition, endPart, duration,  arcLength, angleOffset, completeCallback)
-	local midPoint = (startPosition + endPart.Position) / 2
+	local midPoint = startPosition + (endPart.Position - startPosition) / 2
 	local verticalOffset = Vector3.new(0, arcLength, 0)
 	local horizontalOffset = Vector3.new(math.cos(angleOffset), 0, math.sin(angleOffset)) * arcLength
 	midPoint = midPoint + verticalOffset + horizontalOffset
@@ -76,9 +73,14 @@ function ArcBuilder:AddArc(movingInstance, startPosition, endPart, duration,  ar
 end
 
 function ArcBuilder:Initialize()
+	self._lastTick = tick()
+
 	task.spawn(function()
-		while true do
-			updateAll(self, task.wait(.01))
+		while task.wait(arcsUpdatingTime) do
+			local currentTick = tick()
+			local tickDifference = currentTick - self._lastTick
+			self._lastTick = currentTick
+			updateAll(self, tickDifference)
 		end
 	end)
 end

@@ -11,11 +11,11 @@ export type ArcData = {
 	Duration: number;
     MidPoint: Vector3;
 	ElapsedTime: number;
-	OnCompleteCallback: () -> nil?;
+	OnCompleteCallback: (vfxPart: Part) -> nil?;
 }
 
 export type ArcBuilder = {
-    AddArc: (ArcBuilder, movingInstance: BasePart | Model, startPosition: Vector3, endPart: BasePart, duration : number,  arcLength: number, angleOffset: number, completeCallback: () -> nil?) -> nil;
+    AddArc: (ArcBuilder, movingInstance: BasePart | Model, startPosition: Vector3, endPart: BasePart, duration : number,  arcLength: number, angleOffset: number, completeCallback: (vfxPart: Part) -> nil?) -> nil;
 
     _endedArcs: {ArcData};
     _arcs: {ArcData};

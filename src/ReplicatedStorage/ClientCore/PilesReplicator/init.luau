@@ -1,5 +1,5 @@
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local Players = game:GetService("Players")
-local PileView = require(script.PileView)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PilesConfig = require(ReplicatedStorage.Configs.PilesConfig)
@@ -7,6 +7,7 @@ local FoodCollected = ReplicatedStorage.Remotes.Piles.FoodCollected
 local FoodVfx = ReplicatedStorage.Assets.Food.FoodVfx
 
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
+local PileView = require(script.PileView)
 
 export type PilesReplicator = {
     _playerSpots: {[Player]: {Part}};
@@ -14,6 +15,8 @@ export type PilesReplicator = {
 } & ControllerTemplate.Type
 
 local PilesReplicator = {} :: PilesReplicator
+
+local vfxPoolObjectsAmount = 15
 
 local function onPlayerRemoved(self: PilesReplicator, player: Player)
     if not self._playerSpots[player] then return end
@@ -61,6 +64,12 @@ function PilesReplicator:AfterPlayerLoaded(player: Player)
         onPlayerRemoved(self, player)
     end)
 
+    self._vfxPrefabs = {}
+
+    for _ = 1, vfxPoolObjectsAmount do
+        table.insert(self._vfxPrefabs, FoodVfx:Clone())
+    end
+
     FoodCollected.OnClientEvent:Connect(function(spots: {Part}, amountToGive: number)
         local amountPerPile = amountToGive / #spots
         local vfxSpawners = {}
@@ -80,13 +89,15 @@ function PilesReplicator:AfterPlayerLoaded(player: Player)
         local arcData = PilesConfig.ArcData
 
         for _, spawnData in pairs(vfxSpawners) do
-            local vfx = FoodVfx:Clone()
+            local vfx = if #self._vfxPrefabs > 0 then table.remove(self._vfxPrefabs) else FoodVfx:Clone()
             vfx.Gui.Icon.Image = PilesConfig.Piles[spawnData.PileType].Icon
             vfx.Parent = workspace.Debris
 
-            self._controllers.ArcBuilder:AddArc(vfx, spawnData.Spawn.Position, self._currentBasketPivot, arcData.Duration, arcData.Length, self._random:NextInteger(arcData.Angles.Min, arcData.Angles.Max), function()
-                self._controllers.FoodCounter:AddFood(amountPerPile)
+            self._controllers.ArcBuilder:AddArc(vfx, spawnData.Spawn.Position, self._currentBasketPivot, arcData.Duration, arcData.Length, self._random:NextInteger(arcData.Angles.Min, arcData.Angles.Max), function(vfxPart: Part)
                 self._controllers.SoundPlayer:PlaySound("FoodIncomeSound")
+                self._controllers.FoodCounter:AddFood(amountPerPile)
+                table.insert(self._vfxPrefabs, vfxPart)
+                vfxPart.Parent = ReplicatedFirst
             end)
         end
     end)
