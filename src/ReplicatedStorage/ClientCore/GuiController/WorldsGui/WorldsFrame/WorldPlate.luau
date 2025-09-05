@@ -1,4 +1,3 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ClientTypes = require(ReplicatedStorage.Modules.ClientTypes)
 local UtilsTypes = require(ReplicatedStorage.Modules.UtilsTypes)
