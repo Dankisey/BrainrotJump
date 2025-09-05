@@ -16,7 +16,7 @@ local WorldPlate = {} :: WorldPlate
 
 local function update(self: WorldPlate)
     local currentWorld = self._controllers.WorldsController:GetCurrentWorldIndex()
-    local isUnlocked = self._controllers.WorldsController:IsWorldUnlocked()
+    local isUnlocked = self._controllers.WorldsController:IsWorldUnlocked(self._data.Index)
 
     if currentWorld == self._data.Index then
         self._unlockButton.Visible = false
