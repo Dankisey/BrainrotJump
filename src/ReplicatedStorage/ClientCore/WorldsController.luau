@@ -50,7 +50,7 @@ local function onWorldChanged(self: ClientTypes.WorldsController)
 
     self._baseplateTexture.Color3 = worldInfo.BaseplateColor
 
-    self.WorldChanged:Invoke()
+    self.WorldChanged:Invoke(worldIndex)
     self._controllers.GuiController.FadingGui:FadeOut()
     self._controllers.CharacterMovementController:EnableMovement()
 end
