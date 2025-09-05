@@ -31,10 +31,10 @@ local saveLoadableServices = {
 		ServiceName = "PetIndexService";
 		DataName = "PetIndex";
 	};
-	-- [4] ={
-	-- 	ServiceName = "BrainrotService";
-	-- 	DataName = "BrainrotSave";
-	-- };
+	[4] ={
+		ServiceName = "BrainrotService";
+		DataName = "BrainrotSave";
+	};
 }
 
 local playersUsedCodes = {}

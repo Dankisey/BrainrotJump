@@ -2,6 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Remotes = ReplicatedStorage.Remotes
 
 local BrainrotConfig = require(ReplicatedStorage.Configs.BrainrotConfig)
+local BrainrotGui = ReplicatedStorage.Assets.UI.BrainrotInfoGui
+local ProgressBar = require(ReplicatedStorage.Modules.UI.ProgressBar)
 
 local Players = game:GetService("Players")
 
@@ -19,12 +21,18 @@ local function spawnBrainrotForPlayer(self: BrainrotService, player: Player)
     local brainrotLevel = self._brainrots[player].BrainrotLevel
     local model = BrainrotConfig.Brainrots[brainrotLevel].Model
     local zone = self._services.ZonesService:GetPlayerZone(player)
+    print(model, zone)
 
     for _, child in zone.BrainrotPoint:GetChildren() do
         child:Destroy()
     end
 
-    -- model.Parent = zone.BrainrotPoint
+    model.Parent = zone.BrainrotPoint
+    local gui = BrainrotGui:Clone()
+    gui.LevelLabel.Text = "Lvl " .. self._brainrots[player].BrainrotLevel
+    gui.Parent = model.GuiPart
+    -- ProgressBar.new() and save it smw
+
     model:PivotTo(zone.BrainrotPoint.CFrame)
 end
 
@@ -61,7 +69,7 @@ local function startFeedingProcess(self: BrainrotService, player: Player)
     end
 end
 
-function BrainrotService:LoadPlayer(player: Player, data)
+function BrainrotService:LoadSave(player: Player, data)
     local data = data or {
         BrainrotLevel = 1;
         BrainrotXP = 0;
@@ -103,8 +111,10 @@ function BrainrotService:LoadPlayer(player: Player, data)
     spawnBrainrotForPlayer(self, player)
 end
 
-function BrainrotService:UnloadPlayer(player: Player)
+function BrainrotService:UnloadSave(player: Player)
     local data = self._brainrots[player] or {}
+
+    self._brainrots[player] = nil
 
     return data
 end
