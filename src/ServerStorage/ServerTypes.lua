@@ -61,7 +61,7 @@ export type SoftCurrencyService = {
 
 export type WorldsService = {
     new: () -> WorldsService;
-
+    GetPlayerWorldIndex: (WorldsService, player: Player) -> number?;
     LoadSave: (WorldsService, player: Player, savedInventory: SharedTypes.WorldsSave?) -> nil;
     UnloadSave: (WorldsService, player: Player) -> SharedTypes.WorldsSave;
 
