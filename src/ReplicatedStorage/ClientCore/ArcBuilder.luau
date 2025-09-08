@@ -27,31 +27,34 @@ local function tryUpdateArc(arcData: ClientTypes.ArcData, deltaTime: number) : b
 	if not arcData.Target then return false end
 
     arcData.ElapsedTime += deltaTime
-	local normalizedTime = math.clamp((arcData.ElapsedTime + deltaTime) / arcData.Duration, 0, 1)
 
-	local currentPosition: Vector3 = (1 - normalizedTime) ^ 2 * arcData.StartPosition +
-        2 * (1 - normalizedTime) * normalizedTime * arcData.MidPoint +
-        normalizedTime ^ 2 * arcData.Target.Position
+	task.spawn(function()
+		local normalizedTime = math.clamp((arcData.ElapsedTime + deltaTime) / arcData.Duration, 0, 1)
 
-	arcData.MovingInstance:PivotTo(CFrame.new(currentPosition))
+		local currentPosition: Vector3 = (1 - normalizedTime) ^ 2 * arcData.StartPosition +
+        	2 * (1 - normalizedTime) * normalizedTime * arcData.MidPoint +
+        	normalizedTime ^ 2 * arcData.Target.Position
+
+		arcData.MovingInstance:PivotTo(CFrame.new(currentPosition))
+	end)
 
     return true
 end
 
 local function updateAll(self: ClientTypes.ArcBuilder, deltaTime: number)
-    for _, arcData in pairs(self._endedArcs) do
-        endArc(self, arcData)
-    end
-
-    table.clear(self._endedArcs)
+	local endedArcs = {}
 
 	for _, arcData in ipairs(self._arcs) do
 		if not tryUpdateArc(arcData, deltaTime) then
-            table.insert(self._endedArcs, arcData)
+            table.insert(endedArcs, arcData)
         elseif arcData.ElapsedTime >= arcData.Duration then
-            table.insert(self._endedArcs, arcData)
+            table.insert(endedArcs, arcData)
         end
 	end
+
+	for _, arcData in pairs(endedArcs) do
+		task.spawn(endArc, self, arcData)
+    end
 end
 
 function ArcBuilder:AddArc(movingInstance, startPosition, endPart, duration,  arcLength, angleOffset, completeCallback)
@@ -87,7 +90,6 @@ end
 
 function ArcBuilder.new()
     local self = setmetatable(ArcBuilder, {__index = ControllerTemplate})
-    self._endedArcs = {} :: {ClientTypes.ArcData}
     self._arcs = {} :: {ClientTypes.ArcData}
 
     return self
