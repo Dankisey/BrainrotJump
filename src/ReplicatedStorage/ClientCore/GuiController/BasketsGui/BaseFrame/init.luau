@@ -68,6 +68,9 @@ function BaseFrame:UpdateInfoFrame(newSelectedItem: string)
 
     local descriptionFrame = self._frame.Description
     descriptionFrame.ItemName.Text = BasketsConfig.Items[newSelectedItem].PublicName
+    descriptionFrame.ItemName.TextColor3 = BasketsConfig.Items[self._currentSelectedName].Rarity.Color
+    descriptionFrame.ItemFrame.UIStroke.Color = BasketsConfig.Items[self._currentSelectedName].Rarity.Color
+    descriptionFrame.ItemFrame.UIGradient.Color = BasketsConfig.Items[self._currentSelectedName].Rarity.Gradient
     descriptionFrame.Capacity.Label.Text = string.format("Capacity: %s", self._utils.FormatNumber(BasketsConfig.Items[newSelectedItem].FoodCapacity))
 
     if self._robuxPrices[newSelectedItem] then

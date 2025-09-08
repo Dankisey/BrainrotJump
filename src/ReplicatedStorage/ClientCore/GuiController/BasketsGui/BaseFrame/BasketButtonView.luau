@@ -47,6 +47,7 @@ local function initialize(self: BasketButtonView)
         self._frame.Button.Cost.Label.Text = self._utils.FormatNumber(BasketsConfig.Items[self._name].PriceInCash)
     end
 
+    self._frame.Button.UIGradient.Color = BasketsConfig.Items[self._name].Rarity.Gradient
     self._frame.Button.NameLabel.Text = BasketsConfig.Items[self._name].PublicName
     self._frame.Button.Icon.Image = BasketsConfig.Items[self._name].Icon
 
@@ -71,11 +72,11 @@ local function initialize(self: BasketButtonView)
 end
 
 function BasketButtonView:Unselect()
-    self._frame.Button.BackgroundColor3 = Color3.fromRGB(0, 236, 173)
+    self._frame.Button.UIStroke.Color = Color3.fromRGB(255, 255, 255)
 end
 
 function BasketButtonView:Select()
-    self._frame.Button.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    self._frame.Button.UIStroke.Color = Color3.fromRGB(0, 0, 0)
 end
 
 function BasketButtonView.new(itemFrame: Frame, name: string, controllers: ClientTypes.Controllers, utils: UtilsTypes.Utils, robuxPrice) : BasketButtonView

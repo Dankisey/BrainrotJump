@@ -39,7 +39,7 @@ local function tryCollectFood(self)
     local availablePiles = getPilesWithFoodInRange(self) :: {Part}
     local collectedSpots = {}
 
-    if #availablePiles > 0 and self._food.Value == self._currentBasketCapacity then
+    if #availablePiles > 0 and self._food.Value >= self._currentBasketCapacity then
         self.CapReached:Invoke()
 
         return

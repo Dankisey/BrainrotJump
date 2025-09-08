@@ -1,4 +1,5 @@
 local DevProductsConfig = require(script.Parent.DevProductsConfig)
+local RaritiesConfig = require(script.Parent.RaritiesConfig)
 local BasketsConfig = {}
 
 BasketsConfig.Items = {
@@ -8,13 +9,15 @@ BasketsConfig.Items = {
         Icon = "rbxassetid://92190724973951";
         FoodCapacity = 100;
         PriceInCash = 0;
+        Rarity = RaritiesConfig.Common
     };
     Basket2 = {
-        PublicName = "TestBasket Basket";
+        PublicName = "Test Basket";
         ConfigName = "Basket2";
         Icon = "rbxassetid://92190724973951";
         FoodCapacity = 200;
         PriceInCash = 100;
+        Rarity = RaritiesConfig.Uncommon
     };
     RobuxBasket = {
         PublicName = "Robux Basket";
@@ -23,6 +26,7 @@ BasketsConfig.Items = {
         FoodCapacity = 500;
         ProductId = DevProductsConfig.Baskets.RobuxBasket;
         PriceInCash = 9999999999; --for ordering needs only
+        Rarity = RaritiesConfig.Divine
     };
 }
 
