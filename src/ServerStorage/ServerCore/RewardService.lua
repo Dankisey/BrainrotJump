@@ -12,6 +12,20 @@ local rewardsFunctions = {
 		player.TotalStats.TotalFood.Value += amount
 	end;
 
+	Wins = function(player: Player, amount: number, self: ServiceTemplate.Type)
+		player.Currencies.Wins.Value += amount
+		player.TotalStats.TotalWins.Value += amount
+	end;
+
+	Cash = function(player: Player, amount: number, self: ServiceTemplate.Type)
+		player.Currencies.Cash.Value += amount
+		player.TotalStats.TotalCash.Value += amount
+	end;
+
+	UpgradePoints = function(player: Player, amount: number, self: ServiceTemplate.Type)
+		player.Currencies.UpgradePoints.Value += amount
+	end;
+
 	Pet = function(player: Player, petName: string, self: ServiceTemplate.Type)
 		self._services.PetService:GivePet(player, petName, "Normal")
 	end;

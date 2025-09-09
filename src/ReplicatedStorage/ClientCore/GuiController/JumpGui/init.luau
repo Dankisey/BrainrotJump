@@ -1,0 +1,14 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GuiTemplate = require(ReplicatedStorage.Modules.UI.AnimatedGuiTemplate)
+
+local JumpGui = {}
+
+function JumpGui.new()
+	local self = setmetatable(JumpGui, {__index = GuiTemplate})
+
+	self:CreateChildren(script.Name, script:GetChildren())
+
+	return self
+end
+
+return JumpGui

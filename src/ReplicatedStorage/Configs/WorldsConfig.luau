@@ -7,6 +7,9 @@ WorldsConfig.Worlds = {
         PublicName = "Forest";
         PriceInWins = 0;
         Index = 1;
+        JumpMultiplier = 2;
+        BaseWins = 1;
+        MultiplierWins = 3;
     };
     [2] = {
         BaseplateColor = Color3.fromRGB(194, 235, 228);
@@ -14,6 +17,9 @@ WorldsConfig.Worlds = {
         PublicName = "Winter";
         PriceInWins = 100;
         Index = 2;
+        JumpMultiplier = 1;
+        BaseWins = 2;
+        MultiplierWins = 4;
     };
 }
 

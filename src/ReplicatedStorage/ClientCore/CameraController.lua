@@ -117,6 +117,12 @@ function CameraController:FixThirdPerson(character: Model)
     self:PivotCamera(character, CameraConfig.ThirdPersonOffset)
 end
 
+function CameraController:WatchTarget(target)
+    -- local humanoid = target:WaitForChild("Humanoid")
+	self._camera.CameraType = Enum.CameraType.Custom
+	self._camera.CameraSubject = target
+end
+
 function CameraController:ResetCamera()
     if self._currentAttachment then
         self._currentAttachment:Destroy()
@@ -127,7 +133,11 @@ function CameraController:ResetCamera()
         self._renderBind = nil
     end
 
+    local character = self._player.Character or self._player.CharacterAdded:Wait()
+	local humanoid = character:WaitForChild("Humanoid")
+
     self._camera.CameraType = Enum.CameraType.Custom
+	self._camera.CameraSubject = humanoid
 end
 
 function CameraController:Initialize(player: Player)
