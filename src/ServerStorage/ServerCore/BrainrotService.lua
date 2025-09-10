@@ -4,6 +4,7 @@ local CountdownOver = Remotes.CountdownOver :: RemoteEvent
 local StartJumpPreparation = Remotes.StartJumpPreparation :: RemoteFunction
 local StopRequested = Remotes.StopRequested :: RemoteEvent
 local JumpEnded = Remotes.JumpEnded :: RemoteEvent
+local CheckpointPassed = Remotes.CheckpointPassed :: RemoteEvent
 
 local BrainrotConfig = require(ReplicatedStorage.Configs.BrainrotConfig)
 local WorldsConfig = require(ReplicatedStorage.Configs.WorldsConfig)
@@ -80,10 +81,6 @@ local function startFeedingProcess(self: BrainrotService, player: Player)
     end
 end
 
-local function startJumpForPlayer(self: BrainrotService, player: Player)
-
-end
-
 local function endJumpForPlayer(self: BrainrotService, player: Player, maxReachedHeight: number)
     local currentWorld = self._services.WorldsService:GetPlayerWorldIndex(player)
     local cashAmount = math.round(maxReachedHeight * WorldsConfig.Worlds[currentWorld].CashPerStud)
@@ -113,6 +110,85 @@ local function endJumpForPlayer(self: BrainrotService, player: Player, maxReache
     gui.Enabled = true
 
     player:SetAttribute("CurrentCheckpoint", 0)
+end
+
+local function startJumpForPlayer(self: BrainrotService, player: Player)
+    -- enable animation
+    local model = self._models[player]
+    local currentConfig = BrainrotConfig.Brainrots[self._brainrots[player].BrainrotLevel]
+    local xpPercentage = self._brainrots[player].BrainrotXP / currentConfig.XpToNextLevel * 100
+    local jumpPower = (currentConfig.MaxJumpPower - currentConfig.MinJumpPower) / 100 * xpPercentage + currentConfig.MinJumpPower
+    local currentWorld = self._services.WorldsService:GetPlayerWorldIndex(player)
+    local targetHeight = jumpPower * WorldsConfig.Worlds[currentWorld].JumpMultiplier
+    local estimatedTime = targetHeight / BrainrotConfig.Speed
+    local currentCheckpoint = 0
+
+    local initialPivot = model:GetPivot()
+    local initialY = model:GetPivot().Y
+
+    local timeLeft = estimatedTime
+    local timeElapsed = 0
+    local connection, currentValue, currentHeight
+
+    connection = RunService.Heartbeat:Connect(function(deltaTime)
+        timeElapsed += deltaTime
+        currentValue = self._cubicBezierUp:GetValueAtTime(timeElapsed / estimatedTime)
+        currentHeight = targetHeight * currentValue
+
+        if currentHeight > BrainrotConfig.CheckpointBaseHeight * math.pow(BrainrotConfig.CheckpointHeightMultiplier, currentCheckpoint) then
+            currentCheckpoint += 1
+            print("CURRENT CHECKPOINT UP: ", currentCheckpoint)
+            player:SetAttribute("CurrentCheckpoint", currentCheckpoint)
+            CheckpointPassed:FireClient(player, currentCheckpoint)
+        end
+            ---- Leaderboard Logic
+        model:PivotTo(initialPivot * CFrame.new(0, currentHeight - initialY, 0))
+        timeLeft -= deltaTime
+
+        if timeLeft <= 0 or self._stopRequests[player] then
+            connection:Disconnect()
+            timeLeft = estimatedTime
+            timeElapsed = 0
+
+            if self._stopRequests[player] then
+                self._stopRequests[player] = nil
+                return
+            end
+
+            connection = RunService.Heartbeat:Connect(function(deltaTime)
+                timeElapsed += deltaTime
+                currentValue = self._cubicBezierDown:GetValueAtTime(timeElapsed / estimatedTime)
+                currentHeight = targetHeight - targetHeight * currentValue
+
+                if currentCheckpoint > 0 and currentHeight < BrainrotConfig.CheckpointBaseHeight * math.pow(BrainrotConfig.CheckpointHeightMultiplier, currentCheckpoint) then
+                    currentCheckpoint -= 1
+                    print("CURRENT CHECKPOINT Down: ", currentCheckpoint)
+                    player:SetAttribute("CurrentCheckpoint", currentCheckpoint)
+                    CheckpointPassed:FireClient(player, currentCheckpoint)
+                end
+
+                if currentHeight < initialY then
+                    currentHeight = initialY
+                    timeLeft = 0
+                end
+
+                local targetPivot = initialPivot * CFrame.new(0, currentHeight - initialY, 0)
+                model:PivotTo(targetPivot)
+                timeLeft -= deltaTime
+
+                if timeLeft <= 0 or self._stopRequests[player] then
+                    connection:Disconnect()
+
+                    if self._stopRequests[player] then
+                        self._stopRequests[player] = nil
+                        return
+                    end
+
+                    endJumpForPlayer(self, player, targetHeight)
+                end
+            end)
+        end
+    end)
 end
 
 function BrainrotService:LoadSave(player: Player, data)
@@ -190,86 +266,7 @@ function BrainrotService:Initialize()
     end
 
     CountdownOver.OnServerEvent:Connect(function(player: Player)
-        -- enable animation
-        local model = self._models[player]
-        local currentConfig = BrainrotConfig.Brainrots[self._brainrots[player].BrainrotLevel]
-        local xpPercentage = self._brainrots[player].BrainrotXP / currentConfig.XpToNextLevel * 100
-        local jumpPower = (currentConfig.MaxJumpPower - currentConfig.MinJumpPower) / 100 * xpPercentage + currentConfig.MinJumpPower
-        local currentWorld = self._services.WorldsService:GetPlayerWorldIndex(player)
-        local targetHeight = jumpPower * WorldsConfig.Worlds[currentWorld].JumpMultiplier
-        local estimatedTime = targetHeight / BrainrotConfig.Speed
-        local currentCheckpoint = 0
-
-        local initialPivot = model:GetPivot()
-        local initialY = model:GetPivot().Y
-
-        local timeLeft = estimatedTime
-        local timeElapsed = 0
-        local connection, currentValue, currentHeight
-
-        connection = RunService.Heartbeat:Connect(function(deltaTime)
-            timeElapsed += deltaTime
-            currentValue = self._cubicBezierUp:GetValueAtTime(timeElapsed / estimatedTime)
-            currentHeight = targetHeight * currentValue
-
-            if currentHeight > BrainrotConfig.CheckpointBaseHeight * math.pow(BrainrotConfig.CheckpointHeightMultiplier, currentCheckpoint) then
-                currentCheckpoint += 1
-                player:SetAttribute("CurrentCheckpoint", currentCheckpoint)
-                -- change skybox
-            end
-
-            ---- SKYBOX LOGIC
-            ---- Leaderboard Logic
-
-            -- currentPosition = Vector3.new(initialX, currentHeight, initialZ)
-            -- targetCFrame = CFrame.new(currentPosition)
-            -- model:PivotTo(targetCFrame)
-            model:PivotTo(initialPivot * CFrame.new(0, currentHeight - initialY, 0))
-            timeLeft -= deltaTime
-
-            if timeLeft <= 0 or self._stopRequests[player] then
-                connection:Disconnect()
-                timeLeft = estimatedTime
-                timeElapsed = 0
-
-                if self._stopRequests[player] then
-                    self._stopRequests[player] = nil
-                    return
-                end
-
-                connection = RunService.Heartbeat:Connect(function(deltaTime)
-                    timeElapsed += deltaTime
-                    currentValue = self._cubicBezierDown:GetValueAtTime(timeElapsed / estimatedTime)
-                    currentHeight = targetHeight - targetHeight * currentValue
-
-                    if currentHeight < BrainrotConfig.CheckpointBaseHeight * math.pow(BrainrotConfig.CheckpointHeightMultiplier, currentCheckpoint) then
-                        currentCheckpoint -= 1
-                        player:SetAttribute("CurrentCheckpoint", currentCheckpoint)
-                        -- change skybox
-                    end
-
-                    if currentHeight < initialY then
-                        currentHeight = initialY
-                        timeLeft = 0
-                    end
-
-                    local targetPivot = initialPivot * CFrame.new(0, currentHeight - initialY, 0)
-                    model:PivotTo(targetPivot)
-                    timeLeft -= deltaTime
-
-                    if timeLeft <= 0 or self._stopRequests[player] then
-                        connection:Disconnect()
-
-                        if self._stopRequests[player] then
-                            self._stopRequests[player] = nil
-                            return
-                        end
-
-                        endJumpForPlayer(self, player, targetHeight)
-                    end
-                end)
-            end
-        end)
+        startJumpForPlayer(self, player)
     end)
 
     StopRequested.OnServerEvent:Connect(function(player: Player)
@@ -278,7 +275,7 @@ function BrainrotService:Initialize()
         local initialPivot = self._models[player].Parent.CFrame
         task.wait(.5)
         self._models[player]:PivotTo(initialPivot)
-        -- change skybox to default
+        CheckpointPassed:FireClient(player, 0)
         endJumpForPlayer(self, player, currentHeight)
     end)
 end

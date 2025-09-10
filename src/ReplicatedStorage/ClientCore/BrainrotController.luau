@@ -3,12 +3,23 @@ local Remotes = ReplicatedStorage.Remotes.Brainrots
 local CountdownOver = Remotes.CountdownOver :: RemoteEvent
 local StartJumpPreparation = Remotes.StartJumpPreparation :: RemoteFunction
 local JumpEnded = Remotes.JumpEnded :: RemoteEvent
+local CheckpointPassed = Remotes.CheckpointPassed :: RemoteEvent
+
+local Skyboxes = ReplicatedStorage.Assets.Skyboxes
+local Lighting = game:GetService("Lighting")
 
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 
 local RunService = game:GetService("RunService")
 
 local BrainrotController = {}
+
+local function changeSkybox(self, currentCheckpoint: number)
+    self._currentSkybox:Destroy()
+    local skybox = Skyboxes:WaitForChild(currentCheckpoint):Clone()
+    skybox.Parent = Lighting
+    self._currentSkybox = skybox
+end
 
 function BrainrotController:StartJump()
     local zone = self._controllers.ZoneController:GetZone()
@@ -24,7 +35,6 @@ function BrainrotController:StartJump()
     self.CountdownStarted:Invoke()
 
     while task.wait(1) do
-        -- show time left on screen
         timeLeft -= 1
 
         if timeLeft < 0 then break end
@@ -34,11 +44,9 @@ function BrainrotController:StartJump()
 
     self._controllers.CameraController:ResetCamera()
     self._controllers.CameraController:WatchTarget(currentModel.GuiPart)
+    -- add camera shake
 
-    self.JumpStarted:Invoke()
-    -- start showing cash and altitude in the HUD
-
-    -- reset camera again in the end
+    self.JumpStarted:Invoke(currentModel)
 end
 
 function BrainrotController:AfterPlayerLoaded(player: Player)
@@ -47,9 +55,14 @@ end
 
 function BrainrotController:Initialize()
     self._inDebounce = false
+    self._currentSkybox = Lighting:WaitForChild("Sky")
 
     JumpEnded.OnClientEvent:Connect(function()
         self._controllers.CameraController:ResetCamera()
+    end)
+
+    CheckpointPassed.OnClientEvent:Connect(function(currentCheckpoint: number)
+        changeSkybox(self, currentCheckpoint)
     end)
 end
 
