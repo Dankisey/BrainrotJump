@@ -27,6 +27,62 @@ function CameraController:TweenTo(target: CFrame, time: number, start: CFrame?) 
     return tween.Completed
 end
 
+-- function CameraController:StartCameraShake(shakeIntensity: number)
+--     if self._isShaking then return end
+
+--     self._isShaking = true
+--     local originalCFrame = self._camera.CFrame
+
+--     self._shakingTask = task.spawn(function()
+--         while self._isShaking do
+--             local offset = Vector3.new(
+--                 self._random:NextNumber(-shakeIntensity, shakeIntensity),
+--                 self._random:NextNumber(-shakeIntensity, shakeIntensity),
+--                 self._random:NextNumber(-shakeIntensity, shakeIntensity)
+--             )
+
+--             local currentCFrame = self._camera.CFrame
+--             local targetCFrame = currentCFrame + offset
+
+--             local tween = TweenService:Create(self._camera, TweenInfo.new(0.3), {CFrame = targetCFrame})
+--             tween:Play()
+--             tween.Completed:Wait()
+--         end
+
+--         self._camera.CFrame = originalCFrame
+--     end)
+-- end
+
+function CameraController:StartCameraShake(shakeIntensity: number)
+    if self._isShaking then return end
+
+    self._isShaking = true
+
+    print(self._camera.CameraSubject)
+
+    self._shakingTask = task.spawn(function()
+        while self._isShaking do
+            local offset = Vector3.new(
+                self._random:NextNumber(-shakeIntensity, shakeIntensity),
+                self._random:NextNumber(-shakeIntensity, shakeIntensity),
+                self._random:NextNumber(-shakeIntensity, shakeIntensity)
+            )
+
+            self._shakingOffset = CFrame.new(offset)
+            task.wait()
+        end
+    end)
+end
+
+function CameraController:StopCameraShake()
+    if not self._shakingTask then return end
+
+    task.cancel(self._shakingTask)
+    self._shakingTask = nil
+    self._isShaking = false
+    self._shakingOffset = CFrame.new(Vector3.new(0, 0, 0))
+end
+
 function CameraController:ShakeWithoutPivoting(humanoid: Humanoid, shakeIntencity: number, duration: number, frequency: number)
     if self._isShaking then return end
 
@@ -107,6 +163,23 @@ function CameraController:PivotCamera(character: Model, offsetCframe: CFrame)
     end)
 end
 
+function CameraController:PivotCameraToPart(part: Part, offsetCframe: CFrame)
+    self._currentAttachment = createAttachment(part, offsetCframe)
+    self._camera.CameraType = Enum.CameraType.Scriptable
+
+    if self._renderBind then
+        RunService:UnbindFromRenderStep(self._renderBind)
+        self._renderBind = nil
+    end
+
+    self._renderBind = "CameraUpdate"
+    self._camera:PivotTo(self._currentAttachment.WorldCFrame * self._shakingOffset)
+
+    RunService:BindToRenderStep(self._renderBind, Enum.RenderPriority.Camera.Value + 1, function()
+        self._camera:PivotTo(self._currentAttachment.WorldCFrame * self._shakingOffset)
+    end)
+end
+
 function CameraController:FreezeCamera(character: Model)
     local cameraFrame = self._camera:GetPivot()
     local offset = character:GetPivot():ToObjectSpace(cameraFrame)
@@ -118,8 +191,7 @@ function CameraController:FixThirdPerson(character: Model)
 end
 
 function CameraController:WatchTarget(target)
-    -- local humanoid = target:WaitForChild("Humanoid")
-	self._camera.CameraType = Enum.CameraType.Custom
+	self._camera.CameraType = Enum.CameraType.Track
 	self._camera.CameraSubject = target
 end
 
@@ -145,6 +217,7 @@ function CameraController:Initialize(player: Player)
     self._random = Random.new(os.time())
     self._camera = workspace.CurrentCamera
     self._shakingOffset = CFrame.fromOrientation(0, 0, 0)
+    self._shakingTask = nil
 end
 
 function CameraController.new()

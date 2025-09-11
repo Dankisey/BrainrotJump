@@ -1,9 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Remotes = ReplicatedStorage.Remotes.Brainrots
-local CountdownOver = Remotes.CountdownOver :: RemoteEvent
 local StartJumpPreparation = Remotes.StartJumpPreparation :: RemoteFunction
-local JumpEnded = Remotes.JumpEnded :: RemoteEvent
 local CheckpointPassed = Remotes.CheckpointPassed :: RemoteEvent
+local CountdownOver = Remotes.CountdownOver :: RemoteEvent
+local BrainrotFed = Remotes.BrainrotFed :: RemoteEvent
+local JumpEnded = Remotes.JumpEnded :: RemoteEvent
 
 local Skyboxes = ReplicatedStorage.Assets.Skyboxes
 local Lighting = game:GetService("Lighting")
@@ -44,7 +45,11 @@ function BrainrotController:StartJump()
 
     self._controllers.CameraController:ResetCamera()
     self._controllers.CameraController:WatchTarget(currentModel.GuiPart)
-    -- add camera shake
+
+    -- self._controllers.CameraController:PivotCameraToPart(currentModel.GuiPart, CFrame.new(Vector3.zAxis * 10))
+
+    -- ADD CAMERA SHAKE
+    --self._controllers.CameraController:StartCameraShake(.2)
 
     self.JumpStarted:Invoke(currentModel)
 end
@@ -58,11 +63,20 @@ function BrainrotController:Initialize()
     self._currentSkybox = Lighting:WaitForChild("Sky")
 
     JumpEnded.OnClientEvent:Connect(function()
-        self._controllers.CameraController:ResetCamera()
+        self._controllers.CameraController:StopCameraShake()
+        self._controllers.SoundPlayer:PlaySound(self._configs.SoundNames.Impact)
+
+        task.delay(1, function()
+            self._controllers.CameraController:ResetCamera()
+        end)
     end)
 
     CheckpointPassed.OnClientEvent:Connect(function(currentCheckpoint: number)
         changeSkybox(self, currentCheckpoint)
+    end)
+
+    BrainrotFed.OnClientEvent:Connect(function()
+        self._controllers.SoundPlayer:PlaySound(self._configs.SoundNames.Eating)
     end)
 end
 

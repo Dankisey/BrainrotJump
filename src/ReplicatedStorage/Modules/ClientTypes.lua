@@ -21,6 +21,12 @@ export type ArcBuilder = {
     _arcs: {ArcData};
 } & ControllerTemplate
 
+export type BrainrotController = {
+    new: () -> BrainrotController;
+
+    StartJump: (BrainrotController) -> nil;
+} & ControllerTemplate
+
 export type ButtonsInteractionsConnector = {
     new: () -> ButtonsInteractionsConnector;
 

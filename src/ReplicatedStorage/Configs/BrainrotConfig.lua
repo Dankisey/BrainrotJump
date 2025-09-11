@@ -3,7 +3,7 @@ local BrainrotConfig = {}
 
 BrainrotConfig.CheckpointBaseHeight = 200;
 BrainrotConfig.CheckpointHeightMultiplier = 10;
-BrainrotConfig.Speed = 30; -- studs per second
+BrainrotConfig.Speed = 50; -- studs per second
 
 BrainrotConfig.Brainrots = {
     [1] = {

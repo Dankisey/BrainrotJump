@@ -9,6 +9,22 @@ export type Analytics = {
 
 } & ServiceTemplate
 
+export type BrainrotService = {
+    LoadSave: (BrainrotService, player: Player, data: table) -> nil;
+    UnloadSave: (BrainrotService, player: Player) -> table;
+
+    _brainrots: {[Player]: {
+        BrainrotLevel: number;
+        BrainrotXP: number;
+    }};
+    _models: {[Player]: {
+        Model: Model;
+        AnimationTracks: table;
+        AnimationsLoaded: boolean;
+    }};
+    _debounces: {[Player]: boolean};
+} & ServiceTemplate
+
 export type InventoryService = {
     TryAddItem: (InventoryService, player: Player, itemType: string, categoryName: string, itemName: string) -> boolean;
     HasItem: (InventoryService, player: Player, itemType: string, categoryName: string, itemName: string) -> boolean;

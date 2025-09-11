@@ -212,9 +212,16 @@ function JumpFrame:Initialize()
     end)
 
     JumpEnded.OnClientEvent:Connect(function()
-        self._inJumpFrame.Visible = false
+        self._inJumpFrame.Counters.StudsCounter.Visible = false
+        self._inJumpFrame.StopJumpButton.Visible = false
         self._runServiceConnection:Disconnect()
         self._runServiceConnection = nil
+
+        task.delay(1, function()
+            self._inJumpFrame.Visible = false
+            self._inJumpFrame.Counters.StudsCounter.Visible = true
+            self._inJumpFrame.StopJumpButton.Visible = true
+        end)
     end)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._inJumpFrame.StopJumpButton, function()

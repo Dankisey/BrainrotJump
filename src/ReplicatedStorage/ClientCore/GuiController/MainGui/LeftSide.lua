@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BrainrotFed = ReplicatedStorage.Remotes.Brainrots.BrainrotFed :: RemoteEvent
 local TweenService = game:GetService("TweenService")
 
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
@@ -33,6 +34,10 @@ function LeftSide:AfterPlayerLoaded(player: Player)
     end)
 
     self._controllers.FoodCounter.Disabled:Subscribe(self, function()
+        updateFoodCounter(self)
+    end)
+
+    BrainrotFed.OnClientEvent:Connect(function()
         updateFoodCounter(self)
     end)
 

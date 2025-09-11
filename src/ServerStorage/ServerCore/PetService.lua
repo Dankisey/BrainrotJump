@@ -174,6 +174,25 @@ function PetService:GetPetsCashMultiplier(player)
     return cumulativeMutiplier
 end
 
+function PetService:GetPetsWinsMultiplier(player)
+    local equippedPets = self:GetEquippedPets(player)
+    local cumulativeMutiplier = 1
+
+    for _, petData in equippedPets do
+        local multiplier = PetsConfig.Pets[petData.ConfigName].WinsMultiplier
+
+        if petData.IsGold then
+            multiplier *= PetsConfig.Pets[petData.ConfigName].GoldStatsMultiplier
+        elseif petData.IsShiny then
+            multiplier *= PetsConfig.Pets[petData.ConfigName].ShinyStatsMultiplier
+        end
+
+        cumulativeMutiplier *= multiplier
+    end
+
+    return cumulativeMutiplier
+end
+
 function PetService:RemovePlayer(player: Player)
     local petsInfo = self._playerPets[player]
     self._playerPets[player] = nil
