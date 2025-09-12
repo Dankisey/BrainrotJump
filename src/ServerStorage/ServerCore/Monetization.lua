@@ -135,6 +135,14 @@ function Monetization:Initialize()
 		end
 	end
 
+	for potionName, devProductId in DevProductsConfig.Potions do
+		productFunctions[devProductId] = function(_, player: Player)
+			self._services.RewardService:GiveReward(player, {FunctionName = "Potions", Data = {[potionName] = 1;}})
+
+			return true
+		end
+	end
+
 	for gamepass, info in GamepassesConfig.Attributes do
 		gamepassFunctions[info.GamepassId] = function(_, player, gamePassId)
 			if gamePassId == info.GamepassId then

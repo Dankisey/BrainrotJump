@@ -16,4 +16,10 @@ DevProductsConfig.Baskets = {
     RobuxBasket = 3393127815;
 }
 
+DevProductsConfig.Potions = {
+	CashPotion = 3330139099;
+    JumpPowerPotion = 3330139244;
+    WinsPotion = 3330139448;
+}
+
 return DevProductsConfig

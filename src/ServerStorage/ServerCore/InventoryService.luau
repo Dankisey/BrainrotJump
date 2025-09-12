@@ -4,16 +4,51 @@ local ItemUnlockAttempted = Remotes.ItemUnlockAttempted
 local ItemEquipped = Remotes.ItemEquipped
 local GetInventory = Remotes.GetInventory
 local ItemAdded = Remotes.ItemAdded
+local ConsumableUsed = Remotes.ConsumableUsed
 
 local Assets = ReplicatedStorage.Assets
 local BasketPivotWeld = Assets.Food.BasketPivotWeld
 local Configs = ReplicatedStorage.Configs
 local BasketsConfig = require(Configs.BasketsConfig)
+local ConsumablesConfig = require(Configs.ConsumablesConfig)
 
 local ServerTypes = require(script.Parent.Parent.ServerTypes)
 local ServiceTemplate = require(script.Parent.Parent.ServiceTemplate)
 
 local InventoryService = {} :: ServerTypes.InventoryService
+
+local consumablesUsageFunctions = {
+    CashPotion = function(self, player: Player)
+        return self._services.BoostsService:TryAddTemporaryBoost(player, "CoinsPotion", ConsumablesConfig.Potions.CashPotion.BoostData)
+    end;
+    JumpPowerPotion = function(self, player: Player)
+        return self._services.BoostsService:TryAddTemporaryBoost(player, "PowerPotion", ConsumablesConfig.Potions.JumpPowerPotion.BoostData)
+    end;
+    WinsPotion = function(self, player: Player)
+        return self._services.BoostsService:TryAddTemporaryBoost(player, "LuckPotion", ConsumablesConfig.Potions.WinsPotion.BoostData)
+    end;
+}
+
+local function tryUseConsumable(self: ServerTypes.InventoryService, player: Player, name: string)
+    if not self._playerSaves[player] then return false end
+
+    if (not self._playerSaves[player].Consumables[name]) or (self._playerSaves[player].Consumables[name] < 1) then
+        self._services.ServerMessagesSender:SendMessageToPlayer(player, "Error", "You don't have any of this item")
+
+        return false
+    end
+
+    if consumablesUsageFunctions[name](self, player) then
+        self._playerSaves[player].Consumables[name] -= 1
+        ConsumableUsed:FireClient(player, name)
+
+        return true
+    else
+        self._services.ServerMessagesSender:SendMessageToPlayer(player, "Error", "Something went wrong while using this item")
+
+        return false
+    end
+end
 
 local unlockingFunctions = {
     Baskets = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
@@ -72,6 +107,12 @@ local equipFunctions = {
 local function validateSave(save)
     save = save or {}
 
+    save.Consumables = save.Consumables or {
+        CashPotion = 0;
+        JumpPowerPotion = 0;
+        WinsPotion = 0;
+    }
+
 	save.Equipment = save.Equipment or {}
     save.Equipment.Baskets = save.Equipment.Baskets or {Default = true}
 
@@ -106,13 +147,20 @@ function InventoryService:HasItem(player: Player, itemType, categoryName: string
     return self._playersSaves[player][itemType][categoryName][itemName] ~= nil
 end
 
-function InventoryService:TryAddItem(player: Player, itemType, categoryName: string, itemName: string) : boolean
+function InventoryService:TryAddItem(player: Player, itemType, categoryName: string, itemName: string, amount: number?) : boolean
     if not isValidInventoryRequest(self, player, itemType, categoryName) then return false end
 
-    if self:HasItem(player, itemType, categoryName, itemName) then return false end
+    if categoryName == "Consumables" then
+        local currentAmount = self._playerSaves[player].Consumables[itemName] or 0
+        self._playerSaves[player].Consumables[itemName] = currentAmount + amount
 
-    self._playersSaves[player][itemType][categoryName][itemName] = true
-    ItemAdded:FireClient(player, itemType, categoryName, itemName)
+        ItemAdded:FireClient(player, categoryName, itemName, amount)
+    else
+        if self:HasItem(player, itemType, categoryName, itemName) then return false end
+
+        self._playersSaves[player][itemType][categoryName][itemName] = true
+        ItemAdded:FireClient(player, itemType, categoryName, itemName)
+    end
 
     return true
 end
@@ -149,6 +197,18 @@ function InventoryService:Initialize()
         return self._playersSaves[player]
     end
 
+    local function isInDebounce(player: Player)
+        if self._debounces[player] then return true end
+
+        self._debounces[player] = true
+
+        task.delay(.5, function()
+            self._debounces[player] = nil
+        end)
+
+        return false
+    end
+
     ItemEquipped.OnServerEvent:Connect(function(player: Player, categoryName: string, itemName: string)
         if self._debounces[player] then return end
 
@@ -176,6 +236,14 @@ function InventoryService:Initialize()
         if unlockingFunctions[categoryName] then
             unlockingFunctions[categoryName](self, player, itemName)
         end
+    end)
+
+    ConsumableUsed.OnServerEvent:Connect(function(player: Player, consumableName: string)
+        if isInDebounce(player) then return end
+
+        if not self:HasItem(player, "Consumables", consumableName) then return end
+
+        tryUseConsumable(self, player, consumableName)
     end)
 end
 

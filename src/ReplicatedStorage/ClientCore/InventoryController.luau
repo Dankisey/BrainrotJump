@@ -7,8 +7,13 @@ local ItemUnlockAttempted = Remotes.ItemUnlockAttempted
 local GetInventory = Remotes.GetInventory
 local ItemEquipped = Remotes.ItemEquipped
 local ItemAdded = Remotes.ItemAdded
+local ConsumableUsed = Remotes.ConsumableUsed
 
 local InventoryController = {} :: ClientTypes.InventoryController
+
+function InventoryController:UseConsumable(consumableName: string)
+	ConsumableUsed:FireServer(consumableName)
+end
 
 function InventoryController:RequestItemUnlocking(categoryName: string, itemName: string)
     ItemUnlockAttempted:FireServer(categoryName, itemName)
@@ -33,21 +38,42 @@ function InventoryController:HasEquipment(categoryName: string, itemName: string
     return self._inventory.Equipment[categoryName][itemName] ~= nil
 end
 
+function InventoryController:GetInventory()
+	if self._inventory then
+		return self._utils.DeepCopy(self._inventory)
+	else
+		return nil
+	end
+end
+
 function InventoryController:Initialize()
     self._inventory = GetInventory:InvokeServer()
+    self.Initialized:Invoke(self._utils.DeepCopy(self._inventory))
 
-    ItemAdded.OnClientEvent:Connect(function(itemType: string, categoryName: string, itemName: string)
-        if not self._inventory[itemType] then
-            self._inventory[itemType] = {}
-        end
+    ItemAdded.OnClientEvent:Connect(function(itemType: string, categoryName: string, itemName: string, amount: number?)
+        if categoryName == "Consumables" then
+			local currentAmount = self._inventory.Consumables[itemName] or 0
+        	self._inventory.Consumables[itemName] = currentAmount + amount
+			self.Updated:Invoke("Consumables", itemName, self._inventory.Consumables[itemName])
+		else
+			if not self._inventory[itemType] then
+                self._inventory[itemType] = {}
+            end
 
-        self._inventory[itemType][categoryName][itemName] = true
-        self.Updated:Invoke()
+            self._inventory[itemType][categoryName][itemName] = true
+            self.Updated:Invoke()
+		end
     end)
+
+    ConsumableUsed.OnClientEvent:Connect(function(consumableName: string)
+		self._inventory.Consumables[consumableName] -= 1
+		self.Updated:Invoke("Consumables", consumableName, self._inventory.Consumables[consumableName])
+	end)
 end
 
 function InventoryController:InjectUtils(utils)
     self.Updated = utils.Event.new()
+    self.Initialized = utils.Event.new()
     self._utils = utils
 end
 

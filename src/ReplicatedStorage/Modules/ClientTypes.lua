@@ -21,6 +21,18 @@ export type ArcBuilder = {
     _arcs: {ArcData};
 } & ControllerTemplate
 
+export type BoostsController = {
+    new: () -> BoostsController;
+
+    GetBoostLevel: (BoostsController, boostName: string) -> number;
+    GetBoosts: (BoostsController) -> SharedTypes.BoostsSave;
+
+    BoostsUpdated: UtilsTypes.Event;
+
+    _currentPowerMultiplier: number;
+    _boosts: SharedTypes.BoostsSave;
+} & ControllerTemplate
+
 export type BrainrotController = {
     new: () -> BrainrotController;
 
@@ -204,6 +216,8 @@ export type GuiController = {
 
 export type Controllers = {
     ArcBuilder: ArcBuilder;
+    BoostsController: BoostsController;
+    BrainrotController: BrainrotController;
     ButtonsInteractionsConnector: ButtonsInteractionsConnector;
     CharacterMovementController: CharacterMovementController;
     ClientMessagesSender: ClientMessagesSender;

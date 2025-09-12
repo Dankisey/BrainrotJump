@@ -5,7 +5,12 @@ local GuiOpenPrompt = {}
 
 function GuiOpenPrompt:OnUsed(prompt: ProximityPrompt)
     local guiName = prompt:GetAttribute("GuiName")
-    self._guiController[guiName]:Enable(true)
+
+	self._guiController[guiName]:Enable(true)
+
+	if guiName == "PetIndex" then
+    	self._controllers.GuiController.PetsGui.PetsFrame:ChangeCategory("Pet Index")
+	end
 end
 
 function GuiOpenPrompt.new(controllers)

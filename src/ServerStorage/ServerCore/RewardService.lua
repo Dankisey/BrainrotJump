@@ -29,6 +29,15 @@ local rewardsFunctions = {
 	Pet = function(player: Player, petName: string, self: ServiceTemplate.Type)
 		self._services.PetService:GivePet(player, petName, "Normal")
 	end;
+
+	Potions = function(player: Player, data: {[string]: number}, self: ServiceTemplate.Type)
+		task.spawn(function()
+			for potionName: string, amount: number in pairs(data) do
+				self._services.InventoryService:TryAddItem(player, "Consumables", potionName, amount)
+				task.wait(.5)
+			end
+		end)
+	end;
 }
 
 function RewardService:GiveMultipleRewards(player: Player, rewards)

@@ -2,6 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 local ClientTypes = require(ReplicatedStorage.Modules.ClientTypes)
 
+local PermanentBoostsConfig = require(ReplicatedStorage.Configs.PermanentBoostsConfig)
+local ConsumablesConfig = require(ReplicatedStorage.Configs.ConsumablesConfig)
 local Timer = require(ReplicatedStorage.Modules.Utils.Timer)
 local Widget = require(script.Widget)
 
@@ -12,7 +14,7 @@ local function destroyWidget(self: ClientTypes.BoostsFrame, key: string)
     self._widgets[key] = nil
 end
 
---[[
+
 local function updateWidgets(self: ClientTypes.BoostsFrame, boosts)
     if not boosts then return end
 
@@ -112,7 +114,6 @@ function Boosts:AfterPlayerLoaded()
         updateWidgets(self, boosts)
     end)
 end
-]]
 
 function Boosts.new(frame: Frame)
     local self = setmetatable(Boosts, {__index = ControllerTemplate})

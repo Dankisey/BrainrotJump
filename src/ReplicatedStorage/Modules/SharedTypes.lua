@@ -1,5 +1,19 @@
 local SharedTypes = {}
 
+export type TemporaryBoostData = {
+    ModifiedStats: {[string]: number};
+    Duration: number;
+}
+
+export type BoostsSave = {
+    TemporaryBoosts: {
+        [string]: TemporaryBoostData;
+    };
+    PermanentBoosts: {
+        [string]: boolean | number;
+    };
+}
+
 export type InventorySave = {
     Equipment: {
         Baskets: {[string]: boolean};
