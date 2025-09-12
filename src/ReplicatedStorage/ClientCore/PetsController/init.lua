@@ -79,7 +79,7 @@ function PetsController:UpdatePetsMultiplier()
 
     for _, petData in equippedPets do
         local name = petData.ConfigName
-        local multiplier = PetsConfig.Pets[name].PowerMultiplierPerClick
+        local multiplier = PetsConfig.Pets[name].WinsMultiplier
 
         if petData.IsGold then
             multiplier *= PetsConfig.Pets[name].GoldStatsMultiplier

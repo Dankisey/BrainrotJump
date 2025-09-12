@@ -35,7 +35,7 @@ function HatchingController:StartEggHatchingSequence(eggID : string, pets)
 
     for i = 1, #pets do
         task.spawn(function()
-            local eggTemplate = ReplicatedStorage.Assets.Eggs[eggID]
+            local eggTemplate = ReplicatedStorage.Assets.EggsForHatch[eggID]
 
 			if not eggTemplate then
 				warn("Egg template was not found for ID:", eggID)

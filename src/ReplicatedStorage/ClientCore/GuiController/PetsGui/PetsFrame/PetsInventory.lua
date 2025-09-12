@@ -95,9 +95,9 @@ local function initialize(self)
     end)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._bottom.EquipBest.Button, function()
-        if self._controllers.TutorialController.CurrentStep == 6 then
-            self._controllers.TutorialController:CompleteStep()
-        end
+        -- if self._controllers.TutorialController.CurrentStep == 6 then
+        --     self._controllers.TutorialController:CompleteStep()
+        -- end
 
         local maxEquippedPets = self._player:GetAttribute("MaxEquippedPets") or PetsConfig.ServiceData.MaxEquippedPets
         local currentEquippedPets = self:GetEquippedPets()

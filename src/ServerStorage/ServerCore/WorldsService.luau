@@ -80,6 +80,7 @@ function WorldsService:Initialize()
             self._services.ServerMessagesSender:SendMessageToPlayer(player, "Congrats", string.format("%s World is successfully unlocked", worldInfo.PublicName))
             self._playersSaves[player].UnlockedWorlds[worldIndex] = true
             WorldUnlocked:FireClient(player, worldIndex)
+            self._services.ZonesService:AddEggs(player, worldIndex)
         end
     end)
 

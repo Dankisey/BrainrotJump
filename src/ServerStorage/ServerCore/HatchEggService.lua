@@ -38,8 +38,8 @@ function HatchEggService:GetRandomPetFromEggWithLuck(player, eggName)
         playerLuck = 300
     end
 
-	local bonusLuck = self._services.BoostsService:GetBonus(player, "Luck")
-	playerLuck += bonusLuck
+	-- local bonusLuck = self._services.BoostsService:GetBonus(player, "Luck")
+	-- playerLuck += bonusLuck
 
     local pets = eggConfig.Pets
 
@@ -105,7 +105,7 @@ function HatchEggService:OpenEgg(player, eggId, isTriple, isAuto)
 
 	if #petsGiven > 0 then
 		EggOpened:FireClient(player, eggId, petsGiven)
-		player.GlobalStats.Hatches.Value += #petsGiven
+		player.TotalStats.Hatches.Value += #petsGiven
 	end
 
 	task.spawn(function()
@@ -142,7 +142,7 @@ function HatchEggService:TryOpenEgg(player, eggId, isTriple, IsAuto)
 		return
 	end
 
-	if not self._services.WorldsService:IsWorldUnlocked(player, egg.World) then
+	if self._services.WorldsService:GetPlayerWorldIndex(player) ~= egg.World then
 		removePlayerFromDebounce(self, player)
 		return
 	end

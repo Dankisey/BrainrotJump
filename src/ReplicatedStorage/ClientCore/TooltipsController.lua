@@ -55,6 +55,40 @@ function TooltipsController:RegisterDefaultTooltip(activationObject: GuiObject, 
     end))
 end
 
+function TooltipsController:RegisterPetTooltip(activationObject: GuiObject, petName: string, isGold: boolean, isShiny: boolean)
+    local gui = getGuiParent(activationObject)
+
+    if not gui then
+        return warn("Tooltip activation object is not descendant of ScreenGui")
+    end
+
+    if self._registeredTooltips[activationObject] then
+        for _, connection in pairs(self._registeredTooltips[activationObject]) do
+            connection:Disconnect()
+        end
+
+        table.clear(self._registeredTooltips[activationObject])
+    else
+        self._registeredTooltips[activationObject] = {}
+    end
+
+    table.insert(self._registeredTooltips[activationObject], activationObject.MouseEnter:Connect(function()
+        if gui.Enabled == false then return end
+
+        self.PetTooltipActivated:Invoke(activationObject, petName, isGold, isShiny)
+    end))
+
+    table.insert(self._registeredTooltips[activationObject], activationObject.MouseLeave:Connect(function()
+        self.PetTooltipDisabled:Invoke(activationObject)
+    end))
+
+    table.insert(self._registeredTooltips[activationObject], gui:GetPropertyChangedSignal("Enabled"):Connect(function()
+        if gui.Enabled == false then
+            self.PetTooltipDisabled:Invoke(activationObject)
+        end
+    end))
+end
+
 function TooltipsController:RegisterTooltip(activationObject: GuiObject, info: {Type: string})
     self:RegisterDefaultTooltip(activationObject, info.Text)
 end
@@ -63,6 +97,8 @@ function TooltipsController:InjectUtils(utils)
     self._utils = utils
     self.DefaultTooltipActivated = utils.Event.new()
     self.DefaultTooltipDisabled = utils.Event.new()
+    self.PetTooltipActivated = utils.Event.new()
+    self.PetTooltipDisabled = utils.Event.new()
 end
 
 function TooltipsController.new()

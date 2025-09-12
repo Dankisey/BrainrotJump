@@ -28,6 +28,17 @@ function LeftSide:AfterPlayerLoaded(player: Player)
         self._controllers.GuiController.BasketsGui:Enable(true)
     end)
 
+    self.PetsButton = buttons.PetsButton
+
+    self._controllers.ButtonsInteractionsConnector:ConnectButton(self.PetsButton, function()
+        self._controllers.GuiController.PetsGui:Enable(true)
+        self._controllers.GuiController.PetsGui.PetsFrame:ChangeCategory("Pets")
+
+        -- if self._controllers.TutorialController.CurrentStep == 5 then
+        --     self._controllers.TutorialController:CompleteStep()
+        -- end
+    end)
+
     player:GetAttributeChangedSignal("FoodCapacity"):Connect(function()
         self._currentFoodCapacity = player:GetAttribute("FoodCapacity")
         updateFoodCounter(self)

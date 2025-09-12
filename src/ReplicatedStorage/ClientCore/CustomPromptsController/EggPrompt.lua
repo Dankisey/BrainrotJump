@@ -23,6 +23,7 @@ function EggPrompt:OnEnabled(prompt: ProximityPrompt, gui: BillboardGui)
 
     self._eggName = EggModel.Name
     self._eggData = EggConfig[EggModel.Name]
+    self._eggOwner = EggModel:GetAttribute("Owner")
 
     local petTemplate = gui.EggFrame.Top.Pets.ItemTemplate
 
@@ -44,18 +45,21 @@ function EggPrompt:OnEnabled(prompt: ProximityPrompt, gui: BillboardGui)
 end
 
 function EggPrompt:OnHatchClicked(_: ProximityPrompt)
+    if self._eggOwner ~= LocalPlayer.UserId then return end
+
     if self._eggData.Currency == "Cash" then
         EggHatchRequested:FireServer(self._eggName, false, false)
     elseif self._eggData.Currency == "Robux" then
         DevProductRequested:FireServer(self._eggData.ProductId)
     end
 
-    if self._eggName == "ButterflyEgg" and self._tutorialController.CurrentStep == 4 then
-        self._tutorialController:CompleteStep()
-    end
+    -- if self._eggName == "ButterflyEgg" and self._tutorialController.CurrentStep == 4 then
+    --     self._tutorialController:CompleteStep()
+    -- end
 end
 
 function EggPrompt:OnAutoHatchClicked(_: ProximityPrompt)
+    if self._eggOwner ~= LocalPlayer.UserId then return end
     if self._eggData.Currency ~= "Cash" then return end
 
     if LocalPlayer:GetAttribute("IsInAutoHatching") then
@@ -74,6 +78,8 @@ function EggPrompt:OnAutoHatchClicked(_: ProximityPrompt)
 end
 
 function EggPrompt:OnTripleClicked(_: ProximityPrompt)
+    if self._eggOwner ~= LocalPlayer.UserId then return end
+
     if self._eggData.Currency == "Cash" then
         local hasTriplePass = LocalPlayer:GetAttribute("TripleHatch") or false
 
@@ -88,6 +94,8 @@ function EggPrompt:OnTripleClicked(_: ProximityPrompt)
 end
 
 function EggPrompt:OnLuckClicked(_: ProximityPrompt)
+    if self._eggOwner ~= LocalPlayer.UserId then return end
+
     local hasLuckPass = LocalPlayer:GetAttribute("Luck") or false
 
     if not hasLuckPass then
@@ -96,6 +104,8 @@ function EggPrompt:OnLuckClicked(_: ProximityPrompt)
 end
 
 function EggPrompt:OnMegaLuckClicked(_: ProximityPrompt)
+    if self._eggOwner ~= LocalPlayer.UserId then return end
+
     local hasMegaLuckPass = LocalPlayer:GetAttribute("MegaLuck") or false
 
     if not hasMegaLuckPass then
@@ -104,6 +114,8 @@ function EggPrompt:OnMegaLuckClicked(_: ProximityPrompt)
 end
 
 function EggPrompt:OnUltraLuckClicked(_: ProximityPrompt)
+    if self._eggOwner ~= LocalPlayer.UserId then return end
+
     local hasUltraLuckPass = LocalPlayer:GetAttribute("UltraLuck") or false
 
     if not hasUltraLuckPass then

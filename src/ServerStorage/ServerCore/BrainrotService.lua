@@ -286,6 +286,7 @@ function BrainrotService:UnloadSave(player: Player)
 
     self._brainrots[player] = nil
     self._progressBars[player] = nil
+    self._models[player].Model:Destroy()
     self._models[player] = nil
 
     return data

@@ -1,5 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local EggConfig = require(ReplicatedStorage.Configs.EggConfig)
 local ZonesFolder = workspace.PlayersZones
+local EggsFolder = ReplicatedStorage.Assets.Eggs
 
 local ServiceTemplate = require(script.Parent.Parent.ServiceTemplate)
 local ServerTypes = require(script.Parent.Parent.ServerTypes)
@@ -17,8 +19,41 @@ local function getTeleportPartByPlayer(player: Player): Part?
 	return zone:FindFirstChild("TeleportPart") :: Part
 end
 
+local function clearEggSpot(spot)
+	if spot:FindFirstChildOfClass("Part") then
+		spot:FindFirstChildOfClass("Part"):Destroy()
+	end
+
+	if spot:FindFirstChildOfClass("MeshPart") then
+		spot:FindFirstChildOfClass("MeshPart"):Destroy()
+	end
+end
+
 function ZonesService:GetPlayerZone(player: Player) : Model?
     return self._occupiedZones[player]
+end
+
+function ZonesService:AddEggs(player: Player, worldIndex: number?)
+	local eggSpots = self._occupiedZones[player].EggSpots:GetChildren()
+	local currentWorld = worldIndex or self._services.WorldsService:GetPlayerWorldIndex(player)
+	local eggsToPlace = {}
+
+	for eggName, eggInfo in EggConfig do
+		if eggInfo.World ~= currentWorld then continue end
+
+		table.insert(eggsToPlace, eggName)
+	end
+
+	for index, spot in eggSpots do
+		clearEggSpot(spot)
+
+		if not eggsToPlace[index] then continue end
+
+		local egg = EggsFolder:FindFirstChild(eggsToPlace[index]):Clone()
+		egg.Parent = spot
+		egg:SetAttribute("Owner", player.UserId)
+		egg:PivotTo(spot.CFrame + Vector3.new(0, 4, 0))
+	end
 end
 
 function ZonesService:RemovePlayer(player: Player)
@@ -36,6 +71,12 @@ function ZonesService:RemovePlayer(player: Player)
 	signGui.PlayerTextLabel.Visible = false
 	signGui.Likes.Visible = false
     signGui.EmptyTextLabel.Visible = true
+
+	local eggSpots = zone.EggSpots:GetChildren()
+
+	for _, spot in eggSpots do
+		clearEggSpot(spot)
+	end
 
 	self.ZoneCleared:Invoke(player, zone)
 	table.insert(self._emptyZones, zone)
@@ -82,6 +123,10 @@ function ZonesService:RegisterPlayer(player: Player)
 	signGui.EmptyTextLabel.Visible = false
 
 	self.ZoneOccupied:Invoke(player, zone)
+
+	task.delay(2, function()
+		self:AddEggs(player)
+	end)
 end
 
 function ZonesService:Initialize()
