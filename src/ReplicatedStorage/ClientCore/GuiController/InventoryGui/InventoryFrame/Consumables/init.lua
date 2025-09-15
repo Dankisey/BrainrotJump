@@ -5,14 +5,15 @@ local ConsumableFrame = require(script.ConsumableFrame)
 local Consumables = {}
 
 local function onSaveLoaded(self, consumables)
+    print(consumables)
     for _, consumableData in pairs(ConsumablesConfig.UiInfo) do
         local amount
 
-        if not consumables[consumableData.Name] then
+        if not consumables[consumableData.ItemType][consumableData.Name] then
             warn(consumableData.Name .. "is not in save")
             amount = 0
         else
-            amount = consumables[consumableData.Name]
+            amount = consumables[consumableData.ItemType][consumableData.Name]
         end
 
         local frame = self._prefab:Clone()
@@ -37,8 +38,8 @@ function Consumables:Initialize()
         end)
     end
 
-    self._controllers.InventoryController.Updated:Subscribe(self, function(categoryName: string, itemName: string, newAmount: number)
-        if categoryName ~= "Consumables" then return end
+    self._controllers.InventoryController.Updated:Subscribe(self, function(itemType: string, categoryName: string, itemName: string, newAmount: number)
+        if itemType ~= "Consumables" then return end
 
         if not self._consumables[itemName] then
             return warn("Frame for", itemName, "is not exist")

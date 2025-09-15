@@ -22,7 +22,7 @@ ConsumablesConfig.Potions = {
     WinsPotion = {
         BoostData = {
             ModifiedStats = {
-                Wins = 200;
+                Wins = 2;
             };
 
             Duration = 15 * 60;
@@ -33,6 +33,7 @@ ConsumablesConfig.Potions = {
 ConsumablesConfig.UiInfo = {
     CashPotion = {
         LayoutOrder = 1;
+        ItemType = "Potions";
         Name = "CashPotion";
         PublicName = "x2 Cash";
         Icon = "rbxassetid://81695272763293";
@@ -45,6 +46,7 @@ ConsumablesConfig.UiInfo = {
     };
     JumpPowerPotion = {
         LayoutOrder = 2;
+        ItemType = "Potions";
         Name = "JumpPowerPotion";
         PublicName = "x2 Jump Power";
         Icon = "rbxassetid://118990896434580";
@@ -57,13 +59,14 @@ ConsumablesConfig.UiInfo = {
     };
     WinsPotion = {
         LayoutOrder = 3;
+        ItemType = "Potions";
         Name = "WinsPotion";
         PublicName = "x2 Wins";
         Icon = "rbxassetid://127336974006859";
         TooltipInfo = {
             Type = "Default";
             Text = "<font color='#" .. Color3.fromRGB(41, 177, 250):ToHex() .. "'>+" ..
-            ConsumablesConfig.Potions.WinsPotion.BoostData.ModifiedStats.Wins .. "</font> Wins";
+            math.round((ConsumablesConfig.Potions.WinsPotion.BoostData.ModifiedStats.Wins - 1) * 100) .. "%</font> Wins";
         };
         WidgetOrder = 3;
     };

@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SharedTypes = require(ReplicatedStorage.Modules.SharedTypes)
 local Remotes = ReplicatedStorage.Remotes.Boosts
@@ -159,6 +160,26 @@ function BoostsService:Initialize()
     GetBoosts.OnServerInvoke = function(player: Player)
         return self._playerBoosts[player]
     end
+
+    ----- TEST
+
+    for _, player in Players:GetPlayers() do
+        task.spawn(function()
+            task.wait(20)
+            for potionName, devProductId in self._configs.DevProductsConfig.Potions do
+                self._services.RewardService:GiveReward(player, {FunctionName = "Potions", Data = {[potionName] = 1;}})
+            end
+        end)
+    end
+
+    Players.PlayerAdded:Connect(function(player)
+        task.spawn(function()
+            task.wait(20)
+            for potionName, devProductId in self._configs.DevProductsConfig.Potions do
+                self._services.RewardService:GiveReward(player, {FunctionName = "Potions", Data = {[potionName] = 1;}})
+            end
+        end)
+    end)
 end
 
 function BoostsService.new() : ServerTypes.BoostsService

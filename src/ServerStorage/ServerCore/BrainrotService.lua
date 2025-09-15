@@ -127,6 +127,7 @@ local function endJumpForPlayer(self: BrainrotService, player: Player, maxReache
     local currentWorld = self._services.WorldsService:GetPlayerWorldIndex(player)
     local cashAmount = math.round(maxReachedHeight * WorldsConfig.Worlds[currentWorld].CashPerStud)
     cashAmount *= self._services.PetService:GetPetsCashMultiplier(player)
+    cashAmount *= self._services.BoostsService:GetBonus(player, "Cash")
     self._services.RewardService:GiveReward(player, {FunctionName = "Cash", Data = cashAmount})
 
     local checkpointsPassed = 0
@@ -140,6 +141,7 @@ local function endJumpForPlayer(self: BrainrotService, player: Player, maxReache
     if checkpointsPassed > 0 then
         local wins = WorldsConfig.Worlds[currentWorld].BaseWins * WorldsConfig.Worlds[currentWorld].MultiplierWins ^ (checkpointsPassed - 1)
         wins *= self._services.PetService:GetPetsWinsMultiplier(player)
+        wins *= self._services.BoostsService:GetBonus(player, "Wins")
         self._services.RewardService:GiveReward(player, {FunctionName = "Wins", Data = wins})
     end
 
@@ -159,6 +161,8 @@ local function startJumpForPlayer(self: BrainrotService, player: Player)
     local currentConfig = BrainrotConfig.Brainrots[self._brainrots[player].BrainrotLevel]
     local xpPercentage = self._brainrots[player].BrainrotXP / currentConfig.XpToNextLevel * 100
     local jumpPower = (currentConfig.MaxJumpPower - currentConfig.MinJumpPower) / 100 * xpPercentage + currentConfig.MinJumpPower
+    jumpPower *= self._services.BoostsService:GetBonus(player, "JumpPower")
+    jumpPower = math.clamp(jumpPower, currentConfig.MinJumpPower, currentConfig.MaxJumpPower)
     local currentWorld = self._services.WorldsService:GetPlayerWorldIndex(player)
     local targetHeight = jumpPower * WorldsConfig.Worlds[currentWorld].JumpMultiplier
     local estimatedTime = targetHeight / BrainrotConfig.Speed

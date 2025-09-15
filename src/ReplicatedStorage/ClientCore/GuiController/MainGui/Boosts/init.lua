@@ -14,7 +14,6 @@ local function destroyWidget(self: ClientTypes.BoostsFrame, key: string)
     self._widgets[key] = nil
 end
 
-
 local function updateWidgets(self: ClientTypes.BoostsFrame, boosts)
     if not boosts then return end
 

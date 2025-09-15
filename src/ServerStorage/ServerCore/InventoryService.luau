@@ -19,28 +19,28 @@ local InventoryService = {} :: ServerTypes.InventoryService
 
 local consumablesUsageFunctions = {
     CashPotion = function(self, player: Player)
-        return self._services.BoostsService:TryAddTemporaryBoost(player, "CoinsPotion", ConsumablesConfig.Potions.CashPotion.BoostData)
+        return self._services.BoostsService:TryAddTemporaryBoost(player, "CashPotion", ConsumablesConfig.Potions.CashPotion.BoostData)
     end;
     JumpPowerPotion = function(self, player: Player)
-        return self._services.BoostsService:TryAddTemporaryBoost(player, "PowerPotion", ConsumablesConfig.Potions.JumpPowerPotion.BoostData)
+        return self._services.BoostsService:TryAddTemporaryBoost(player, "JumpPowerPotion", ConsumablesConfig.Potions.JumpPowerPotion.BoostData)
     end;
     WinsPotion = function(self, player: Player)
-        return self._services.BoostsService:TryAddTemporaryBoost(player, "LuckPotion", ConsumablesConfig.Potions.WinsPotion.BoostData)
+        return self._services.BoostsService:TryAddTemporaryBoost(player, "WinsPotion", ConsumablesConfig.Potions.WinsPotion.BoostData)
     end;
 }
 
-local function tryUseConsumable(self: ServerTypes.InventoryService, player: Player, name: string)
-    if not self._playerSaves[player] then return false end
+local function tryUseConsumable(self: ServerTypes.InventoryService, player: Player, categoryName: string, name: string)
+    if not self._playersSaves[player] then return false end
 
-    if (not self._playerSaves[player].Consumables[name]) or (self._playerSaves[player].Consumables[name] < 1) then
+    if (not self._playersSaves[player].Consumables[categoryName][name]) or (self._playersSaves[player].Consumables[categoryName][name] < 1) then
         self._services.ServerMessagesSender:SendMessageToPlayer(player, "Error", "You don't have any of this item")
 
         return false
     end
 
     if consumablesUsageFunctions[name](self, player) then
-        self._playerSaves[player].Consumables[name] -= 1
-        ConsumableUsed:FireClient(player, name)
+        self._playersSaves[player].Consumables[categoryName][name] -= 1
+        ConsumableUsed:FireClient(player, categoryName, name)
 
         return true
     else
@@ -108,9 +108,11 @@ local function validateSave(save)
     save = save or {}
 
     save.Consumables = save.Consumables or {
-        CashPotion = 0;
-        JumpPowerPotion = 0;
-        WinsPotion = 0;
+        Potions = {
+            CashPotion = 0;
+            JumpPowerPotion = 0;
+            WinsPotion = 0;
+        };
     }
 
 	save.Equipment = save.Equipment or {}
@@ -147,14 +149,14 @@ function InventoryService:HasItem(player: Player, itemType, categoryName: string
     return self._playersSaves[player][itemType][categoryName][itemName] ~= nil
 end
 
-function InventoryService:TryAddItem(player: Player, itemType, categoryName: string, itemName: string, amount: number?) : boolean
+function InventoryService:TryAddItem(player: Player, itemType: string, categoryName: string, itemName: string, amount: number?) : boolean
     if not isValidInventoryRequest(self, player, itemType, categoryName) then return false end
 
-    if categoryName == "Consumables" then
-        local currentAmount = self._playerSaves[player].Consumables[itemName] or 0
-        self._playerSaves[player].Consumables[itemName] = currentAmount + amount
+    if itemType == "Consumables" then
+        local currentAmount = self._playersSaves[player].Consumables[categoryName][itemName] or 0
+        self._playersSaves[player].Consumables[categoryName][itemName] = currentAmount + amount
 
-        ItemAdded:FireClient(player, categoryName, itemName, amount)
+        ItemAdded:FireClient(player, itemType, categoryName, itemName, amount)
     else
         if self:HasItem(player, itemType, categoryName, itemName) then return false end
 
@@ -238,12 +240,12 @@ function InventoryService:Initialize()
         end
     end)
 
-    ConsumableUsed.OnServerEvent:Connect(function(player: Player, consumableName: string)
+    ConsumableUsed.OnServerEvent:Connect(function(player: Player, consumableName: string, categoryName: string)
         if isInDebounce(player) then return end
 
-        if not self:HasItem(player, "Consumables", consumableName) then return end
+        if not self:HasItem(player, "Consumables", categoryName, consumableName) then return end
 
-        tryUseConsumable(self, player, consumableName)
+        tryUseConsumable(self, player, categoryName, consumableName)
     end)
 end
 

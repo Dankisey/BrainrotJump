@@ -33,7 +33,7 @@ local rewardsFunctions = {
 	Potions = function(player: Player, data: {[string]: number}, self: ServiceTemplate.Type)
 		task.spawn(function()
 			for potionName: string, amount: number in pairs(data) do
-				self._services.InventoryService:TryAddItem(player, "Consumables", potionName, amount)
+				self._services.InventoryService:TryAddItem(player, "Consumables", "Potions", potionName, amount)
 				task.wait(.5)
 			end
 		end)

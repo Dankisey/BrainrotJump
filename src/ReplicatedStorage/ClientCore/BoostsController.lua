@@ -51,7 +51,7 @@ local function recalculatePowerMultiplier(self: ClientTypes.BoostsController)
 end
 
 local function recalculateMultipliers(self: ClientTypes.BoostsController)
-    recalculatePowerMultiplier(self)
+    -- recalculatePowerMultiplier(self)
 end
 
 function BoostsController:GetBoostLevel(boostName: string) : number

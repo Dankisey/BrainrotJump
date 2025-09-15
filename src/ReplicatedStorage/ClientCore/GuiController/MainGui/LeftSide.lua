@@ -39,6 +39,10 @@ function LeftSide:AfterPlayerLoaded(player: Player)
         -- end
     end)
 
+    self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.InventoryButton, function()
+        self._controllers.GuiController.InventoryGui:Enable(true)
+    end)
+
     player:GetAttributeChangedSignal("FoodCapacity"):Connect(function()
         self._currentFoodCapacity = player:GetAttribute("FoodCapacity")
         updateFoodCounter(self)

@@ -51,10 +51,10 @@ function InventoryController:Initialize()
     self.Initialized:Invoke(self._utils.DeepCopy(self._inventory))
 
     ItemAdded.OnClientEvent:Connect(function(itemType: string, categoryName: string, itemName: string, amount: number?)
-        if categoryName == "Consumables" then
-			local currentAmount = self._inventory.Consumables[itemName] or 0
-        	self._inventory.Consumables[itemName] = currentAmount + amount
-			self.Updated:Invoke("Consumables", itemName, self._inventory.Consumables[itemName])
+        if itemType == "Consumables" then
+			local currentAmount = self._inventory.Consumables[categoryName][itemName] or 0
+        	self._inventory.Consumables[categoryName][itemName] = currentAmount + amount
+			self.Updated:Invoke("Consumables", categoryName, itemName, self._inventory.Consumables[categoryName][itemName])
 		else
 			if not self._inventory[itemType] then
                 self._inventory[itemType] = {}
@@ -65,9 +65,9 @@ function InventoryController:Initialize()
 		end
     end)
 
-    ConsumableUsed.OnClientEvent:Connect(function(consumableName: string)
-		self._inventory.Consumables[consumableName] -= 1
-		self.Updated:Invoke("Consumables", consumableName, self._inventory.Consumables[consumableName])
+    ConsumableUsed.OnClientEvent:Connect(function(categoryName: string, consumableName: string)
+		self._inventory.Consumables[categoryName][consumableName] -= 1
+		self.Updated:Invoke("Consumables", categoryName, consumableName, self._inventory.Consumables[categoryName][consumableName])
 	end)
 end
 

@@ -26,7 +26,7 @@ export type BrainrotService = {
 } & ServiceTemplate
 
 export type InventoryService = {
-    TryAddItem: (InventoryService, player: Player, itemType: string, categoryName: string, itemName: string) -> boolean;
+    TryAddItem: (InventoryService, player: Player, itemType: string, categoryName: string, itemName: string, amount: number?) -> boolean;
     HasItem: (InventoryService, player: Player, itemType: string, categoryName: string, itemName: string) -> boolean;
     RestoreEquippedItems: (InventoryService, player: Player) -> nil;
 

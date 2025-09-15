@@ -28,7 +28,7 @@ function ConsumableFrame:ChangeAmount(value: number)
 
     elseif self._amount > 0 and self._isSubscribed == false then
         self._buttonsInteractionsConnector:ConnectButton(self._useButton, function()
-            ConsumableUsed:FireServer(self._config.Name)
+            ConsumableUsed:FireServer(self._config.Name, self._config.ItemType)
         end)
 
         self._useButton.Image = ActiveButtonImage

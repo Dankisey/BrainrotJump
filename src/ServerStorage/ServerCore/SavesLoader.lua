@@ -28,12 +28,16 @@ local saveLoadableServices = {
 		DataName = "WorldsSave";
 	};
 	[3] = {
-		ServiceName = "PetIndexService";
-		DataName = "PetIndex";
+		ServiceName = "BoostsService";
+		DataName = "Boosts";
 	};
 	[4] ={
 		ServiceName = "BrainrotService";
 		DataName = "BrainrotSave";
+	};
+	[5] = {
+		ServiceName = "PetIndexService";
+		DataName = "PetIndex";
 	};
 }
 
