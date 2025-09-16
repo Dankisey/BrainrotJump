@@ -19,21 +19,21 @@ local SavesLoader = {} :: ServiceTemplate.Type
 
 --[[Order is imprtant]]
 local saveLoadableServices = {
-	[1] = {
+	[1] ={
+		ServiceName = "BrainrotService";
+		DataName = "BrainrotSave";
+	};
+	[2] = {
 		ServiceName = "InventoryService";
 		DataName = "InventorySave";
 	};
-	[2] = {
+	[3] = {
 		ServiceName = "WorldsService";
 		DataName = "WorldsSave";
 	};
-	[3] = {
+	[4] = {
 		ServiceName = "BoostsService";
 		DataName = "Boosts";
-	};
-	[4] ={
-		ServiceName = "BrainrotService";
-		DataName = "BrainrotSave";
 	};
 	[5] = {
 		ServiceName = "PetIndexService";

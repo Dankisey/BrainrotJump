@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local EggConfig = require(ReplicatedStorage.Configs.EggConfig)
 local ZonesFolder = workspace.PlayersZones
 local EggsFolder = ReplicatedStorage.Assets.Eggs
+local WingsGuiOpener = ReplicatedStorage.Assets.WingsGuiOpener
 
 local ServiceTemplate = require(script.Parent.Parent.ServiceTemplate)
 local ServerTypes = require(script.Parent.Parent.ServerTypes)
@@ -72,6 +73,9 @@ function ZonesService:RemovePlayer(player: Player)
 	signGui.Likes.Visible = false
     signGui.EmptyTextLabel.Visible = true
 
+	local wingsOpenerPoint = zone.WingsOpenerPoint
+	wingsOpenerPoint:FindFirstChild("WingsGuiOpener"):Destroy()
+
 	local eggSpots = zone.EggSpots:GetChildren()
 
 	for _, spot in eggSpots do
@@ -121,6 +125,11 @@ function ZonesService:RegisterPlayer(player: Player)
     signGui.PlayerTextLabel.Visible = true
     signGui.PlayerTextLabel.Text = string.format("%s's Place", player.Name)
 	signGui.EmptyTextLabel.Visible = false
+
+	local wingsOpenerPoint = zone.WingsOpenerPoint
+	local wingsGuiOpener = WingsGuiOpener:Clone()
+	wingsGuiOpener.Parent = wingsOpenerPoint
+	wingsGuiOpener:PivotTo(wingsOpenerPoint.CFrame)
 
 	self.ZoneOccupied:Invoke(player, zone)
 

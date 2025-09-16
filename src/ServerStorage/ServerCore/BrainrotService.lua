@@ -69,6 +69,11 @@ local function spawnBrainrotForPlayer(self: BrainrotService, player: Player)
     self._progressBars[player]:SetValue(progress)
 
     model:PivotTo(zone.BrainrotPoint.CFrame)
+
+    task.delay(2, function()
+        self._services.InventoryService:RestoreEquippedWings(player)
+    end)
+
     self._models[player].Model = model
     loadAnimations(self, player)
 end
@@ -162,6 +167,11 @@ local function startJumpForPlayer(self: BrainrotService, player: Player)
     local xpPercentage = self._brainrots[player].BrainrotXP / currentConfig.XpToNextLevel * 100
     local jumpPower = (currentConfig.MaxJumpPower - currentConfig.MinJumpPower) / 100 * xpPercentage + currentConfig.MinJumpPower
     jumpPower *= self._services.BoostsService:GetBonus(player, "JumpPower")
+
+    if player.Equipment.Wing.Value and player.Equipment.Wing.Value ~= "" then
+        jumpPower *= self._configs.WingsConfig.Wings[player.Equipment.Wing.Value].JumpPowerMultiplier
+    end
+
     jumpPower = math.clamp(jumpPower, currentConfig.MinJumpPower, currentConfig.MaxJumpPower)
     local currentWorld = self._services.WorldsService:GetPlayerWorldIndex(player)
     local targetHeight = jumpPower * WorldsConfig.Worlds[currentWorld].JumpMultiplier
@@ -240,6 +250,20 @@ local function startJumpForPlayer(self: BrainrotService, player: Player)
             end)
         end
     end)
+end
+
+function BrainrotService:GetPlayerBrainrot(player: Player)
+    if not self._models[player] or self._models[player].Model then
+        local tries = 0
+
+        while tries < 5 do
+            task.wait(1)
+            tries += 1
+            if self._models[player].Model then break end
+        end
+    end
+
+    return self._models[player].Model
 end
 
 function BrainrotService:LoadSave(player: Player, data)

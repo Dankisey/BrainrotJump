@@ -135,6 +135,12 @@ function Monetization:Initialize()
 		end
 	end
 
+	for wingsName, id in pairs(DevProductsConfig.Wings) do
+		productFunctions[id] = function(self: ServiceTemplate.Type, player: Player)
+			return self._services.InventoryService:TryAddItem(player, "Equipment", "Wings", wingsName)
+		end
+	end
+
 	for potionName, devProductId in DevProductsConfig.Potions do
 		productFunctions[devProductId] = function(_, player: Player)
 			self._services.RewardService:GiveReward(player, {FunctionName = "Potions", Data = {[potionName] = 1;}})

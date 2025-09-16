@@ -22,4 +22,8 @@ DevProductsConfig.Potions = {
     WinsPotion = 3330139448;
 }
 
+DevProductsConfig.Wings = {
+	DragonWings = 3405858757;
+}
+
 return DevProductsConfig

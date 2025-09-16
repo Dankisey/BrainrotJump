@@ -11,6 +11,7 @@ local BasketPivotWeld = Assets.Food.BasketPivotWeld
 local Configs = ReplicatedStorage.Configs
 local BasketsConfig = require(Configs.BasketsConfig)
 local ConsumablesConfig = require(Configs.ConsumablesConfig)
+local WingsConfig = require(Configs.WingsConfig)
 
 local ServerTypes = require(script.Parent.Parent.ServerTypes)
 local ServiceTemplate = require(script.Parent.Parent.ServiceTemplate)
@@ -61,7 +62,19 @@ local unlockingFunctions = {
                 self:TryAddItem(player, "Equipment", "Baskets", itemName)
             end
         end
-    end
+    end;
+
+    Wings = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
+        local wingsInfo = WingsConfig.Wings[itemName]
+
+        if wingsInfo.ProductId then
+            self._services.Monetization:PromptProduct(player, wingsInfo.ProductId)
+        else
+            if self._services.SoftCurrencyService:TrySpentCurrency(player, "Cash", wingsInfo.PriceInCash, "Gameplay", itemName) then
+                self:TryAddItem(player, "Equipment", "Wings", itemName)
+            end
+        end
+    end;
 }
 
 local equipFunctions = {
@@ -102,6 +115,30 @@ local equipFunctions = {
         model.Name = "Basket"
 		self._equippedItemModels[player].Basket = model
 	end;
+
+    Wings = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
+        local brainrotModel = self._services.BrainrotService:GetPlayerBrainrot(player)
+        local wingsPivot = brainrotModel:FindFirstChild("WingsPivot")
+
+		if self._equippedItemModels[player].Wings then
+			self._equippedItemModels[player].Wings:Destroy()
+			self._equippedItemModels[player].Wings = nil
+		end
+
+        player.Equipment.Wing.Value = itemName;
+        local model = WingsConfig.Wings[itemName].Model:Clone() :: Model
+
+		local weld = Instance.new("Weld")
+		weld.Parent = model
+		weld.Part0 = wingsPivot
+		weld.Part1 = model.PrimaryPart
+		weld.C1 = CFrame.fromEulerAnglesYXZ(0, 0, 0)
+
+		model.Parent = wingsPivot
+        model:PivotTo(wingsPivot.CFrame)
+        -- model.Name = "Wings"
+		self._equippedItemModels[player].Wings = model
+	end;
 }
 
 local function validateSave(save)
@@ -117,6 +154,7 @@ local function validateSave(save)
 
 	save.Equipment = save.Equipment or {}
     save.Equipment.Baskets = save.Equipment.Baskets or {Default = true}
+    save.Equipment.Wings = save.Equipment.Wings or {}
 
     return save
 end
@@ -167,10 +205,18 @@ function InventoryService:TryAddItem(player: Player, itemType: string, categoryN
     return true
 end
 
+function InventoryService:RestoreEquippedWings(player: Player)
+    if player.Equipment.Wing and player.Equipment.Wing.Value ~= "" then
+        equipFunctions["Wings"](self, player, player.Equipment.Wing.Value)
+    end
+end
+
 function InventoryService:RestoreEquippedItems(player: Player)
     self._equippedItemModels[player].BasketPivot = nil
 
 	for _, obj: StringValue in pairs(player.Equipment:GetChildren()) do
+        if not obj.Value or obj.Value == "" then continue end
+
 		equipFunctions[obj.Name .. "s"](self, player, obj.Value)
 	end
 end
