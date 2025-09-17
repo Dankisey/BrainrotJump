@@ -108,6 +108,9 @@ local function onPlayerAdded(self: ServiceTemplate.Type, player: Player)
 		self._services[saveLoadableServices[i].ServiceName]:LoadSave(player, data[saveLoadableServices[i].DataName])
 	end
 
+	local isGroupRewardClaimed = data.IsGroupRewardClaimed or false
+	player:SetAttribute("IsGroupRewardClaimed", isGroupRewardClaimed)
+
 	player:SetAttribute("IsLoaded", true)
 	self._loadedPlayers[player.Name] = true
 end
@@ -144,6 +147,9 @@ local function onPlayerRemoving(self: ServiceTemplate.Type, player: Player)
 	end
 
 	self._services.LeaderboardService:UpdateTotals(player)
+
+	local isGroupRewardClaimed = player:GetAttribute("IsGroupRewardClaimed") or false
+	data.IsGroupRewardClaimed = isGroupRewardClaimed
 
 	if not isUsingEmptySave then
 		local success, value = pcall(SavesDataStore.SetAsync, SavesDataStore, player.UserId, data)
