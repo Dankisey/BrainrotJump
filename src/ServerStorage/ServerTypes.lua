@@ -12,6 +12,7 @@ export type Analytics = {
 export type BrainrotService = {
     LoadSave: (BrainrotService, player: Player, data: table) -> nil;
     UnloadSave: (BrainrotService, player: Player) -> table;
+    GetPlayerBrainrot: (BrainrotService, player: Player) -> Model;
 
     _brainrots: {[Player]: {
         BrainrotLevel: number;
@@ -28,7 +29,9 @@ export type BrainrotService = {
 export type InventoryService = {
     TryAddItem: (InventoryService, player: Player, itemType: string, categoryName: string, itemName: string, amount: number?) -> boolean;
     HasItem: (InventoryService, player: Player, itemType: string, categoryName: string, itemName: string) -> boolean;
+    ToggleWingsVisibility: (InventoryService, player: Player, enable: boolean) -> nil;
     RestoreEquippedItems: (InventoryService, player: Player) -> nil;
+    RestoreEquippedWings: (InventoryService, player: Player) -> nil;
 
     LoadSave: (InventoryService, player: Player, savedInventory: SharedTypes.InventorySave?) -> nil;
     UnloadSave: (InventoryService, player: Player) -> SharedTypes.InventorySave;

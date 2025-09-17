@@ -136,7 +136,6 @@ local equipFunctions = {
 
 		model.Parent = wingsPivot
         model:PivotTo(wingsPivot.CFrame)
-        -- model.Name = "Wings"
 		self._equippedItemModels[player].Wings = model
 	end;
 }
@@ -203,6 +202,20 @@ function InventoryService:TryAddItem(player: Player, itemType: string, categoryN
     end
 
     return true
+end
+
+function InventoryService:ToggleWingsVisibility(player: Player, enable: boolean)
+    if not self._equippedItemModels[player].Wings then return end
+
+    local model = self._equippedItemModels[player].Wings
+    local transparency = enable and 1 or 0
+
+    for _, part in model:GetChildren() do
+        if not part:IsA("Part") then continue end
+        if part.Name == "Primary" then continue end
+
+        part.Transparency = transparency
+    end
 end
 
 function InventoryService:RestoreEquippedWings(player: Player)
