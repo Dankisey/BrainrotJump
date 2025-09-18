@@ -1,5 +1,6 @@
 local Gamepasses = {}
 
+---- Change Ids
 Gamepasses.Attributes = {
     Plus1Pet = {
 		AttributeName = "Plus1Pet";
@@ -40,6 +41,18 @@ Gamepasses.Attributes = {
 	};
 	UltraLuck = {
 		AttributeName = "UltraLuck";
+		GamepassId = 1441373636;
+	};
+	DoubleCash = {
+		AttributeName = "DoubleCash";
+		GamepassId = 1441373636;
+	};
+	DoubleJumpPower = {
+		AttributeName = "DoubleJumpPower";
+		GamepassId = 1441373636;
+	};
+	AutoCollect = {
+		AttributeName = "AutoCollect";
 		GamepassId = 1441373636;
 	};
 }

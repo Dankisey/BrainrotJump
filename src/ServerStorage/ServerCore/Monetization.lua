@@ -2,11 +2,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Configs = ReplicatedStorage.Configs
 local DevProductsConfig = require(Configs.DevProductsConfig)
 local GamepassesConfig = require(Configs.GamepassesConfig)
+local CurrenciesPacksConfig = require(Configs.CurrenciesPacksConfig)
 
 local Remotes = ReplicatedStorage.Remotes.Monetization
 local GamepassRequested = Remotes.GamepassRequested
 local DevProductRequested = Remotes.DevProductRequested
 local GamepassPurchased = Remotes.GamepassPurchased
+local StarterPackPurchased = Remotes.StarterPackPurchased
 
 local DataStoreService = game:GetService("DataStoreService")
 local PurchasesHistoryStore = DataStoreService:GetDataStore("PurchasesHistory")
@@ -22,6 +24,29 @@ local Monetization = {} :: ServiceTemplate.Type
 local productFunctions = {}
 local gamepassFunctions = {}
 local extraGamepassFunctions = {}
+
+local function getPlayersHighestOpenWorld(self, player)
+	local highestOpenWorld = 1
+
+	for i = #self._configs.WorldsConfig.Worlds, 1, -1 do
+		local unlocked = self._services.WorldsService:IsWorldUnlocked(player, i)
+
+		if unlocked then
+			highestOpenWorld = i
+			break
+		end
+	end
+
+	return highestOpenWorld
+end
+
+productFunctions[DevProductsConfig.Others.StarterPack] = function(self, player)
+	self._services.RewardService:GiveMultipleRewards(player, self._configs.StarterPackConfig.Rewards)
+	player:SetAttribute("StarterPackPurchased", true)
+	StarterPackPurchased:FireClient(player)
+
+	return true
+end
 
 function Monetization:ProcessReciept(receiptInfo)
 	local playerProductKey = receiptInfo.PlayerId .. "_" .. receiptInfo.PurchaseId
@@ -194,6 +219,33 @@ function Monetization:Initialize()
 			end
 
 			self._services.HatchEggService:OpenEgg(player, eggId, true, false)
+
+			return true
+		end
+	end
+
+	for packName, devProductId in DevProductsConfig.Cash do
+		productFunctions[devProductId] = function(_, player: Player)
+			local highestOpenWorld = getPlayersHighestOpenWorld(self, player)
+
+			local cashAmount = CurrenciesPacksConfig.Cash[highestOpenWorld][packName]
+			self._services.RewardService:GiveReward(player, {FunctionName = "Cash",
+			Data = {
+				Amount = cashAmount;
+				TransactionType = Enum.AnalyticsEconomyTransactionType.IAP;
+				Sku = "World " .. highestOpenWorld .. " " .. packName .. " CashPack";
+			}})
+
+			return true
+		end
+	end
+
+	for packName, devProductId in DevProductsConfig.Wins do
+		productFunctions[devProductId] = function(_, player: Player)
+			local highestOpenWorld = getPlayersHighestOpenWorld(self, player)
+
+			local winsAmount = CurrenciesPacksConfig.Wins[highestOpenWorld][packName]
+			self._services.RewardService:GiveReward(player, {FunctionName = "Wins", Data = winsAmount})
 
 			return true
 		end

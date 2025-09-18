@@ -47,6 +47,10 @@ function LeftSide:AfterPlayerLoaded(player: Player)
         self._controllers.GuiController.WingsGui:Enable(true)
     end)
 
+    self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.ShopButton, function()
+        self._controllers.GuiController.RobuxShopGui:Enable(true)
+    end)
+
     player:GetAttributeChangedSignal("FoodCapacity"):Connect(function()
         self._currentFoodCapacity = player:GetAttribute("FoodCapacity")
         updateFoodCounter(self)
