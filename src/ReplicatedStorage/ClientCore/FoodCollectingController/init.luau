@@ -64,12 +64,20 @@ function FoodCollectingController:AfterPlayerLoaded(player: Player)
     self._player = player
     self._ring = CollectingRing.new(player)
     self._basketFiller = BasketFiller.new(player)
-    self._collectingTickTime = FoodCollectingConfig.CollectingTickTime
+    self._currentRadius = self._player:GetAttribute("CollectingRadius") or 1
+
     self._collectingPiles = self._player:GetAttribute("CollectingPiles") or 1
-    self._currentRadius = self._player:GetAttribute("CollectingRadius")
 
     self._player:GetAttributeChangedSignal("CollectingPiles"):Connect(function()
         self._collectingPiles = self._player:GetAttribute("CollectingPiles")
+    end)
+
+    local collectingSpeedMultiplier = self._player:GetAttribute("CollectingSpeedMultiplier") or 1
+    self._collectingTickTime = FoodCollectingConfig.CollectingTickTime / collectingSpeedMultiplier
+
+    self._player:GetAttributeChangedSignal("CollectingSpeedMultiplier"):Connect(function()
+        collectingSpeedMultiplier = self._player:GetAttribute("CollectingSpeedMultiplier")
+        self._collectingTickTime = FoodCollectingConfig.CollectingTickTime / collectingSpeedMultiplier
     end)
 
     self._pileSpots = self._controllers.ZoneController:GetZone().FoodPileSpots:GetChildren()

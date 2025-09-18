@@ -159,8 +159,6 @@ local function validateSave(save)
 end
 
 local function onEquipmentChanged(player: Player)
-    player:SetAttribute("CollectingRadius", 20)
-    player:SetAttribute("CollectingPiles", 1)
     player:SetAttribute("FoodCapacity", BasketsConfig.Items[player.Equipment.Basket.Value].FoodCapacity)
 end
 

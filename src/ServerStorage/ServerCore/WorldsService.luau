@@ -31,6 +31,12 @@ function WorldsService:UnloadSave(player: Player)
     return save
 end
 
+function WorldsService:IsWorldUnlocked(player: Player, worldIndex: number)
+    if not self._playersSaves[player] then return end
+
+    return self._playersSaves[player].UnlockedWorlds[worldIndex]
+end
+
 function WorldsService:GetPlayerWorldIndex(player: Player)
     if not self._playersSaves[player] then return end
 
