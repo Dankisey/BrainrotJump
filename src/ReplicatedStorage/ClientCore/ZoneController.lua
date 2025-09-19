@@ -27,6 +27,26 @@ local function waitForInitializingEnd(self)
     end
 end
 
+function ZoneController:GetFoodPilesFolder() : Part
+    waitForInitializingEnd(self)
+
+    if not self._foodPilesFolder then
+        self._foodPilesFolder = self._zone:WaitForChild("FoodPileSpots") :: Folder
+    end
+
+    return self._foodPilesFolder
+end
+
+function ZoneController:GetFeedingPart() : Part
+    waitForInitializingEnd(self)
+
+    if not self._feedingPart then
+        self._feedingPart = self._zone:WaitForChild("FeedingCircle") :: Part
+    end
+
+    return self._feedingPart
+end
+
 function ZoneController:GetTeleportPart() : Part
     waitForInitializingEnd(self)
 

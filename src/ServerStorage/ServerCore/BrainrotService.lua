@@ -9,6 +9,7 @@ local JumpEnded = Remotes.JumpEnded :: RemoteEvent
 
 local BrainrotConfig = require(ReplicatedStorage.Configs.BrainrotConfig)
 local WorldsConfig = require(ReplicatedStorage.Configs.WorldsConfig)
+local GamepassesConfig = require(ReplicatedStorage.Configs.GamepassesConfig)
 local BrainrotGui = ReplicatedStorage.Assets.UI.BrainrotInfoGui
 local ProgressBar = require(ReplicatedStorage.Modules.UI.ProgressBar)
 local FeedParticles = ReplicatedStorage.Assets.Particles.FeedParticles
@@ -133,7 +134,16 @@ local function endJumpForPlayer(self: BrainrotService, player: Player, maxReache
     local cashAmount = math.round(maxReachedHeight * WorldsConfig.Worlds[currentWorld].CashPerStud)
     cashAmount *= self._services.PetService:GetPetsCashMultiplier(player)
     cashAmount *= self._services.BoostsService:GetBonus(player, "Cash")
-    self._services.RewardService:GiveReward(player, {FunctionName = "Cash", Data = cashAmount})
+
+    if player:GetAttribute(GamepassesConfig.Attributes.DoubleCash.AttributeName) then
+        cashAmount *= 2
+    end
+
+    self._services.RewardService:GiveReward(player, {FunctionName = "Cash", Data = {
+					Amount = cashAmount;
+                    TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
+                    Sku = "Jump Reward";
+                };})
 
     local checkpointsPassed = 0
     local checkpointHeight = BrainrotConfig.CheckpointBaseHeight
@@ -170,6 +180,10 @@ local function startJumpForPlayer(self: BrainrotService, player: Player)
 
     if player.Equipment.Wing.Value and player.Equipment.Wing.Value ~= "" then
         jumpPower *= self._configs.WingsConfig.Wings[player.Equipment.Wing.Value].JumpPowerMultiplier
+    end
+
+    if player:GetAttribute(GamepassesConfig.Attributes.DoubleJumpPower.AttributeName) then
+        jumpPower *= 2
     end
 
     jumpPower = math.clamp(jumpPower, currentConfig.MinJumpPower, currentConfig.MaxJumpPower)

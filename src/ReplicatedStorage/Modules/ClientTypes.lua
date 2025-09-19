@@ -152,6 +152,8 @@ export type WorldsController = {
 export type ZoneController = {
     new: () -> ZoneController;
 
+    GetFoodPilesFolder: (ZoneController) -> Folder;
+    GetFeedingPart: (ZoneController) -> Part;
     GetPlayersZone: (ZoneController, player: Player) -> Model;
     GetTeleportPart: (ZoneController) -> Part;
     GetZone: (ZoneController) -> Model;

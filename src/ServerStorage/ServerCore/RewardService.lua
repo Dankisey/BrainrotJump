@@ -17,9 +17,11 @@ local rewardsFunctions = {
 		player.TotalStats.TotalWins.Value += amount
 	end;
 
-	Cash = function(player: Player, amount: number, self: ServiceTemplate.Type)
-		player.Currencies.Cash.Value += amount
-		player.TotalStats.TotalCash.Value += amount
+	Cash = function(player: Player, data: {any}, self: ServiceTemplate.Type)
+		player.Currencies.Cash.Value += data.Amount
+		self._services.Analytics:LogCurrencyIncome(player, "Cash", data.Amount, data.TransactionType, data.Sku)
+		player.TotalStats.TotalCash.Value += data.Amount
+		SoundRequested:FireClient(player, self._configs.SoundNames.Coins)
 	end;
 
 	UpgradePoints = function(player: Player, amount: number, self: ServiceTemplate.Type)
