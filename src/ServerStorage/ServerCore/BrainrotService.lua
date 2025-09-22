@@ -32,10 +32,21 @@ export type BrainrotService = {
         AnimationTracks: table;
         AnimationsLoaded: boolean;
     }};
+    _connections: {[Player]: RBXScriptConnection};
     _debounces: {[Player]: boolean};
 } & ServiceTemplate.Type
 
 local BrainrotService = {} :: BrainrotService
+
+local function scaleModel(self: BrainrotService, player: Player)
+    local model: Model = self._models[player].Model
+
+    if not model then return end
+
+    local originalModel: Model = ReplicatedStorage.Assets.Brainrot:FindFirstChild(model.Name)
+    local originalScale: number = originalModel and originalModel:GetScale() or 0.014
+    model:ScaleTo(originalScale * UpgradesConfig.Upgrades.BrainrotSize.Levels[player.Upgrades[UpgradesConfig.Upgrades.BrainrotSize.LevelObjectName].Value].Scale)
+end
 
 local function loadAnimations(self: BrainrotService, player: Player)
     local model = self._models[player].Model
@@ -47,7 +58,6 @@ local function loadAnimations(self: BrainrotService, player: Player)
     }
 
     self._models[player].AnimationsLoaded = true
-
     self._models[player].AnimationTracks.Idle:Play()
 end
 
@@ -326,6 +336,11 @@ function BrainrotService:LoadSave(player: Player, data)
     self._brainrots[player] = data
     self._models[player] = {}
     spawnBrainrotForPlayer(self, player)
+    scaleModel(self, player)
+
+    self._connections[player] = player.Upgrades[UpgradesConfig.Upgrades.BrainrotSize.LevelObjectName].Changed:Connect(function()
+        scaleModel(self, player)
+    end)
 end
 
 function BrainrotService:UnloadSave(player: Player)
@@ -340,12 +355,6 @@ function BrainrotService:UnloadSave(player: Player)
 end
 
 function BrainrotService:Initialize()
-    self._brainrots = {}
-    self._debounces = {}
-    self._progressBars = {}
-    self._models = {}
-    self._stopRequests = {}
-
     self._cubicBezierUp = self._utils.CubicBezier.new(.09,.87,.76,.91)
     self._cubicBezierDown = self._utils.CubicBezier.new(.43,-0.01,.95,.76)
 
@@ -378,6 +387,12 @@ end
 
 function BrainrotService.new()
     local self = setmetatable(BrainrotService, {__index = ServiceTemplate})
+    self._progressBars = {}
+    self._stopRequests = {}
+    self._connections = {}
+    self._brainrots = {}
+    self._debounces = {}
+    self._models = {}
 
     return self
 end

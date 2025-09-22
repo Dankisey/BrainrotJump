@@ -12,11 +12,11 @@ UpgradesConfig.Upgrades = {
                 HeightMultiplier = 1;
             };
             [2] = {
-                Scale = 1.1;
+                Scale = 2;
                 HeightMultiplier = 1.2;
             };
             [3] = {
-                Scale = 1.3;
+                Scale = 3;
                 HeightMultiplier = 1.5;
 
                 WorldLock = 2;
