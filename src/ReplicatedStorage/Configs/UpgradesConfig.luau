@@ -123,10 +123,10 @@ UpgradesConfig.Upgrades = {
                 Value = 1;
             };
             [2] = {
-                Value = 1.5;
+                Value = 2;
             };
             [3] = {
-                Value = 2;
+                Value = 3;
                 WorldLock = 2;
             };
         };

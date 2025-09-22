@@ -10,6 +10,7 @@ local JumpEnded = Remotes.JumpEnded :: RemoteEvent
 local BrainrotConfig = require(ReplicatedStorage.Configs.BrainrotConfig)
 local WorldsConfig = require(ReplicatedStorage.Configs.WorldsConfig)
 local GamepassesConfig = require(ReplicatedStorage.Configs.GamepassesConfig)
+local UpgradesConfig = require(ReplicatedStorage.Configs.UpgradesConfig)
 local BrainrotGui = ReplicatedStorage.Assets.UI.BrainrotInfoGui
 local ProgressBar = require(ReplicatedStorage.Modules.UI.ProgressBar)
 local FeedParticles = ReplicatedStorage.Assets.Particles.FeedParticles
@@ -157,6 +158,7 @@ local function endJumpForPlayer(self: BrainrotService, player: Player, maxReache
         local wins = WorldsConfig.Worlds[currentWorld].BaseWins * WorldsConfig.Worlds[currentWorld].MultiplierWins ^ (checkpointsPassed - 1)
         wins *= self._services.PetService:GetPetsWinsMultiplier(player)
         wins *= self._services.BoostsService:GetBonus(player, "Wins")
+        wins *= UpgradesConfig.Upgrades.WinsMultiplier.Levels[player.Upgrades.WinsMultiplierLevel.Value].Value
         self._services.RewardService:GiveReward(player, {FunctionName = "Wins", Data = wins})
     end
 

@@ -72,7 +72,7 @@ function UpgradesService:Initialize()
             return self._services.ServerMessagesSender:SendMessageToPlayer(player, "Error", "Upgrade is Already on Max Level")
         end
 
-        local worldLock = #UpgradesConfig.Upgrades[upgradeName].Levels[levelValueObject.Value + 1].WorldLock
+        local worldLock = UpgradesConfig.Upgrades[upgradeName].Levels[levelValueObject.Value + 1].WorldLock
 
         if worldLock and (not self._services.WorldsService:IsWorldUnlocked(player, worldLock))then
             return self._services.ServerMessagesSender:SendMessageToPlayer(player, "Error", "Upgrade is not available yet")

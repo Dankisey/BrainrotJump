@@ -5,10 +5,16 @@ local UpgradeHolder = require(script.UpgradeHolder)
 
 export type UpgradesFrame = {
     _upgradeHolders: {[string]: UpgradeHolder.Type};
+    _pointsValueObject: IntValue;
+    _pointsLabel: TextLabel;
     _frame: Frame;
 } & ControllerTemplate.Type
 
 local BaseFrame = {}
+
+local function updatePointsLabel(self: UpgradesFrame)
+    self._pointsLabel.Text = string.format("Upgrade Points: %d", self._pointsValueObject.Value)
+end
 
 function BaseFrame:AfterPlayerLoaded(player: Player)
     local scrollingFrame = self._frame.ScrollingFrame :: ScrollingFrame
@@ -27,6 +33,14 @@ function BaseFrame:AfterPlayerLoaded(player: Player)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.CloseButton, function()
         self._controllers.GuiController.UpgradesGui:Disable()
+    end)
+
+    self._pointsValueObject = player:WaitForChild("Currencies"):WaitForChild("UpgradePoints")
+    self._pointsLabel = self._frame.UpgradePointsLabel
+    updatePointsLabel(self)
+
+    self._pointsValueObject.Changed:Connect(function()
+        updatePointsLabel(self)
     end)
 end
 
