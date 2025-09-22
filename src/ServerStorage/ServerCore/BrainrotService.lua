@@ -135,16 +135,18 @@ local function endJumpForPlayer(self: BrainrotService, player: Player, maxReache
     local cashAmount = math.round(maxReachedHeight * WorldsConfig.Worlds[currentWorld].CashPerStud)
     cashAmount *= self._services.PetService:GetPetsCashMultiplier(player)
     cashAmount *= self._services.BoostsService:GetBonus(player, "Cash")
+    cashAmount *= UpgradesConfig.Upgrades.CashMultiplier.Levels[player.Upgrades[UpgradesConfig.Upgrades.CashMultiplier.LevelObjectName].Value].Value
 
     if player:GetAttribute(GamepassesConfig.Attributes.DoubleCash.AttributeName) then
         cashAmount *= 2
     end
 
-    self._services.RewardService:GiveReward(player, {FunctionName = "Cash", Data = {
-					Amount = cashAmount;
-                    TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
-                    Sku = "Jump Reward";
-                };})
+    self._services.RewardService:GiveReward(player, {FunctionName = "Cash", Data =
+    {
+		Amount = cashAmount;
+        TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
+        Sku = "Jump Reward";
+    };})
 
     local checkpointsPassed = 0
     local checkpointHeight = BrainrotConfig.CheckpointBaseHeight
@@ -158,7 +160,7 @@ local function endJumpForPlayer(self: BrainrotService, player: Player, maxReache
         local wins = WorldsConfig.Worlds[currentWorld].BaseWins * WorldsConfig.Worlds[currentWorld].MultiplierWins ^ (checkpointsPassed - 1)
         wins *= self._services.PetService:GetPetsWinsMultiplier(player)
         wins *= self._services.BoostsService:GetBonus(player, "Wins")
-        wins *= UpgradesConfig.Upgrades.WinsMultiplier.Levels[player.Upgrades.WinsMultiplierLevel.Value].Value
+        wins *= UpgradesConfig.Upgrades.WinsMultiplier.Levels[player.Upgrades[UpgradesConfig.Upgrades.WinsMultiplier.LevelObjectName].Value].Value
         self._services.RewardService:GiveReward(player, {FunctionName = "Wins", Data = wins})
     end
 
@@ -179,6 +181,7 @@ local function startJumpForPlayer(self: BrainrotService, player: Player)
     local xpPercentage = self._brainrots[player].BrainrotXP / currentConfig.XpToNextLevel * 100
     local jumpPower = (currentConfig.MaxJumpPower - currentConfig.MinJumpPower) / 100 * xpPercentage + currentConfig.MinJumpPower
     jumpPower *= self._services.BoostsService:GetBonus(player, "JumpPower")
+    jumpPower *= UpgradesConfig.Upgrades.BrainrotSize.Levels[player.Upgrades[UpgradesConfig.Upgrades.BrainrotSize.LevelObjectName].Value].HeightMultiplier
 
     if player.Equipment.Wing.Value and player.Equipment.Wing.Value ~= "" then
         jumpPower *= self._configs.WingsConfig.Wings[player.Equipment.Wing.Value].JumpPowerMultiplier

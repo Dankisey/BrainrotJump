@@ -3,6 +3,7 @@ local Remotes = ReplicatedStorage.Remotes.Piles
 local FoodCollected = Remotes.FoodCollected
 
 local PilesConfig = require(ReplicatedStorage.Configs.PilesConfig)
+local UpgradesConfig = require(ReplicatedStorage.Configs.UpgradesConfig)
 
 local ServiceTemplate = require(script.Parent.Parent.ServiceTemplate)
 export type PileService = {
@@ -88,6 +89,7 @@ function PileService:Initialize()
             totalCollectedFood += claimingFoodAmount
         end
 
+        totalCollectedFood *= UpgradesConfig.Upgrades.FoodMultiplier.Levels[player.Upgrades[UpgradesConfig.Upgrades.FoodMultiplier.LevelObjectName].Value].Value
         local foodLimit = player:GetAttribute("FoodCapacity") or 0
         local currentFoodAmount = player.Currencies.Food.Value
         local amountToGive = if currentFoodAmount + totalCollectedFood > foodLimit then math.max(foodLimit - currentFoodAmount, 0) else totalCollectedFood
