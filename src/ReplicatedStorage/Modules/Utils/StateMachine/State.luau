@@ -1,73 +1,49 @@
 --!strict
 
-local Classes = require(script.parent.SM_Classes)
+local Classes = require(script.Parent.SM_Classes)
 
-local StateMachine = {}
-StateMachine.__index = StateMachine
+local State = {}
+State.__index = State
 
-function StateMachine.new() : Classes.StateMachine
-	local self = setmetatable({} :: Classes.StateMachine , StateMachine)
-	self.CurrentState = nil
-	self.IsRunning = false
+function State.new(name : string) : Classes.State
+	local self = setmetatable({} :: Classes.State ,State)
+	self.Name = name
+	self.Conditions = {}
+	self.isRunning = false
+
+	self.EnterAction = nil
+	self.UpdateAction = nil
+	self.ExitAction = nil
+
 	return self
 end
 
-function StateMachine:SwitchState(newState : Classes.State)
-	
-	local oldState = self.CurrentState
-	
-	self.CurrentState = nil
-
-	if oldState then
-		oldState:Exit()
-	end
-
-	if newState then
-		newState:Enter()
-	end
-	
-	self.CurrentState = newState
+function State:Enter()
+	self.isRunning = false
+	self.EnterAction()
 end
 
-function StateMachine:Update(deltaTime : number)
-	if self.CurrentState and self.IsRunning then
-		
-		local condition = self.CurrentState:CheckForCondition(deltaTime)
-		
-		if condition then
-			self:SwitchState(condition.TransitionState)
-			return
+function State:Update(deltaTime : number)
+	self.UpdateAction(deltaTime)
+end
+
+function State:Exit()
+	self.ExitAction()
+	self.isRunning = false
+end
+
+function State:AddCondition(condition : Classes.Condition)
+	table.insert(self.Conditions, condition)
+end
+
+function State:CheckForCondition(deltaTime : number) : Classes.Condition?
+	for _, condition in pairs(self.Conditions) do
+		if condition:Evaluate(deltaTime) then
+			return condition
 		end
-		
-		self.CurrentState:Update(deltaTime)
 	end
+	
+	return nil
 end
 
-function StateMachine:Start(newState : Classes.State)
-	self:SwitchState(newState)
-	self.IsRunning = true
-end
-
-function StateMachine:Pause()
-	self.IsRunning = false
-end
-
-function StateMachine:Resume()
-	self.IsRunning = true
-end
-
-function StateMachine:Stop(endCurrentState : boolean?)
-	self.IsRunning = false
-	if endCurrentState and self.CurrentState then
-		self.CurrentState:Exit()
-	end
-end
-
-function StateMachine:CurrentStateName()
-	if not self.CurrentState then
-		return ""
-	end
-	return 	self.CurrentState.Name
-end
-
-return StateMachine
+return State
