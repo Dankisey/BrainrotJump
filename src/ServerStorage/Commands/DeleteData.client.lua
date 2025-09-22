@@ -5,7 +5,7 @@ local dataStores = {
 }
 
 local idsToDelete = {
-	8739680057
+	7333499935
 }
 
 for _, dataStore in pairs(dataStores) do

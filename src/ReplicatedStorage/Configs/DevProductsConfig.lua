@@ -12,8 +12,8 @@ DevProductsConfig.TripleEggs = {
 	ShinyEgg = 3407435091;
 }
 
-DevProductsConfig.Baskets = {
-    RobuxBasket = 3407434073;
+DevProductsConfig.Sacks = {
+	RobuxSack = 3407434073;
 }
 
 DevProductsConfig.Potions = {

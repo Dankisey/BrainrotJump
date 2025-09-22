@@ -19,7 +19,7 @@ function CapFrame:AfterPlayerLoaded()
     end)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.ActionsFrame.UpgradeButton, function()
-        self._controllers.GuiController.BasketsGui:Enable(true)
+		self._controllers.GuiController.SacksGui:Enable(true)
     end)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.ActionsFrame.FeedButton, function()

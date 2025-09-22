@@ -24,8 +24,8 @@ function LeftSide:AfterPlayerLoaded(player: Player)
 
     local buttons = self._frame.Buttons
 
-    self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.BasketsButton, function()
-        self._controllers.GuiController.BasketsGui:Enable(true)
+	self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.SacksButton, function()
+		self._controllers.GuiController.SacksGui:Enable(true)
     end)
 
     self.PetsButton = buttons.PetsButton

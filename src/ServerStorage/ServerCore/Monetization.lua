@@ -154,9 +154,9 @@ function Monetization:PromptPass(player: Player, passId: number)
 end
 
 function Monetization:Initialize()
-	for basketName, id in pairs(DevProductsConfig.Baskets) do
+	for sackName, id in pairs(DevProductsConfig.Sacks) do
 		productFunctions[id] = function(self: ServiceTemplate.Type, player: Player)
-			return self._services.InventoryService:TryAddItem(player, "Equipment", "Baskets", basketName)
+			return self._services.InventoryService:TryAddItem(player, "Equipment", "Sacks", sackName)
 		end
 	end
 

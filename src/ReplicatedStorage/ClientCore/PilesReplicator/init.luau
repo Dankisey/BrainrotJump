@@ -46,10 +46,10 @@ end
 function PilesReplicator:AfterPlayerLoaded(player: Player)
     self._random = Random.new(os.time())
     local character = player.Character or player.CharacterAdded:Wait()
-    self._currentBasketPivot = character:WaitForChild("BasketPivot")
+	self._currentSackPivot = character:WaitForChild("SackPivot")
 
     player.CharacterAdded:Connect(function(newCharacter)
-        self._currentBasketPivot = newCharacter:WaitForChild("BasketPivot")
+		self._currentSackPivot = newCharacter:WaitForChild("SackPivot")
     end)
 
     for _, player: Player in pairs(Players:GetPlayers()) do
@@ -93,7 +93,7 @@ function PilesReplicator:AfterPlayerLoaded(player: Player)
             vfx.Gui.Icon.Image = PilesConfig.Piles[spawnData.PileType].Icon
             vfx.Parent = workspace.Debris
 
-            self._controllers.ArcBuilder:AddArc(vfx, spawnData.Spawn.Position, self._currentBasketPivot, arcData.Duration, arcData.Length, self._random:NextInteger(arcData.Angles.Min, arcData.Angles.Max), function(vfxPart: Part)
+			self._controllers.ArcBuilder:AddArc(vfx, spawnData.Spawn.Position, self._currentSackPivot, arcData.Duration, arcData.Length, self._random:NextInteger(arcData.Angles.Min, arcData.Angles.Max), function(vfxPart: Part)
                 self._controllers.SoundPlayer:PlaySound("FoodIncomeSound")
                 self._controllers.FoodCounter:AddFood(amountPerPile)
                 table.insert(self._vfxPrefabs, vfxPart)

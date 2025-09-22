@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local FoodCollectingConfig = require(ReplicatedStorage.Configs.FoodCollectingConfig)
 local PilesConfig = require(ReplicatedStorage.Configs.PilesConfig)
 local CollectingRing = require(script.CollectingRing)
-local BasketFiller = require(script.BasketFiller)
+local SackFiller = require(script.SackFiller)
 local FoodCollected = ReplicatedStorage.Remotes.Piles.FoodCollected
 
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
@@ -39,7 +39,7 @@ local function tryCollectFood(self)
     local availablePiles = getPilesWithFoodInRange(self) :: {Part}
     local collectedSpots = {}
 
-    if #availablePiles > 0 and self._food.Value >= self._currentBasketCapacity then
+	if #availablePiles > 0 and self._food.Value >= self._currentSackCapacity then
         self.CapReached:Invoke()
 
         return
@@ -63,7 +63,7 @@ end
 function FoodCollectingController:AfterPlayerLoaded(player: Player)
     self._player = player
     self._ring = CollectingRing.new(player)
-    self._basketFiller = BasketFiller.new(player)
+	self._sackFiller = SackFiller.new(player)
     self._currentRadius = self._player:GetAttribute("CollectingRadius") or 1
 
     self._collectingPiles = self._player:GetAttribute("CollectingPiles") or 1
@@ -81,11 +81,11 @@ function FoodCollectingController:AfterPlayerLoaded(player: Player)
     end)
 
     self._pileSpots = self._controllers.ZoneController:GetZone().FoodPileSpots:GetChildren()
-    self._currentBasketCapacity = self._player:GetAttribute("FoodCapacity") or 1
+	self._currentSackCapacity = self._player:GetAttribute("FoodCapacity") or 1
     self._food = self._player:WaitForChild("Currencies"):WaitForChild("Food")
 
     self._player:GetAttributeChangedSignal("FoodCapacity"):Connect(function()
-        self._currentBasketCapacity = self._player:GetAttribute("FoodCapacity")
+		self._currentSackCapacity = self._player:GetAttribute("FoodCapacity")
     end)
 
     task.spawn(function()

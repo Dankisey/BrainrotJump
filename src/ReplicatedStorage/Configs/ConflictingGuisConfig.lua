@@ -1,6 +1,6 @@
 local ConflictingGuisConfig = {
     ConfirmationPromptGui = true;
-    BasketsGui = true;
+	SacksGui = true;
     FoodCapGui = true;
 }
 

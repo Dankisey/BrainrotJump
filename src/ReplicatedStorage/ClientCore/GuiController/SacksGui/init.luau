@@ -1,14 +1,14 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local GuiTemplate = require(ReplicatedStorage.Modules.UI.AnimatedGuiTemplate)
 
-local BasketsGui = {}
+local SacksGui = {}
 
-function BasketsGui.new()
-	local self = setmetatable(BasketsGui, {__index = GuiTemplate})
+function SacksGui.new()
+	local self = setmetatable(SacksGui, {__index = GuiTemplate})
 
 	self:CreateChildren(script.Name, script:GetChildren())
 
 	return self
 end
 
-return BasketsGui
+return SacksGui

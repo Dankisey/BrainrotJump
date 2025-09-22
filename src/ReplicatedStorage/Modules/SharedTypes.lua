@@ -16,7 +16,7 @@ export type BoostsSave = {
 
 export type InventorySave = {
     Equipment: {
-        Baskets: {[string]: boolean};
+        Sacks: {[string]: boolean};
     };
 }
 

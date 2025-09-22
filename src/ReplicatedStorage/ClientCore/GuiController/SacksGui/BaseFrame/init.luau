@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local BasketsConfig = require(ReplicatedStorage.Configs.BasketsConfig)
-local BasketButtonView = require(script.BasketButtonView)
+local SacksConfig = require(ReplicatedStorage.Configs.SacksConfig)
+local SackButtonView = require(script.SackButtonView)
 
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 local BaseFrame = {} :: ControllerTemplate.Type
@@ -9,11 +9,11 @@ local function updateDescritionView(self: ControllerTemplate.Type)
     local descriptionFrame = self._frame.Description
     local actionButtonLabel = descriptionFrame.ActionButton.Label
 
-    if self._currentSelectedName == self._currentBasket.Value then
+    if self._currentSelectedName == self._currentSack.Value then
         actionButtonLabel.Text = "Equipped"
         self._isCurrentItemEquipped = true
         self._ownsCurrent = true
-    elseif self._controllers.InventoryController:HasEquipment("Baskets", self._currentSelectedName) then
+    elseif self._controllers.InventoryController:HasEquipment("Sacks", self._currentSelectedName) then
         actionButtonLabel.Text = "Equip"
         self._isCurrentItemEquipped = false
         self._ownsCurrent = true
@@ -23,33 +23,33 @@ local function updateDescritionView(self: ControllerTemplate.Type)
         self._ownsCurrent = false
     end
 
-    descriptionFrame.ItemFrame.Icon.Image = if self._ownsCurrent then BasketsConfig.Items[self._currentSelectedName].Icon else "rbxassetid://125352837907619"
+    descriptionFrame.ItemFrame.Icon.Image = if self._ownsCurrent then SacksConfig.Items[self._currentSelectedName].Icon else "rbxassetid://125352837907619"
 end
 
 local function fillItems(self: ControllerTemplate.Type)
     local scrollingFrame: ScrollingFrame = self._frame:WaitForChild("ScrollingFrame")
     local itemTemplate: Frame = scrollingFrame:WaitForChild("ItemTemplate")
-    local sortedBaskets = self._utils.GetKeys(BasketsConfig.Items)
+    local sortedSacks = self._utils.GetKeys(SacksConfig.Items)
 
-    table.sort(sortedBaskets, function(basketNameA: string, basketNameB: string)
-        return BasketsConfig.Items[basketNameA].PriceInCash < BasketsConfig.Items[basketNameB].PriceInCash
+    table.sort(sortedSacks, function(sackNameA: string, sackNameB: string)
+        return SacksConfig.Items[sackNameA].PriceInCash < SacksConfig.Items[sackNameB].PriceInCash
     end)
 
-    for i = 1, #sortedBaskets do
+    for i = 1, #sortedSacks do
         local itemFrame = itemTemplate:Clone()
         itemFrame.Parent = scrollingFrame
         itemFrame.LayoutOrder = i
 
-        local name = sortedBaskets[i]
+        local name = sortedSacks[i]
         local robuxPrice
 
-        if BasketsConfig.Items[name].ProductId then
-            local info = self._utils.TryGetProductInfo(BasketsConfig.Items[name].ProductId, Enum.InfoType.Product)
+        if SacksConfig.Items[name].ProductId then
+            local info = self._utils.TryGetProductInfo(SacksConfig.Items[name].ProductId, Enum.InfoType.Product)
             robuxPrice = if info then info.PriceInRobux else "???"
             self._robuxPrices[name] = robuxPrice
         end
 
-        self._viewsPerName[name] = BasketButtonView.new(itemFrame, name, self._controllers, self._utils, robuxPrice)
+        self._viewsPerName[name] = SackButtonView.new(itemFrame, name, self._controllers, self._utils, robuxPrice)
 
         itemFrame.Visible = true
         itemFrame.Name = name
@@ -67,18 +67,18 @@ function BaseFrame:UpdateInfoFrame(newSelectedItem: string)
     self._currentSelectedName = newSelectedItem
 
     local descriptionFrame = self._frame.Description
-    descriptionFrame.ItemName.Text = BasketsConfig.Items[newSelectedItem].PublicName
-    descriptionFrame.ItemName.TextColor3 = BasketsConfig.Items[self._currentSelectedName].Rarity.Color
-    descriptionFrame.ItemFrame.UIStroke.Color = BasketsConfig.Items[self._currentSelectedName].Rarity.Color
-    descriptionFrame.ItemFrame.UIGradient.Color = BasketsConfig.Items[self._currentSelectedName].Rarity.Gradient
-    descriptionFrame.Capacity.Label.Text = string.format("Capacity: %s", self._utils.FormatNumber(BasketsConfig.Items[newSelectedItem].FoodCapacity))
+    descriptionFrame.ItemName.Text = SacksConfig.Items[newSelectedItem].PublicName
+    descriptionFrame.ItemName.TextColor3 = SacksConfig.Items[self._currentSelectedName].Rarity.Color
+    descriptionFrame.ItemFrame.UIStroke.Color = SacksConfig.Items[self._currentSelectedName].Rarity.Color
+    descriptionFrame.ItemFrame.UIGradient.Color = SacksConfig.Items[self._currentSelectedName].Rarity.Gradient
+    descriptionFrame.Capacity.Label.Text = string.format("Capacity: %s", self._utils.FormatNumber(SacksConfig.Items[newSelectedItem].FoodCapacity))
 
     if self._robuxPrices[newSelectedItem] then
         descriptionFrame.Cost.Icon.Image = "rbxasset://textures/ui/common/robux@3x.png"
         descriptionFrame.Cost.Label.Text = self._robuxPrices[newSelectedItem]
     else
         descriptionFrame.Cost.Icon.Image = "rbxassetid://80513201967002"
-        descriptionFrame.Cost.Label.Text = self._utils.FormatNumber(BasketsConfig.Items[newSelectedItem].PriceInCash)
+        descriptionFrame.Cost.Label.Text = self._utils.FormatNumber(SacksConfig.Items[newSelectedItem].PriceInCash)
     end
 
     updateDescritionView(self)
@@ -86,21 +86,21 @@ end
 
 function BaseFrame:AfterPlayerLoaded(player: Player)
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.CloseButton, function()
-        self._controllers.GuiController.BasketsGui:Disable()
+        self._controllers.GuiController.SacksGui:Disable()
     end)
 
     fillItems(self)
 
-    self._currentBasket = player:WaitForChild("Equipment"):WaitForChild("Basket") :: StringValue
-    self:UpdateInfoFrame(self._currentBasket.Value)
+    self._currentSack = player:WaitForChild("Equipment"):WaitForChild("Sack") :: StringValue
+    self:UpdateInfoFrame(self._currentSack.Value)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.Description.ActionButton, function()
         if self._isCurrentItemEquipped then return end
 
         if self._ownsCurrent then
-            self._controllers.InventoryController:TryEquipItem("Baskets", self._currentSelectedName)
+            self._controllers.InventoryController:TryEquipItem("Sacks", self._currentSelectedName)
         else
-            self._controllers.InventoryController:RequestItemUnlocking("Baskets", self._currentSelectedName)
+            self._controllers.InventoryController:RequestItemUnlocking("Sacks", self._currentSelectedName)
         end
     end)
 
@@ -108,7 +108,7 @@ function BaseFrame:AfterPlayerLoaded(player: Player)
         updateDescritionView(self)
     end)
 
-    self._currentBasket.Changed:Connect(function()
+    self._currentSack.Changed:Connect(function()
         updateDescritionView(self)
     end)
 end

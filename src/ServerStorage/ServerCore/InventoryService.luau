@@ -7,9 +7,9 @@ local ItemAdded = Remotes.ItemAdded
 local ConsumableUsed = Remotes.ConsumableUsed
 
 local Assets = ReplicatedStorage.Assets
-local BasketPivotWeld = Assets.Food.BasketPivotWeld
+local SackPivotWeld = Assets.Food.SackPivotWeld
 local Configs = ReplicatedStorage.Configs
-local BasketsConfig = require(Configs.BasketsConfig)
+local SacksConfig = require(Configs.SacksConfig)
 local ConsumablesConfig = require(Configs.ConsumablesConfig)
 local WingsConfig = require(Configs.WingsConfig)
 
@@ -52,14 +52,14 @@ local function tryUseConsumable(self: ServerTypes.InventoryService, player: Play
 end
 
 local unlockingFunctions = {
-    Baskets = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
-        local basketInfo = BasketsConfig.Items[itemName]
+    Sacks = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
+        local sackInfo = SacksConfig.Items[itemName]
 
-        if basketInfo.ProductId then
-            self._services.Monetization:PromptProduct(player, basketInfo.ProductId)
+        if sackInfo.ProductId then
+            self._services.Monetization:PromptProduct(player, sackInfo.ProductId)
         else
-            if self._services.SoftCurrencyService:TrySpentCurrency(player, "Cash", basketInfo.PriceInCash, "Gameplay", itemName) then
-                self:TryAddItem(player, "Equipment", "Baskets", itemName)
+            if self._services.SoftCurrencyService:TrySpentCurrency(player, "Cash", sackInfo.PriceInCash, "Gameplay", itemName) then
+                self:TryAddItem(player, "Equipment", "Sacks", itemName)
             end
         end
     end;
@@ -78,42 +78,42 @@ local unlockingFunctions = {
 }
 
 local equipFunctions = {
-    Baskets = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
+    Sacks = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
         local character = player.Character or player.CharacterAdded:Wait()
 
-        if not self._equippedItemModels[player].BasketPivot then
-            local basketPivot = Instance.new("Part")
-            basketPivot.Size = Vector3.one * .1
-            basketPivot.CanCollide = false
-            basketPivot.Transparency = 1
-            basketPivot.Name = "BasketPivot"
-            self._equippedItemModels[player].BasketPivot = basketPivot
-            self._equippedItemModels[player].BasketPivot.Parent = character
+        if not self._equippedItemModels[player].SackPivot then
+            local sackPivot = Instance.new("Part")
+            sackPivot.Size = Vector3.one * .1
+            sackPivot.CanCollide = false
+            sackPivot.Transparency = 1
+            sackPivot.Name = "SackPivot"
+            self._equippedItemModels[player].SackPivot = sackPivot
+            self._equippedItemModels[player].SackPivot.Parent = character
 
-            local weld = BasketPivotWeld:Clone()
-            weld.Parent = basketPivot
+            local weld = SackPivotWeld:Clone()
+            weld.Parent = sackPivot
             weld.Part0 = character:WaitForChild("RightHand")
-            weld.Part1 = basketPivot
+            weld.Part1 = sackPivot
             weld.Enabled = true
         end
 
-		if self._equippedItemModels[player].Basket then
-			self._equippedItemModels[player].Basket:Destroy()
-			self._equippedItemModels[player].Basket = nil
+		if self._equippedItemModels[player].Sack then
+			self._equippedItemModels[player].Sack:Destroy()
+			self._equippedItemModels[player].Sack = nil
 		end
 
-        player.Equipment.Basket.Value = itemName;
-		local model = Assets.Baskets[itemName]:Clone() :: Model
+        player.Equipment.Sack.Value = itemName;
+		local model = Assets.Sacks[itemName]:Clone() :: Model
 
 		local weld = Instance.new("Weld")
-		weld.Parent = self._equippedItemModels[player].BasketPivot
-		weld.Part0 = self._equippedItemModels[player].BasketPivot
+		weld.Parent = self._equippedItemModels[player].SackPivot
+		weld.Part0 = self._equippedItemModels[player].SackPivot
 		weld.Part1 = model.PrimaryPart
 		weld.C1 = CFrame.fromEulerAnglesYXZ(0, 0, 0)
 
 		model.Parent = character
-        model.Name = "Basket"
-		self._equippedItemModels[player].Basket = model
+        model.Name = "Sack"
+		self._equippedItemModels[player].Sack = model
 	end;
 
     Wings = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
@@ -152,14 +152,14 @@ local function validateSave(save)
     }
 
 	save.Equipment = save.Equipment or {}
-    save.Equipment.Baskets = save.Equipment.Baskets or {Default = true}
+    save.Equipment.Sacks = save.Equipment.Sacks or {BasicSack = true}
     save.Equipment.Wings = save.Equipment.Wings or {}
 
     return save
 end
 
 local function onEquipmentChanged(player: Player)
-    player:SetAttribute("FoodCapacity", BasketsConfig.Items[player.Equipment.Basket.Value].FoodCapacity)
+    player:SetAttribute("FoodCapacity", SacksConfig.Items[player.Equipment.Sack.Value].FoodCapacity)
 end
 
 local function isValidInventoryRequest(self: ServerTypes.InventoryService, player: Player, itemType: string, categoryName: string)
@@ -223,7 +223,7 @@ function InventoryService:RestoreEquippedWings(player: Player)
 end
 
 function InventoryService:RestoreEquippedItems(player: Player)
-    self._equippedItemModels[player].BasketPivot = nil
+    self._equippedItemModels[player].SackPivot = nil
 
 	for _, obj: StringValue in pairs(player.Equipment:GetChildren()) do
         if not obj.Value or obj.Value == "" then continue end
