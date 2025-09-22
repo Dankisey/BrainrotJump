@@ -11,8 +11,6 @@ local Lighting = game:GetService("Lighting")
 
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 
-local RunService = game:GetService("RunService")
-
 local BrainrotController = {}
 
 local function changeSkybox(self, currentCheckpoint: number)
@@ -54,6 +52,16 @@ function BrainrotController:StartJump()
     self.JumpStarted:Invoke(currentModel)
 end
 
+function BrainrotController:ToggleAutoJump()
+    self.IsInAutoJump = not self.IsInAutoJump
+
+    if self.IsInAutoJump then
+        task.spawn(function()
+            self:StartJump()
+        end)
+    end
+end
+
 function BrainrotController:AfterPlayerLoaded(player: Player)
     self._player = player
 end
@@ -61,6 +69,7 @@ end
 function BrainrotController:Initialize()
     self._inDebounce = false
     self._currentSkybox = Lighting:WaitForChild("Sky")
+    self.IsInAutoJump = false
 
     JumpEnded.OnClientEvent:Connect(function()
         self._controllers.CameraController:StopCameraShake()
@@ -68,6 +77,14 @@ function BrainrotController:Initialize()
 
         task.delay(1, function()
             self._controllers.CameraController:ResetCamera()
+
+            if self.IsInAutoJump then
+                task.wait(4)
+
+                if not self.IsInAutoJump then return end
+
+                self:StartJump()
+            end
         end)
     end)
 

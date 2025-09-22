@@ -6,7 +6,11 @@ StarterPackConfig.Rewards = {
         CashPotion = 1;
         WinsPotion = 1;
     };
-    Cash = {Amount = 100000};
+    Cash = {
+		Amount = 100000;
+        TransactionType = Enum.AnalyticsEconomyTransactionType.IAP;
+        Sku = "StarterPack";
+    };
 }
 
 return StarterPackConfig

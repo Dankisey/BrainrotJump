@@ -3,7 +3,6 @@ local AutoCollectController = {}
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
-local CollectionService = game:GetService("CollectionService")
 local UserInputService = game:GetService("UserInputService")
 local PathfindingService = game:GetService("PathfindingService")
 
@@ -23,16 +22,13 @@ local movementKeys = {
 	[Enum.KeyCode.D] = true
 }
 
-local selectedSeedPile = nil :: Model
-
-local feeders = {}
 local active = false
 local activeTime = 3
 local inActiveTime = 35
 
 function AutoCollectController:Update(deltaTime)
 	self._stateMachine:Update(deltaTime)
-	AutoCollectController.CheckIfIdle(deltaTime)
+	self:CheckIfIdle(deltaTime)
 end
 
 function AutoCollectController:Enable()
@@ -43,7 +39,7 @@ end
 function AutoCollectController:Disable()
 	active = false
 	self._stateMachine:Stop()
-	AutoCollectController.CancelMoveTo()
+	self:CancelMoveTo()
 end
 
 function AutoCollectController:Idle()
@@ -67,8 +63,8 @@ function AutoCollectController:CollectFood()
 	self._states["CollectFood"].EnterAction = function()
 		player:SetAttribute("AutoFarmState", "CollectFood")
 
-		self:MoveTo(selectedSeedPile.Position -  (selectedSeedPile.Size / 2), function()
-			print("Cant Reach location", selectedSeedPile)
+		self:MoveTo(self._selectedFoodPile.Position -  (self._selectedFoodPile.Size / 2), function()
+			print("Cant Reach location", self._selectedFoodPile)
 		end)
 
 	end
@@ -86,14 +82,22 @@ function AutoCollectController:CollectFood()
 end
 
 function AutoCollectController:DepositFood()
-	self._states["DepositFood"].EnterAction = function()	
+	self._states["DepositFood"].EnterAction = function()
 		player:SetAttribute("AutoFarmState", "DepositFood")
 
-		local feedingPart = self._controllers.ZoneController:GetFeedingPart()
+		local selectedFeeder = self:GetClosestFeederToPlayer()
 
-		self:MoveTo(feedingPart.Position, function()
+		self:MoveTo(selectedFeeder.Position, function()
 			print("Cant Reach location")
 		end)
+
+		-- local feedingPart = self._controllers.ZoneController:GetFeedingPart()
+
+		-- print("Feeding part", feedingPart, feedingPart.Position)
+
+		-- self:MoveTo(feedingPart.Position, function()
+		-- 	print("Cant Reach location")
+		-- end)
 	end
 
 	self._states["DepositFood"].UpdateAction = function(deltaTime)
@@ -110,9 +114,9 @@ end
 function AutoCollectController:SetUpConditions()
 	self._conditions["IdleToCollectFood"].TransitionState = self._states["CollectFood"]
 	self._conditions["IdleToCollectFood"].ExitCondition = function()
-		local closesSeedPile = self:GetClosestFoodPileToPlayer()
-		if closesSeedPile then
-			selectedSeedPile = closesSeedPile
+		local closestFoodPile = self:GetClosestFoodPileToPlayer()
+		if closestFoodPile then
+			self._selectedFoodPile = closestFoodPile
 			return true
 		end
 
@@ -121,11 +125,7 @@ function AutoCollectController:SetUpConditions()
 
 	self._conditions["CollectFoodToIdle"].TransitionState = self._states["Idle"]
 	self._conditions["CollectFoodToIdle"].ExitCondition = function()
-		if not selectedSeedPile:GetAttribute("Enabled") then
-			return true
-		end
-
-		if selectedSeedPile:GetAttribute("HasPet") then
+		if self._selectedFoodPile:GetAttribute("FoodLeft") <= 0 then
 			return true
 		end
 
@@ -134,7 +134,7 @@ function AutoCollectController:SetUpConditions()
 
 	self._conditions["CollectFoodToDepositFood"].TransitionState = self._states["DepositFood"]
 	self._conditions["CollectFoodToDepositFood"].ExitCondition = function()
-		if player:GetAttribute("CurrentSeed") >= player:GetAttribute("MaxSeed") then
+		if self._food.Value >= self._player:GetAttribute("FoodCapacity") then
 			return true
 		end
 
@@ -143,7 +143,7 @@ function AutoCollectController:SetUpConditions()
 
 	self._conditions["DepositFoodToIdle"].TransitionState = self._states["Idle"]
 	self._conditions["DepositFoodToIdle"].ExitCondition = function()
-		if player:GetAttribute("CurrentSeed") == 0 then
+		if self._food.Value == 0 then
 			return true
 		end
 
@@ -171,6 +171,26 @@ function AutoCollectController:GetClosestFoodPileToPlayer()
 	return closestFoodPile
 end
 
+function AutoCollectController:GetClosestFeederToPlayer()
+	local closestDistance = math.huge -- Initialize with a very large number
+	local closestFeeder = nil
+
+	for _, feeder in pairs(self._feeders) do
+		if not feeder or not feeder:IsA("Part") then
+			continue
+		end
+
+		local distance = self._player:DistanceFromCharacter(feeder.Position)
+
+		if distance < closestDistance then
+			closestDistance = distance
+			closestFeeder = feeder
+		end
+	end
+
+	return closestFeeder
+end
+
 function AutoCollectController:MoveTo(position : Vector3, OnFailed : ()->())
 	self:CancelMoveTo()
 
@@ -183,7 +203,7 @@ function AutoCollectController:MoveTo(position : Vector3, OnFailed : ()->())
 			AgentRadius = 2, -- Adjust as needed for your character size
 			AgentHeight = 5,
 			AgentCanJump = true,
-			AgentJumpHeight = 10, -- Adjust jump height if needed
+			AgentCanClimb = true,
 			AgentMaxSlope = 45,
 		})
 
@@ -209,6 +229,7 @@ function AutoCollectController:MoveTo(position : Vector3, OnFailed : ()->())
 				end
 			end
 		else
+			print(path.Status, character.PrimaryPart.Position, position)
 			if OnFailed then
 				OnFailed()
 			end
@@ -240,22 +261,20 @@ function AutoCollectController:CheckIfIdle(deltaTime : number)
 	local currentPosition = self._player.Character.PrimaryPart.Position
 
 	if (currentPosition - self._lastPlayerPos).magnitude < 0.1 and 
-		not player:GetAttribute("IsDepositing") and 
-		not player:GetAttribute("InteractiveUI")  then
+		not player:GetAttribute("IsDepositing") then
 
 		self._idleTimer += deltaTime -- Increment idle time using deltatime
 
-		if player:GetAttribute("AutoFarm") then			
+		if player:GetAttribute("AutoFarm") then
 			if self._idleTimer >= activeTime then
 				self._stateMachine:SwitchState(self._states["Idle"])
 				self._stateMachine:Resume()
-				self._idleTimer = 0 
-				
+				self._idleTimer = 0
 			end
 		else
 			if self._idleTimer >= inActiveTime then
 				player:SetAttribute("AutoFarm", true)
-				self._idleTimer = 0 
+				self._idleTimer = 0
 			end
 		end
 	else
@@ -273,21 +292,25 @@ function AutoCollectController:OnInputBegan(input, gameProcessedEvent)
 	if movementKeys[input.KeyCode] and self._stateMachine.IsRunning then
 		self._stateMachine:Pause()
 		self._stateMachine:SwitchState(self._states["Idle"])
-		AutoCollectController.CancelMoveTo()
+		self:CancelMoveTo()
 	end
+end
+
+function AutoCollectController:AfterPlayerLoaded()
+	self._food = self._player:WaitForChild("Currencies"):WaitForChild("Food")
+	self._feeders = self._controllers.ZoneController:GetFeedingPart():GetChildren()
 end
 
 function AutoCollectController:Initialize(player: Player)
     self._player = player
     self._idleTimer = 0
     self._isMoving = false
+	self._selectedFoodPile = nil :: Model
 
-    -- Initialize self._states with type casting
 	self._states["Idle"] = State.new("Idle") :: Classes.State
 	self._states["CollectFood"] = State.new("CollectFood") :: Classes.State
 	self._states["DepositFood"] = State.new("DepositFood") :: Classes.State
 
-	-- Initialize self._conditions with type casting
 	self._conditions["IdleToCollectFood"] = Condition.new("IdleToCollectFood") :: Classes.Condition
 	self._conditions["CollectFoodToDepositFood"] = Condition.new("CollectFoodToDepositFood") :: Classes.Condition
 	self._conditions["CollectFoodToIdle"] = Condition.new("CollectFoodToIdle") :: Classes.Condition
@@ -306,10 +329,10 @@ function AutoCollectController:Initialize(player: Player)
 			self._idleTimer = 0
 		end
 
-		if attribute == "InteractiveUI" then
-			if player:GetAttribute("InteractiveUI") then
-				player:SetAttribute("AutoFarm", false)
-			end
+		if attribute == "AutoCollect" then
+			self.UpdateConnection = RunService.Heartbeat:Connect(function(deltaTime)
+				self:Update(deltaTime)
+			end)
 		end
 	end)
 
@@ -323,9 +346,11 @@ function AutoCollectController:Initialize(player: Player)
 
 	self:SetUpConditions()
 
-	self.UpdateConnection = RunService.Heartbeat:Connect(function(deltaTime)
-        self:Update(deltaTime)
-    end)
+	if player:GetAttribute("AutoCollect") then
+		self.UpdateConnection = RunService.Heartbeat:Connect(function(deltaTime)
+			self:Update(deltaTime)
+		end)
+	end
 
 	self._lastPlayerPos = player.Character.PrimaryPart.Position
 end
@@ -336,6 +361,8 @@ function AutoCollectController.new()
     self._stateMachine = StateMachine.new() :: Classes.StateMachine
     self._states = {} :: {[string]: Classes.State}
     self._conditions = {} :: {[string]: Classes.Condition}
+
+	print(self)
 
     return self
 end

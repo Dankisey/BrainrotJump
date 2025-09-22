@@ -111,6 +111,9 @@ local function onPlayerAdded(self: ServiceTemplate.Type, player: Player)
 	local isGroupRewardClaimed = data.IsGroupRewardClaimed or false
 	player:SetAttribute("IsGroupRewardClaimed", isGroupRewardClaimed)
 
+	local isStarterPackPurchased = data.IsStarterPackPurchased or false
+	player:SetAttribute("StarterPackPurchased", isStarterPackPurchased)
+
 	player:SetAttribute("IsLoaded", true)
 	self._loadedPlayers[player.Name] = true
 end
@@ -150,6 +153,9 @@ local function onPlayerRemoving(self: ServiceTemplate.Type, player: Player)
 
 	local isGroupRewardClaimed = player:GetAttribute("IsGroupRewardClaimed") or false
 	data.IsGroupRewardClaimed = isGroupRewardClaimed
+
+	local isStarterPackPurchased = player:GetAttribute("StarterPackPurchased") or false
+	data.IsStarterPackPurchased = isStarterPackPurchased
 
 	if not isUsingEmptySave then
 		local success, value = pcall(SavesDataStore.SetAsync, SavesDataStore, player.UserId, data)
