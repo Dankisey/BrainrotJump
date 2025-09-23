@@ -14,6 +14,7 @@ local UpgradesConfig = require(ReplicatedStorage.Configs.UpgradesConfig)
 local BrainrotGui = ReplicatedStorage.Assets.UI.BrainrotInfoGui
 local ProgressBar = require(ReplicatedStorage.Modules.UI.ProgressBar)
 local FeedParticles = ReplicatedStorage.Assets.Particles.FeedParticles
+local JumpEndParticles = ReplicatedStorage.Assets.Particles.JumpEndParticles
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -177,6 +178,14 @@ local function endJumpForPlayer(self: BrainrotService, player: Player, maxReache
 
     JumpEnded:FireClient(player)
 
+    local particles = JumpEndParticles:Clone()
+    local zone = self._services.ZonesService:GetPlayerZone(player)
+    particles.Parent = zone.BrainrotPoint
+
+    task.delay(3, function()
+        particles:Destroy()
+    end)
+
     local prompt = self._models[player].Model.ProximityPrompt
     prompt.Enabled = true
 
@@ -206,6 +215,19 @@ local function startJumpForPlayer(self: BrainrotService, player: Player)
     local currentWorld = self._services.WorldsService:GetPlayerWorldIndex(player)
     local targetHeight = jumpPower * WorldsConfig.Worlds[currentWorld].JumpMultiplier
     local estimatedTime = targetHeight / BrainrotConfig.Speed
+
+    local estimatedCheckpointsPassed = 0
+    local checkpointHeight = BrainrotConfig.CheckpointBaseHeight
+
+    while targetHeight > checkpointHeight do
+        estimatedCheckpointsPassed += 1
+        checkpointHeight = BrainrotConfig.CheckpointBaseHeight * BrainrotConfig.CheckpointHeightMultiplier ^ estimatedCheckpointsPassed
+    end
+
+    if estimatedTime > (estimatedCheckpointsPassed + 1) * BrainrotConfig.MaxTimePerCheckpoint then
+        estimatedTime = estimatedCheckpointsPassed * BrainrotConfig.MaxTimePerCheckpoint
+    end
+
     local currentCheckpoint = 0
 
     task.spawn(function()
@@ -356,8 +378,8 @@ function BrainrotService:UnloadSave(player: Player)
 end
 
 function BrainrotService:Initialize()
-    self._cubicBezierUp = self._utils.CubicBezier.new(.09,.87,.76,.91)
-    self._cubicBezierDown = self._utils.CubicBezier.new(.43,-0.01,.95,.76)
+    self._cubicBezierUp = self._utils.CubicBezier.new(.04,1.16,.88,.89)
+    self._cubicBezierDown = self._utils.CubicBezier.new(1,.07,.95,.5)
 
     StartJumpPreparation.OnServerInvoke = function(player: Player)
         if not self._models[player] or not self._models[player].Model then return false end

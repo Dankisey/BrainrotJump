@@ -4,6 +4,7 @@ local BrainrotConfig = {}
 BrainrotConfig.CheckpointBaseHeight = 200;
 BrainrotConfig.CheckpointHeightMultiplier = 10;
 BrainrotConfig.Speed = 50; -- studs per second
+BrainrotConfig.MaxTimePerCheckpoint = 10;
 
 BrainrotConfig.JumpEffectParameters = {
     PreJumpMinIntensity = 0.2;

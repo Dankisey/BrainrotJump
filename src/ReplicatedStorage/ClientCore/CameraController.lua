@@ -27,45 +27,35 @@ function CameraController:TweenTo(target: CFrame, time: number, start: CFrame?) 
     return tween.Completed
 end
 
--- function CameraController:StartCameraShake(shakeIntensity: number)
---     if self._isShaking then return end
+function CameraController:ChangeShakeIntensity(minIntensity: number, maxIntensity: number, duration: number, interval: number)
+    self._shakeIntensity = minIntensity
+    local totalChange = maxIntensity - minIntensity
+    local oneChange = totalChange / (duration / interval)
 
---     self._isShaking = true
---     local originalCFrame = self._camera.CFrame
+    task.spawn(function()
+        while task.wait(interval) do
+            self._shakeIntensity += oneChange
+            duration -= interval
 
---     self._shakingTask = task.spawn(function()
---         while self._isShaking do
---             local offset = Vector3.new(
---                 self._random:NextNumber(-shakeIntensity, shakeIntensity),
---                 self._random:NextNumber(-shakeIntensity, shakeIntensity),
---                 self._random:NextNumber(-shakeIntensity, shakeIntensity)
---             )
+            if duration <= 0  or self._shakeIntensity > maxIntensity then break end
+        end
 
---             local currentCFrame = self._camera.CFrame
---             local targetCFrame = currentCFrame + offset
-
---             local tween = TweenService:Create(self._camera, TweenInfo.new(0.3), {CFrame = targetCFrame})
---             tween:Play()
---             tween.Completed:Wait()
---         end
-
---         self._camera.CFrame = originalCFrame
---     end)
--- end
+        self._shakeIntensity = 1
+    end)
+end
 
 function CameraController:StartCameraShake(shakeIntensity: number)
     if self._isShaking then return end
 
     self._isShaking = true
-
-    print(self._camera.CameraSubject)
+    self._shakeIntensity = shakeIntensity
 
     self._shakingTask = task.spawn(function()
         while self._isShaking do
             local offset = Vector3.new(
-                self._random:NextNumber(-shakeIntensity, shakeIntensity),
-                self._random:NextNumber(-shakeIntensity, shakeIntensity),
-                self._random:NextNumber(-shakeIntensity, shakeIntensity)
+                self._random:NextNumber(-self._shakeIntensity, self._shakeIntensity),
+                self._random:NextNumber(-self._shakeIntensity, self._shakeIntensity),
+                self._random:NextNumber(-self._shakeIntensity, self._shakeIntensity)
             )
 
             self._shakingOffset = CFrame.new(offset)
