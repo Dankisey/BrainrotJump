@@ -3,7 +3,7 @@ local UpgradesConfig = {}
 UpgradesConfig.Upgrades = {
     BrainrotSize = {
         PublicName = "Brainrot Size";
-        Icon = "rbxassetid://92190724973951";
+		Icon = "rbxassetid://133188277389753";
         LevelObjectName = "BrainrotSizeLevel";
 
         Levels = {
@@ -25,7 +25,7 @@ UpgradesConfig.Upgrades = {
     };
     CashMultiplier = {
         PublicName = "Cash Multiplier";
-        Icon = "rbxassetid://92190724973951";
+		Icon = "rbxassetid://18885492705";
         LevelObjectName = "CashMultiplierLevel";
 
         Levels = {
@@ -43,7 +43,7 @@ UpgradesConfig.Upgrades = {
     };
     FoodCollectingRadius = {
         PublicName = "Food Collecting Radius";
-        Icon = "rbxassetid://92190724973951";
+		Icon = "rbxassetid://140480601874521";
         LevelObjectName = "FoodCollectingRadiusLevel";
 
         Levels = {
@@ -61,7 +61,7 @@ UpgradesConfig.Upgrades = {
     };
     FoodCollectingSpeed = {
         PublicName = "Food Collecting Speed";
-        Icon = "rbxassetid://92190724973951";
+		Icon = "rbxassetid://73583481620723";
         LevelObjectName = "FoodCollectingSpeedLevel";
 
         Levels = {
@@ -79,7 +79,7 @@ UpgradesConfig.Upgrades = {
     };
     FoodMultiplier = {
         PublicName = "Food Multiplier";
-        Icon = "rbxassetid://92190724973951";
+		Icon = "rbxassetid://138352037251053";
         LevelObjectName = "FoodMultiplierLevel";
 
         Levels = {
@@ -97,7 +97,7 @@ UpgradesConfig.Upgrades = {
     };
     CollectingPiles = {
         PublicName = "Food Sources";
-        Icon = "rbxassetid://92190724973951";
+		Icon = "rbxassetid://84692930918491";
         LevelObjectName = "CollectingPilesLevel";
 
         Levels = {
@@ -115,7 +115,7 @@ UpgradesConfig.Upgrades = {
     };
     WinsMultiplier = {
         PublicName = "Wins Multiplier";
-        Icon = "rbxassetid://92190724973951";
+		Icon = "rbxassetid://74036095975091";
         LevelObjectName = "WinsMultiplierLevel";
 
         Levels = {
