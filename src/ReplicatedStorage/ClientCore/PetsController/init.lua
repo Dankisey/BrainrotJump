@@ -70,37 +70,50 @@ end
 
 function PetsController:UpdatePetsMultiplier()
     local equippedPets = self:GetEquippedPets(self._player)
-    self._cumulativeMultiplier = 1
+    self._winsMultiplier = 1
+    self._cashMultiplier = 1
 
     if not equippedPets then
-        self.PetsMultiplierChanged:Invoke(self._cumulativeMultiplier)
+        self.WinsMultiplierChanged:Invoke(self._winsMultiplier)
+        self.CashMultiplierChanged:Invoke(self._cashMultiplier)
+
         return
     end
 
     for _, petData in equippedPets do
         local name = petData.ConfigName
-        local multiplier = PetsConfig.Pets[name].WinsMultiplier
+        local winsMultiplier = PetsConfig.Pets[name].WinsMultiplier
+        local cashMultiplier = PetsConfig.Pets[name].CashMultiplier
 
         if petData.IsGold then
-            multiplier *= PetsConfig.Pets[name].GoldStatsMultiplier
+            winsMultiplier *= PetsConfig.Pets[name].GoldStatsMultiplier
+            cashMultiplier *= PetsConfig.Pets[name].GoldStatsMultiplier
         elseif petData.IsShiny then
-            multiplier *= PetsConfig.Pets[name].ShinyStatsMultiplier
+            winsMultiplier *= PetsConfig.Pets[name].ShinyStatsMultiplier
+            cashMultiplier *= PetsConfig.Pets[name].ShinyStatsMultiplier
         end
 
-        self._cumulativeMultiplier *= multiplier
+        self._winsMultiplier *= winsMultiplier
+        self._cashMultiplier *= cashMultiplier
     end
 
-    self.PetsMultiplierChanged:Invoke(self._cumulativeMultiplier)
+    self.WinsMultiplierChanged:Invoke(self._winsMultiplier)
+    self.CashMultiplierChanged:Invoke(self._cashMultiplier)
 end
 
-function PetsController:GetPetsMultiplier()
-    return self._cumulativeMultiplier or 1
+function PetsController:GetWinsMultiplier()
+    return self._winsMultiplier or 1
+end
+
+function PetsController:GetCashMultiplier()
+    return self._cashMultiplier or 1
 end
 
 function PetsController:Initialize(myPlayer: Player)
+    self._winsMultiplier = 1
+    self._cashMultiplier = 1
     self._player = myPlayer
     self._playerPets = {}
-    self._cumulativeMultiplier = 1
 
     local playersPets = GetPlayersPets:InvokeServer() :: {[string]: {[string]: PetsConfig.PetData}}
 
@@ -206,8 +219,9 @@ function PetsController:Initialize(myPlayer: Player)
 end
 
 function PetsController:InjectUtils(utils)
+    self.WinsMultiplierChanged = utils.Event.new()
+    self.CashMultiplierChanged = utils.Event.new()
     self._utils = utils
-    self.PetsMultiplierChanged = utils.Event.new()
 end
 
 function PetsController.new()

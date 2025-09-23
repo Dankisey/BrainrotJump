@@ -1,6 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local GamepassesConfig = require(ReplicatedStorage.Configs.GamepassesConfig)
+local UpgradesConfig = require(ReplicatedStorage.Configs.UpgradesConfig)
 local BrainrotConfig = require(ReplicatedStorage.Configs.BrainrotConfig)
 local Remotes = ReplicatedStorage.Remotes.Brainrots
 local StopRequested = Remotes.StopRequested :: RemoteEvent
@@ -151,7 +153,7 @@ function JumpFrame:StartJump(currentModel)
 
         if currentHeight > maxHeight then
             maxHeight = currentHeight
-            cashCounter.Text = currentHeight * cashPerStud
+            cashCounter.Text = currentHeight * cashPerStud * self._petsCashMultiplier * self._boostCashMultiplier * self._upgradeCashMultiplier * self._passCashMultiplier
         end
 
         updateProgressBar(self)
@@ -171,7 +173,7 @@ function JumpFrame:AfterPlayerLoaded(player: Player)
     end)
 end
 
-function JumpFrame:Initialize()
+function JumpFrame:Initialize(player: Player)
     self._countdownFrame = self._frame.CountdownFrame
     self._inJumpFrame = self._frame.InJumpFrame
     self._runServiceConnection = nil
@@ -180,7 +182,37 @@ function JumpFrame:Initialize()
     self._currentCheckpoint = 0
     self._currentCheckpointHeight = BrainrotConfig.CheckpointBaseHeight * math.pow(BrainrotConfig.CheckpointHeightMultiplier, self._currentCheckpoint)
     self._prevCheckpointHeight = 0
+    --[[===========================================================================]]
+    self._petsCashMultiplier = self._controllers.PetsController:GetCashMultiplier()
 
+    self._controllers.PetsController.CashMultiplierChanged:Subscribe(self, function(newMultiplier: number)
+        self._petsCashMultiplier = newMultiplier
+    end)
+
+    self._boostCashMultiplier = self._controllers.BoostsController:GetCashMultiplier()
+
+    self._controllers.BoostsController.CashMultiplierChanged:Subscribe(self, function(newMultiplier: number)
+        self._boostCashMultiplier = newMultiplier
+    end)
+
+    self._cashUpgradeObject = player:WaitForChild("Upgrades"):WaitForChild("CashMultiplierLevel")
+    self._upgradeCashMultiplier = UpgradesConfig.Upgrades.CashMultiplier.Levels[self._cashUpgradeObject.Value].Value
+
+    self._cashUpgradeObject.Changed:Connect(function()
+        self._upgradeCashMultiplier = UpgradesConfig.Upgrades.CashMultiplier.Levels[self._cashUpgradeObject.Value].Value
+    end)
+
+    self._passCashMultiplier = 1
+
+    if player:GetAttribute(GamepassesConfig.Attributes.DoubleCash.AttributeName) then
+        self._passCashMultiplier = 2
+    end
+
+    player:GetAttributeChangedSignal(GamepassesConfig.Attributes.DoubleCash.AttributeName):Connect(function()
+        self._passCashMultiplier = if player:GetAttribute(GamepassesConfig.Attributes.DoubleCash.AttributeName) then 2 else 1
+    end)
+
+    --[[===========================================================================]]
     self._controllers.BrainrotController.CountdownStarted:Subscribe(self, function()
         self:StartCountdown()
     end)

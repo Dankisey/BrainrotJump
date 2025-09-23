@@ -9,17 +9,17 @@ local ClientTypes = require(ReplicatedStorage.Modules.ClientTypes)
 
 local BoostsController = {} :: ClientTypes.BoostsController
 
-local function recalculatePowerMultiplier(self: ClientTypes.BoostsController)
+local function recalculateMultiplier(self: ClientTypes.BoostsController, stat: string)
     local accumulatingFunction = function(a, b)
         return a * b
     end
 
-    local modifier = 1
+    local multiplier = 1
 
     if self._boosts.TemporaryBoosts then
         for _, boostInfo in pairs(self._boosts.TemporaryBoosts) do
-            if boostInfo.ModifiedStats.Power then
-                modifier = accumulatingFunction(modifier, boostInfo.ModifiedStats.Power)
+            if boostInfo.ModifiedStats[stat] then
+                multiplier = accumulatingFunction(multiplier, boostInfo.ModifiedStats[stat])
             end
         end
     end
@@ -29,35 +29,41 @@ local function recalculatePowerMultiplier(self: ClientTypes.BoostsController)
             local boostValue = nil
 
             if PermanentBoosts.Boosts[boostName].IsLevelBased then
-                if not PermanentBoosts.Boosts[boostName].ModifiedStats[level].Power then continue end
+                if not PermanentBoosts.Boosts[boostName].ModifiedStats[level][stat] then continue end
 
-                boostValue = PermanentBoosts.Boosts[boostName].ModifiedStats[level].Power
+                boostValue = PermanentBoosts.Boosts[boostName].ModifiedStats[level][stat]
             else
-                if not PermanentBoosts.Boosts[boostName].ModifiedStats.Power then continue end
+                if not PermanentBoosts.Boosts[boostName].ModifiedStats[stat] then continue end
 
-                boostValue = PermanentBoosts.Boosts[boostName].ModifiedStats.Power
+                boostValue = PermanentBoosts.Boosts[boostName].ModifiedStats[stat]
             end
 
             if boostValue then
-                modifier = accumulatingFunction(modifier, boostValue)
+                multiplier = accumulatingFunction(multiplier, boostValue)
             end
         end
     end
 
-    if self._currentPowerMultiplier ~= modifier then
-        self.PowerMultiplierChanged:Invoke(modifier)
-        self._currentPowerMultiplier = modifier
-    end
+    return multiplier
 end
 
 local function recalculateMultipliers(self: ClientTypes.BoostsController)
-    -- recalculatePowerMultiplier(self)
+    local cashMultiplier = recalculateMultiplier(self, "Cash")
+
+    if cashMultiplier ~= self._cashMultiplier then
+        self._cashMultiplier = cashMultiplier
+        self.CashMultiplierChanged:Invoke(cashMultiplier)
+    end
 end
 
 function BoostsController:GetBoostLevel(boostName: string) : number
     if (not self._boosts.PermanentBoosts) or (not self._boosts.PermanentBoosts[boostName]) or (not PermanentBoosts.Boosts[boostName].IsLevelBased) then return end
 
     return self._boosts.PermanentBoosts[boostName]
+end
+
+function BoostsController:GetCashMultiplier()
+    return self._cashMultiplier
 end
 
 function BoostsController:GetBoosts()
@@ -80,14 +86,14 @@ function BoostsController:Initialize()
 end
 
 function BoostsController:InjectUtils(utils)
-    self.PowerMultiplierChanged = utils.Event.new()
+    self.CashMultiplierChanged = utils.Event.new()
     self.BoostsUpdated = utils.Event.new()
     self._utils = utils
 end
 
 function BoostsController.new()
     local self = setmetatable(BoostsController, {__index = ControllerTemplate})
-    self._currentPowerMultiplier = 1
+    self._currentCashMultipler = 1
     self._boosts = {}
 
     return self
