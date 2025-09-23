@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local TranslateRange = require(ReplicatedStorage.Modules.Utils.TranslateRange)
 local PilesConfig = require(ReplicatedStorage.Configs.PilesConfig)
 local PilesAssets = ReplicatedStorage.Assets.Piles
 
@@ -9,6 +10,7 @@ local function setView(self, pileType: string, stage: number)
     self._currentView = PilesAssets[pileType][tostring(stage)]:Clone()
     self._currentView:PivotTo(self._spot.CFrame)
     self._currentView.Parent = self._spot
+    self._currentScaleFactor = self._currentView:GetScale()
 end
 
 local function stopAnimations(self)
@@ -72,8 +74,8 @@ local function initialize(self)
     self._scaleValue.Value = 1
 
     self._scaleObjectConnection = self._scaleValue.Changed:Connect(function(value)
-        if self._currentView then
-            self._currentView:ScaleTo(value)
+        if self._currentView and self._currentScaleFactor then
+            self._currentView:ScaleTo(TranslateRange(0, 1, 0, self._currentScaleFactor, value))
         end
     end)
 

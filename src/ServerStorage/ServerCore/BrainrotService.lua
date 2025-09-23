@@ -105,6 +105,7 @@ local function upgradeBrainrot(self: BrainrotService, player: Player)
     self._services.RewardService:GiveReward(player, {FunctionName = "UpgradePoints", Data = 1})
 
     spawnBrainrotForPlayer(self, player)
+    scaleModel(self, player)
 end
 
 local function startFeedingProcess(self: BrainrotService, player: Player)
