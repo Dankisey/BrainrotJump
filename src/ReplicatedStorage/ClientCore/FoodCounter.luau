@@ -40,7 +40,7 @@ function FoodCounter:AddFood(amount: number)
     self._lifeTime = 0
 
     if amount > 0 then
-        self._counter.Gui.Frame.CountLabel.Text = "+" .. self._utils.FormatNumber(self._currentShowingFoodAmount)
+        self._counter.Gui.Frame.CountLabel.Text = "+" .. self._utils.FormatNumber(math.round(self._currentShowingFoodAmount))
     else
         self._counter.Gui.Frame.CountLabel.Text = "Max"
     end
