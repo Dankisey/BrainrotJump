@@ -195,7 +195,7 @@ function JumpFrame:Initialize()
         self._runServiceConnection:Disconnect()
         self._runServiceConnection = nil
 
-        task.delay(1, function()
+        task.delay(BrainrotConfig.JumpEffectParameters.DelayToDisableJumpGui, function()
             self._inJumpFrame.Visible = false
             self._inJumpFrame.Counters.StudsCounter.Visible = true
             self._inJumpFrame.StopJumpButton.Visible = true
