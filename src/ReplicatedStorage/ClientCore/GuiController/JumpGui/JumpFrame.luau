@@ -72,40 +72,16 @@ local function updateProgressBar(self)
 	end
 end
 
--- function JumpFrame:StartCountdown()
---     self._countdownFrame.Visible = true
---     local timeLeft = 3
-
---     while task.wait(1) do
---         local label = self._countdownFrame:FindFirstChild(timeLeft)
-
---         if not label then return end
-
---         label.Visible = true
-
---         task.spawn(function()
---             -- tween label
---             task.wait(1)
---             label.Visible = false
---         end)
-
---         timeLeft -= 1
-
---         if timeLeft < 0 then break end
---     end
-
---     self._countdownFrame.Visible = false
--- end
-
 function JumpFrame:StartCountdown()
     self._countdownFrame.Visible = true
-    local timeLeft = 3
+    local timeLeft = 1.5
+    local step = 3
     local tweenService = game:GetService("TweenService")
 
-    while task.wait(1) do
+    while true do
         task.spawn(function()
-            local label = self._countdownFrame:FindFirstChild(tostring(timeLeft))
-        
+            local label = self._countdownFrame:FindFirstChild(tostring(step))
+
             if not label then 
                 self._countdownFrame.Visible = false
                 return 
@@ -117,7 +93,7 @@ function JumpFrame:StartCountdown()
             local originalSize = label.Size
 
             local scaleTween = tweenService:Create(label, TweenInfo.new(
-                0.8,
+                0.35,
                 Enum.EasingStyle.Back,
                 Enum.EasingDirection.Out
             ), {
@@ -129,27 +105,29 @@ function JumpFrame:StartCountdown()
                     originalSize.Y.Offset * 1.2
                 )
             })
-            
+
             scaleTween:Play()
             scaleTween.Completed:Wait()
 
             local fadeTween = tweenService:Create(label, TweenInfo.new(
-                0.2,
+                0.15,
                 Enum.EasingStyle.Quad,
                 Enum.EasingDirection.In
             ), {
                 TextTransparency = 1
             })
-            
+
             fadeTween:Play()
             fadeTween.Completed:Wait()
-            
+
             label.Visible = false
             label.TextTransparency = 0.5
             label.Size = originalSize
         end)
 
-        timeLeft -= 1
+        timeLeft -= .5
+        step -= 1
+        task.wait(.5)
 
         if timeLeft < 0 then break end
     end

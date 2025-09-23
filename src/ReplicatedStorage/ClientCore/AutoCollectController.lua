@@ -90,14 +90,6 @@ function AutoCollectController:DepositFood()
 		self:MoveTo(selectedFeeder.Position, function()
 			print("Cant Reach location")
 		end)
-
-		-- local feedingPart = self._controllers.ZoneController:GetFeedingPart()
-
-		-- print("Feeding part", feedingPart, feedingPart.Position)
-
-		-- self:MoveTo(feedingPart.Position, function()
-		-- 	print("Cant Reach location")
-		-- end)
 	end
 
 	self._states["DepositFood"].UpdateAction = function(deltaTime)
