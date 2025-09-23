@@ -4,8 +4,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- local Remotes = ReplicatedStorage.Remotes.Trails
 -- local TrailPurchaseAttempted = Remotes.TrailPurchaseAttempted
 
-local GreenButton = "rbxassetid://111561490440561"
-local RedButton = "rbxassetid://76677229449648"
+local GreenButton = "rbxassetid://81390608716518"
+local RedButton = "rbxassetid://97873563899005"
 
 local Trails = {}
 

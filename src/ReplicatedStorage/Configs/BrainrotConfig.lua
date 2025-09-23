@@ -5,14 +5,6 @@ BrainrotConfig.CheckpointBaseHeight = 200;
 BrainrotConfig.CheckpointHeightMultiplier = 10;
 BrainrotConfig.Speed = 50; -- studs per second
 
-BrainrotConfig.JumpEffectParameters = {
-    PreJumpMinIntensity = .2;
-    PreJumpMaxIntensity = 3;
-    PostJumpShakeIntensity = 1;
-    PostJumpShakeDuration = 0.5;
-    DelayToDisableJumpGui = 3;
-}
-
 BrainrotConfig.Brainrots = {
     [1] = {
         PublicName = "Avocadini Guffo";

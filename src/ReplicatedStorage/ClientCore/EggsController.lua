@@ -7,7 +7,7 @@ local AutoStopRequested = ReplicatedStorage.Remotes.Eggs.AutoStopRequested
 local RunService = game:GetService("RunService")
 
 local RobuxIcon = "rbxassetid://120243801977220"
-local CoinIcon = "rbxassetid://80513201967002"
+local CoinIcon = "rbxassetid://18885492705"
 
 local EggsController = {}
 

@@ -69,7 +69,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+				Icon = "rbxassetid://18885492705";
             };
             Gold = {
                 RewardName = "Cash";
@@ -79,7 +79,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+				Icon = "rbxassetid://18885492705";
             };
             Shiny = {
                 RewardName = "Cash";
@@ -89,7 +89,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
         };
         GlacierEgg = {
@@ -141,7 +141,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
             Gold = {
                 RewardName = "Cash";
@@ -151,7 +151,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
             Shiny = {
                 RewardName = "Cash";
@@ -161,7 +161,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
         };
         ButterflyEgg = {
@@ -173,7 +173,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
             Gold = {
                 RewardName = "Cash";
@@ -183,7 +183,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
             Shiny = {
                 RewardName = "Cash";
@@ -193,7 +193,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
         };
         FrostEgg = {
@@ -205,7 +205,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
             Gold = {
                 RewardName = "Cash";
@@ -215,7 +215,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
             Shiny = {
                 RewardName = "Cash";
@@ -225,7 +225,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
         };
         FlameEgg = {
@@ -257,7 +257,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
             Gold = {
                 RewardName = "Cash";
@@ -267,7 +267,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
             Shiny = {
                 RewardName = "Cash";
@@ -277,7 +277,7 @@ local PetIndexConfig = {
                     TransactionType = Enum.AnalyticsEconomyTransactionType.Gameplay;
                     Sku = "PetIndexReward";
                 };
-                Icon = "rbxassetid://80513201967002";
+                Icon = "rbxassetid://18885492705";
             };
         };
         RainbowEgg = {

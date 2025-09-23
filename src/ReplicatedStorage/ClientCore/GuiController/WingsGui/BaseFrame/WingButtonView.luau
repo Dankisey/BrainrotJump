@@ -22,7 +22,7 @@ export type WingButtonView = {
 local WingButtonView = {} :: WingButtonView
 
 local function updateView(self: WingButtonView)
-    self._frame.Button.Icon.Image = if self._isOwned then WingsConfig.Wings[self._name].Icon else "rbxassetid://125352837907619"
+	self._frame.Button.Icon.Image = if self._isOwned then WingsConfig.Wings[self._name].Icon else "rbxassetid://11662997125"
 
     if self._isEquipped then
         self._frame.Button.StatusLabel.Text = "Equipped"
@@ -43,7 +43,7 @@ local function initialize(self: WingButtonView)
         self._frame.Button.Cost.Icon.Image = "rbxasset://textures/ui/common/robux@3x.png"
         self._frame.Button.Cost.Label.Text = self._robuxPrice
     else
-        self._frame.Button.Cost.Icon.Image = "rbxassetid://80513201967002"
+		self._frame.Button.Cost.Icon.Image = "rbxassetid://18885492705"
         self._frame.Button.Cost.Label.Text = self._utils.FormatNumber(WingsConfig.Wings[self._name].PriceInCash)
     end
 

@@ -23,7 +23,7 @@ local function updateDescritionView(self: ControllerTemplate.Type)
         self._ownsCurrent = false
     end
 
-    descriptionFrame.ItemFrame.Icon.Image = if self._ownsCurrent then SacksConfig.Items[self._currentSelectedName].Icon else "rbxassetid://125352837907619"
+	descriptionFrame.ItemFrame.Icon.Image = if self._ownsCurrent then SacksConfig.Items[self._currentSelectedName].Icon else "rbxassetid://11662997125"
 end
 
 local function fillItems(self: ControllerTemplate.Type)
@@ -77,7 +77,7 @@ function BaseFrame:UpdateInfoFrame(newSelectedItem: string)
         descriptionFrame.Cost.Icon.Image = "rbxasset://textures/ui/common/robux@3x.png"
         descriptionFrame.Cost.Label.Text = self._robuxPrices[newSelectedItem]
     else
-        descriptionFrame.Cost.Icon.Image = "rbxassetid://80513201967002"
+		descriptionFrame.Cost.Icon.Image = "rbxassetid://18885492705"
         descriptionFrame.Cost.Label.Text = self._utils.FormatNumber(SacksConfig.Items[newSelectedItem].PriceInCash)
     end
 

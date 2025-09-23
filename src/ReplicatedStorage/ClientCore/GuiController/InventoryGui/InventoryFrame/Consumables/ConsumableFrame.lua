@@ -4,8 +4,8 @@ local ConsumableUsed = Remotes.ConsumableUsed
 
 local ConsumableFrame = {}
 
-local ActiveButtonImage = "rbxassetid://111561490440561"
-local InactiveButtonImage = "rbxassetid://78015294234688"
+local ActiveButtonImage = "rbxassetid://81390608716518"
+local InactiveButtonImage = "rbxassetid://138260343216839"
 
 local function initialize(self)
     self._frame.ItemName.Text = self._config.PublicName

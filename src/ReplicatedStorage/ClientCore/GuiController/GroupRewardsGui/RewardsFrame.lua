@@ -8,7 +8,7 @@ local RewardsFrame = {}
 
 local function disableButton(self)
     self._controllers.ButtonsInteractionsConnector:DisconnectButton(self._frame.ClaimButton)
-	self._frame.ClaimButton.Image = "rbxassetid://79018637165895"
+	self._frame.ClaimButton.Image = "rbxassetid://138260343216839"
     self._frame.ClaimButton.TextLabel.Text = "Claimed"
 end
 

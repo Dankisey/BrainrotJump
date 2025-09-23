@@ -15,7 +15,7 @@ PermanentBoosts.Boosts = {
 
 PermanentBoosts.UiInfo = {
     Rebirth = {
-        Icon = "rbxassetid://80993270685237";
+		Icon = "rbxassetid://124789088886644";
         TooltipInfo = {
             Type = "Default";
             Text = "<font color='#" .. Color3.fromRGB(41, 250, 48):ToHex() .. "'>+" ..
