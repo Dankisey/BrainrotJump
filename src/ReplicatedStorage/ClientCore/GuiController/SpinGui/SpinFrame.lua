@@ -22,12 +22,12 @@ local robuxSign = ""
 local AutoSpinInfo = {
     [true] = {
         StrokeColor = Color3.fromRGB(21, 81, 15);
-        ImageId = "rbxassetid://111561490440561";
+        ImageId = "rbxassetid://81390608716518";
         Text = "Auto Spin (on)";
     };
     [false] = {
         StrokeColor = Color3.fromRGB(89, 2, 3);
-        ImageId = "rbxassetid://76677229449648";
+        ImageId = "rbxassetid://97873563899005";
         Text = "Auto Spin (off)";
     };
 }
