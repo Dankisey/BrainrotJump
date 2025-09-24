@@ -8,9 +8,13 @@ end
 
 function Counter.new(frame: Frame, intValue: IntValue)
     local self = setmetatable({}, {__index = Counter})
-    self._currencyValueObject = intValue.Value
+    self._currencyValueObject = intValue
     self._label = frame.CounterLabel
     self:Update()
+
+    intValue.Changed:Connect(function(value)
+        self:Update()
+    end)
 
     return self
 end
