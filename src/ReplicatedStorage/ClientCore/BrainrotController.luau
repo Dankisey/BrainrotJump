@@ -90,9 +90,9 @@ function BrainrotController:Initialize()
 
         self._controllers.CameraController:PivotCameraToPart(newPart, CFrame.new())
         self._controllers.CameraController:StartCameraShake(BrainrotConfig.JumpEffectParameters.PostJumpShakeIntensity)
+        self._controllers.SoundPlayer:PlaySound(self._configs.SoundNames.Impact)
         task.wait(BrainrotConfig.JumpEffectParameters.PostJumpShakeDuration)
         self._controllers.CameraController:StopCameraShake()
-        self._controllers.SoundPlayer:PlaySound(self._configs.SoundNames.Impact)
 
         if self._currentParticles then
             self._currentParticles:Destroy()
@@ -106,6 +106,7 @@ function BrainrotController:Initialize()
 
         task.delay(1, function()
             self._controllers.CameraController:ResetCamera()
+            newPart:Destroy()
 
             if self.IsInAutoJump then
                 task.wait(4)
