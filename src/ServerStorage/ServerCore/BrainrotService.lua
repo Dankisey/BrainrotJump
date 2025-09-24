@@ -190,12 +190,15 @@ local function endJumpForPlayer(self: BrainrotService, player: Player, maxReache
 
         local gui = self._models[player].Model.GuiPart.BrainrotInfoGui
         gui.Enabled = true
+
+        self._playersInJump[player] = nil
     end)
 
     player:SetAttribute("CurrentCheckpoint", 0)
 end
 
 local function startJumpForPlayer(self: BrainrotService, player: Player)
+    self._playersInJump[player] = true
     local model = self._models[player].Model
     local currentConfig = BrainrotConfig.Brainrots[self._brainrots[player].BrainrotLevel]
     local xpPercentage = self._brainrots[player].BrainrotXP / currentConfig.XpToNextLevel * 100
@@ -343,8 +346,8 @@ function BrainrotService:LoadSave(player: Player, data)
 	    if not touchedPlayer then return end
 
         if touchedPlayer ~= player then return end
-
 	    if self._debounces[touchedPlayer] then return end
+        if self._playersInJump[touchedPlayer] then return end
 
 	    self._debounces[touchedPlayer] = true
 
@@ -410,6 +413,7 @@ end
 
 function BrainrotService.new()
     local self = setmetatable(BrainrotService, {__index = ServiceTemplate})
+    self._playersInJump = {}
     self._progressBars = {}
     self._stopRequests = {}
     self._connections = {}

@@ -25,6 +25,8 @@ local function changeSkybox(self, currentCheckpoint: number)
 end
 
 function BrainrotController:StartJump()
+    self.IsJumping = true
+    self._controllers.CharacterMovementController:DisableMovement()
     local zone = self._controllers.ZoneController:GetZone()
     local currentModel = zone.BrainrotPoint:FindFirstChildOfClass("Model")
     local cameraPoint = currentModel:FindFirstChild("CameraPoint")
@@ -79,6 +81,7 @@ function BrainrotController:Initialize()
     self._inDebounce = false
     self._currentSkybox = Lighting:WaitForChild("Sky")
     self.IsInAutoJump = false
+    self.IsJumping = false
 
     JumpEnded.OnClientEvent:Connect(function()
         local Camera = workspace.Camera
@@ -93,6 +96,8 @@ function BrainrotController:Initialize()
         self._controllers.SoundPlayer:PlaySound(self._configs.SoundNames.Impact)
         task.wait(BrainrotConfig.JumpEffectParameters.PostJumpShakeDuration)
         self._controllers.CameraController:StopCameraShake()
+        self._controllers.CharacterMovementController:EnableMovement()
+        self.IsJumping = false
 
         if self._currentParticles then
             self._currentParticles:Destroy()
