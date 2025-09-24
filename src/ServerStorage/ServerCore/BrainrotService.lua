@@ -378,8 +378,10 @@ function BrainrotService:UnloadSave(player: Player)
 end
 
 function BrainrotService:Initialize()
-    self._cubicBezierUp = self._utils.CubicBezier.new(.04,1.16,.88,.89)
-    self._cubicBezierDown = self._utils.CubicBezier.new(1,.07,.95,.5)
+    local bezierUp = BrainrotConfig.BezierUp
+    self._cubicBezierUp = self._utils.CubicBezier.new(bezierUp.X1, bezierUp.Y1, bezierUp.X2, bezierUp.Y2)
+    local bezierDown = BrainrotConfig.BezierDown
+    self._cubicBezierDown = self._utils.CubicBezier.new(bezierDown.X1, bezierDown.Y1, bezierDown.X2, bezierDown.Y2)
 
     StartJumpPreparation.OnServerInvoke = function(player: Player)
         if not self._models[player] or not self._models[player].Model then return false end
