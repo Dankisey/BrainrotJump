@@ -6,7 +6,7 @@ local BrainrotConfig = {}
  go to https://cubic-bezier.com to edit curve
  ]]
 BrainrotConfig.BezierUp = Bezier.new(0,.9,.58,.99);
-BrainrotConfig.BezierDown = Bezier.new(.26,.05,.78,-.12);
+BrainrotConfig.BezierDown = Bezier.new(.31,.23,.45,1);
 
 --[[=======================================]]
 BrainrotConfig.CheckpointBaseHeight = 200;
@@ -18,7 +18,7 @@ BrainrotConfig.JumpEffectParameters = {
     PreJumpMinIntensity = 0.01;
     PreJumpMaxIntensity = 0.13;
     PostJumpShakeIntensity = 0.5;
-    PostJumpShakeDuration = .5;
+    PostJumpShakeDuration = .3;
     DelayToDisableJumpGui = 3;
 }
 
@@ -28,8 +28,8 @@ BrainrotConfig.Brainrots = {
         Icon = "";
         XpToNextLevel = 200;
         Model = ReplicatedStorage.Assets.Brainrot.AvocadiniGuffo;
-        MinJumpPower = 10;
-        MaxJumpPower = 100;
+        MinJumpPower = 100;
+        MaxJumpPower = 150;
     };
     [2] = {
         PublicName = "Frigo Camelo";
