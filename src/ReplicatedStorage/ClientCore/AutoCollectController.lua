@@ -354,8 +354,6 @@ function AutoCollectController.new()
     self._states = {} :: {[string]: Classes.State}
     self._conditions = {} :: {[string]: Classes.Condition}
 
-	print(self)
-
     return self
 end
 

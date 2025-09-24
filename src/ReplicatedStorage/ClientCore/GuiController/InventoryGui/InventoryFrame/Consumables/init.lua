@@ -5,7 +5,6 @@ local ConsumableFrame = require(script.ConsumableFrame)
 local Consumables = {}
 
 local function onSaveLoaded(self, consumables)
-    print(consumables)
     for _, consumableData in pairs(ConsumablesConfig.UiInfo) do
         local amount
 

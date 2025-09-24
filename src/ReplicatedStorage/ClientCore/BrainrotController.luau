@@ -49,8 +49,6 @@ function BrainrotController:StartJump()
 
     local Camera = workspace.CurrentCamera
     self._runConnection = RunService.RenderStepped:Connect(function()
-        if (not self._character) then return end
-
         if not self._currentParticles then
             self._currentParticles = Particles:Clone()
             self._currentParticles.Parent = game.Workspace
@@ -59,11 +57,6 @@ function BrainrotController:StartJump()
             self._currentParticles.CFrame = Camera.CFrame * CFrame.new(0, 0, -5) * CFrame.Angles(math.rad(-90), math.rad(0), math.rad(0))
         end
     end)
-
-    -- self._controllers.CameraController:PivotCameraToPart(currentModel.GuiPart, CFrame.new(Vector3.zAxis * 10))
-
-    -- ADD CAMERA SHAKE
-    --self._controllers.CameraController:StartCameraShake(.2)
 
     self.JumpStarted:Invoke(currentModel)
 end
@@ -88,10 +81,14 @@ function BrainrotController:Initialize()
     self.IsInAutoJump = false
 
     JumpEnded.OnClientEvent:Connect(function()
-        local zone = self._controllers.ZoneController:GetZone()
-        local currentModel = zone.BrainrotPoint:FindFirstChildOfClass("Model")
-        local cameraPoint = currentModel:FindFirstChild("CameraPoint")
-        self._controllers.CameraController:PivotCameraToPart(cameraPoint, CFrame.new())
+        local Camera = workspace.Camera
+        local newPart = Instance.new("Part", workspace)
+        newPart.Transparency = 1
+        newPart.CanCollide = false
+        newPart:PivotTo(Camera.CFrame)
+        newPart.Anchored = true
+
+        self._controllers.CameraController:PivotCameraToPart(newPart, CFrame.new())
         self._controllers.CameraController:StartCameraShake(BrainrotConfig.JumpEffectParameters.PostJumpShakeIntensity)
         task.wait(BrainrotConfig.JumpEffectParameters.PostJumpShakeDuration)
         self._controllers.CameraController:StopCameraShake()
