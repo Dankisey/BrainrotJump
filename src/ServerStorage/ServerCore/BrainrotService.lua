@@ -182,15 +182,15 @@ local function endJumpForPlayer(self: BrainrotService, player: Player, maxReache
     local zone = self._services.ZonesService:GetPlayerZone(player)
     particles.Parent = zone.BrainrotPoint
 
-    task.delay(3, function()
+    task.delay(BrainrotConfig.JumpEffectParameters.DelayToDisableJumpGui, function()
         particles:Destroy()
+
+        local prompt = self._models[player].Model.ProximityPrompt
+        prompt.Enabled = true
+
+        local gui = self._models[player].Model.GuiPart.BrainrotInfoGui
+        gui.Enabled = true
     end)
-
-    local prompt = self._models[player].Model.ProximityPrompt
-    prompt.Enabled = true
-
-    local gui = self._models[player].Model.GuiPart.BrainrotInfoGui
-    gui.Enabled = true
 
     player:SetAttribute("CurrentCheckpoint", 0)
 end

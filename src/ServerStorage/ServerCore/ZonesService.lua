@@ -101,7 +101,7 @@ function ZonesService:TeleportCharacterToAssignedZone(player: Player)
 
 	if not tpPart then return end
 
-	character:PivotTo(tpPart.CFrame)
+	character:PivotTo(tpPart.CFrame * CFrame.Angles(0, 180, 0))
 end
 
 function ZonesService:RegisterPlayer(player: Player)
@@ -132,6 +132,8 @@ function ZonesService:RegisterPlayer(player: Player)
 	wingsGuiOpener:PivotTo(wingsOpenerPoint.CFrame)
 
 	self.ZoneOccupied:Invoke(player, zone)
+
+	self:TeleportCharacterToAssignedZone(player)
 
 	task.delay(2, function()
 		self:AddEggs(player)

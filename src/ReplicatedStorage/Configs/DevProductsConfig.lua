@@ -23,7 +23,7 @@ DevProductsConfig.Potions = {
 }
 
 DevProductsConfig.Wings = {
-	DragonWings = 3405858757;
+	FairyWings = 3405858757;
 }
 
 DevProductsConfig.Cash = {

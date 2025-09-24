@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Counter = require(ReplicatedStorage.Modules.UI.Counter)
 local BrainrotFed = ReplicatedStorage.Remotes.Brainrots.BrainrotFed :: RemoteEvent
 local TweenService = game:GetService("TweenService")
 
@@ -21,6 +22,9 @@ function LeftSide:AfterPlayerLoaded(player: Player)
     self._foodValueObject = player:WaitForChild("Currencies"):WaitForChild("Food")
     self._currentFoodCapacity = player:GetAttribute("FoodCapacity") or 1
     self._foodCounterLabel = self._frame.FoodCounter.CounterLabel
+
+    local cash = player:WaitForChild("Currencies"):WaitForChild("Cash") :: IntValue
+	self.Counters.Cash = Counter.new(self._frame.CashCounter, cash)
 
     local buttons = self._frame.Buttons
 
@@ -74,6 +78,7 @@ end
 function LeftSide.new(frame: Frame)
     local self = setmetatable(LeftSide, {__index = ControllerTemplate})
     self._frame = frame
+    self.Counters = {}
 
     return self
 end
