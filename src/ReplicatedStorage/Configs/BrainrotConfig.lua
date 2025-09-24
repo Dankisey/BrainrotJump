@@ -11,6 +11,7 @@ BrainrotConfig.JumpEffectParameters = {
     PreJumpMaxIntensity = 3;
     PostJumpShakeIntensity = 1;
     PostJumpShakeDuration = .5;
+    DelayToDisableJumpGui = 3;
 }
 
 BrainrotConfig.Brainrots = {
