@@ -48,7 +48,7 @@ UpgradesConfig.Upgrades = {
 
         Levels = {
             [1] = {
-                Value = 20;
+                Value = 10;
             };
             [2] = {
                 Value = 30;

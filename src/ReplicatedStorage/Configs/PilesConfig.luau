@@ -3,8 +3,8 @@ local PilesConfig = {}
 PilesConfig.ViewStages = 3
 PilesConfig.CollectingOffset = 3
 PilesConfig.DefaultRegenerationTime = 10 --fallback if smth went wrong
-PilesConfig.ArcsPerCollection = 4
-PilesConfig.ArcsSpawningDelay = .2
+PilesConfig.ArcsPerCollection = 6
+PilesConfig.ArcsSpawningDelay = .15
 
 PilesConfig.ArcData = {
     Duration = .5;

@@ -81,7 +81,6 @@ function PilesReplicator:AfterPlayerLoaded(player: Player)
 
             table.insert(vfxSpawners, {
                 PileType = pileType;
-                Amount = amountPerPile;
                 Spawn = spot
             })
         end
@@ -89,15 +88,23 @@ function PilesReplicator:AfterPlayerLoaded(player: Player)
         local arcData = PilesConfig.ArcData
 
         for _, spawnData in pairs(vfxSpawners) do
-            local vfx = if #self._vfxPrefabs > 0 then table.remove(self._vfxPrefabs) else FoodVfx:Clone()
-            vfx.Gui.Icon.Image = PilesConfig.Piles[spawnData.PileType].Icon
-            vfx.Parent = workspace.Debris
+            task.spawn(function()
+                for i = 1, PilesConfig.ArcsPerCollection do
+                    local vfx = if #self._vfxPrefabs > 0 then table.remove(self._vfxPrefabs) else FoodVfx:Clone()
+                    vfx.Gui.Icon.Image = PilesConfig.Piles[spawnData.PileType].Icon
+                    vfx.Trail.Color = PilesConfig.Piles[spawnData.PileType].TrailColor
+                    vfx.Parent = workspace.Debris
 
-			self._controllers.ArcBuilder:AddArc(vfx, spawnData.Spawn.Position, self._currentSackPivot, arcData.Duration, arcData.Length, self._random:NextInteger(arcData.Angles.Min, arcData.Angles.Max), function(vfxPart: Part)
-                self._controllers.SoundPlayer:PlaySound("FoodIncomeSound")
-                self._controllers.FoodCounter:AddFood(amountPerPile)
-                table.insert(self._vfxPrefabs, vfxPart)
-                vfxPart.Parent = ReplicatedFirst
+			        self._controllers.ArcBuilder:AddArc(vfx, spawnData.Spawn.Position, self._currentSackPivot, arcData.Duration, arcData.Length, self._random:NextInteger(arcData.Angles.Min, arcData.Angles.Max), function(vfxPart: Part)
+                        self._controllers.SoundPlayer:PlaySound("FoodIncomeSound")
+                        self._controllers.FoodCounter:AddFood(amountPerPile / PilesConfig.ArcsPerCollection)
+
+                        table.insert(self._vfxPrefabs, vfxPart)
+                        vfxPart.Parent = ReplicatedFirst
+                    end)
+
+                    task.wait(PilesConfig.ArcsSpawningDelay)
+                end
             end)
         end
     end)
