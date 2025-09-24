@@ -174,6 +174,15 @@ function Monetization:Initialize()
 		end
 	end
 
+	for spinsAmount, devProductId in DevProductsConfig.Spins do
+		productFunctions[devProductId] = function(_, player: Player)
+			local currentSpins = player:GetAttribute("SpinsAmount") or 0
+			player:SetAttribute("SpinsAmount", currentSpins + spinsAmount)
+
+			return true
+		end
+	end
+
 	for gamepass, info in GamepassesConfig.Attributes do
 		gamepassFunctions[info.GamepassId] = function(_, player, gamePassId)
 			if gamePassId == info.GamepassId then

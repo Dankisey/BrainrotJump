@@ -35,6 +35,12 @@ DevProductsConfig.Cash = {
 	Pack6 = 3407428366;
 };
 
+DevProductsConfig.Spins = {
+    [1] = 3324058655;
+    [10] = 3324058778;
+    [100] = 3324058926;
+}
+
 DevProductsConfig.Wins = {
 	Pack1 = 3407429724;
 	Pack2 = 3407429913;

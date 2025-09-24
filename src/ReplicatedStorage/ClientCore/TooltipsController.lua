@@ -90,7 +90,13 @@ function TooltipsController:RegisterPetTooltip(activationObject: GuiObject, petN
 end
 
 function TooltipsController:RegisterTooltip(activationObject: GuiObject, info: {Type: string})
-    self:RegisterDefaultTooltip(activationObject, info.Text)
+    if info.Type == "Pet" then
+        self:RegisterPetTooltip(activationObject, info.PetName, info.IsGold or false, info.IsShiny or false)
+    elseif info.Type == "Trail" then
+        self:RegisterTrailTooltip(activationObject, info.TrailName)
+    else
+        self:RegisterDefaultTooltip(activationObject, info.Text)
+    end
 end
 
 function TooltipsController:InjectUtils(utils)
