@@ -1,4 +1,3 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SharedTypes = require(ReplicatedStorage.Modules.SharedTypes)
 local Remotes = ReplicatedStorage.Remotes.Boosts
@@ -74,9 +73,17 @@ function BoostsService:GetBonus(player: Player, targetStat: string) : number
         local boostValue = nil
 
         if PermanentBoosts.Boosts[boostName].IsLevelBased then
-            if not PermanentBoosts.Boosts[boostName].ModifiedStats[level][targetStat] then continue end
+            if ((not PermanentBoosts.Boosts[boostName].StatsFunctions) or (not PermanentBoosts.Boosts[boostName].StatsFunctions[targetStat]))
+                and ((not PermanentBoosts.Boosts[boostName].ModifiedStats) or (not PermanentBoosts.Boosts[boostName].ModifiedStats[level][targetStat])) then
 
-            boostValue = PermanentBoosts.Boosts[boostName].ModifiedStats[level][targetStat]
+                continue
+            end
+
+            if PermanentBoosts.Boosts[boostName].StatsFunctions then
+                boostValue = PermanentBoosts.Boosts[boostName].StatsFunctions[targetStat](level)
+            else
+                boostValue = PermanentBoosts.Boosts[boostName].ModifiedStats[level][targetStat]
+            end
         else
             if not PermanentBoosts.Boosts[boostName].ModifiedStats[targetStat] then continue end
 
@@ -89,6 +96,12 @@ function BoostsService:GetBonus(player: Player, targetStat: string) : number
     end
 
     return currentModifier
+end
+
+function BoostsService:GetBoostLevel(player: Player, name: string) : number?
+    if (not self._playerBoosts[player]) or (not self._playerBoosts[player].PermanentBoosts) or (not self._playerBoosts[player].PermanentBoosts[name]) then return  end
+
+    return not self._playerBoosts[player].PermanentBoosts[name]
 end
 
 function BoostsService:TryAddTemporaryBoost(player: Player, name: string, data: SharedTypes.TemporaryBoostData) : boolean
@@ -112,7 +125,11 @@ function BoostsService:CreateOrUpdateLeveledPermanentBoost(player: Player, name:
     if (not self._playerBoosts[player]) or (not PermanentBoosts.Boosts[name].IsLevelBased) then return end
 
     if self._playerBoosts[player].PermanentBoosts[name] then
-        self._playerBoosts[player].PermanentBoosts[name] = math.min(self._playerBoosts[player].PermanentBoosts[name] + 1, #PermanentBoosts.Boosts[name].ModifiedStats)
+        if PermanentBoosts.Boosts[name].ModifiedStats then
+            self._playerBoosts[player].PermanentBoosts[name] = math.min(self._playerBoosts[player].PermanentBoosts[name] + 1, #PermanentBoosts.Boosts[name].ModifiedStats)
+        else
+            self._playerBoosts[player].PermanentBoosts[name] += 1
+        end
     else
         self._playerBoosts[player].PermanentBoosts[name] = 1
     end
@@ -160,26 +177,6 @@ function BoostsService:Initialize()
     GetBoosts.OnServerInvoke = function(player: Player)
         return self._playerBoosts[player]
     end
-
-    ----- TEST
-
-    for _, player in Players:GetPlayers() do
-        task.spawn(function()
-            task.wait(20)
-            for potionName, devProductId in self._configs.DevProductsConfig.Potions do
-                self._services.RewardService:GiveReward(player, {FunctionName = "Potions", Data = {[potionName] = 1;}})
-            end
-        end)
-    end
-
-    Players.PlayerAdded:Connect(function(player)
-        task.spawn(function()
-            task.wait(20)
-            for potionName, devProductId in self._configs.DevProductsConfig.Potions do
-                self._services.RewardService:GiveReward(player, {FunctionName = "Potions", Data = {[potionName] = 1;}})
-            end
-        end)
-    end)
 end
 
 function BoostsService.new() : ServerTypes.BoostsService

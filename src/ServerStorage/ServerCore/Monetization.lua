@@ -40,10 +40,16 @@ local function getPlayersHighestOpenWorld(self, player)
 	return highestOpenWorld
 end
 
-productFunctions[DevProductsConfig.Others.StarterPack] = function(self, player)
+productFunctions[DevProductsConfig.Others.StarterPack] = function(self: ServiceTemplate.Type, player)
 	self._services.RewardService:GiveMultipleRewards(player, self._configs.StarterPackConfig.Rewards)
 	player:SetAttribute("StarterPackPurchased", true)
 	StarterPackPurchased:FireClient(player)
+
+	return true
+end
+
+productFunctions[DevProductsConfig.Others.SkipRebirth] = function(self: ServiceTemplate.Type, player)
+	self._services.RebirthService:ApplyRebirthWithSkip(player)
 
 	return true
 end

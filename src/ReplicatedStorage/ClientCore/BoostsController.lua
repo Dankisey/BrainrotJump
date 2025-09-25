@@ -9,46 +9,67 @@ local ClientTypes = require(ReplicatedStorage.Modules.ClientTypes)
 
 local BoostsController = {} :: ClientTypes.BoostsController
 
-local function recalculateMultiplier(self: ClientTypes.BoostsController, stat: string)
-    local accumulatingFunction = function(a, b)
-        return a * b
+local function getBonus(self: ClientTypes.BoostsController, stat: string)
+    local accumulatingFunction
+    local currentModifier
+
+    if stat == "Luck" then
+        accumulatingFunction = function(a, b)
+            return a + b
+        end
+
+        currentModifier = 0
+    else
+        accumulatingFunction = function(a, b)
+            return a * b
+        end
+
+        currentModifier = 1
     end
 
-    local multiplier = 1
+    if not self._boosts then return currentModifier end
 
-    if self._boosts.TemporaryBoosts then
-        for _, boostInfo in pairs(self._boosts.TemporaryBoosts) do
-            if boostInfo.ModifiedStats[stat] then
-                multiplier = accumulatingFunction(multiplier, boostInfo.ModifiedStats[stat])
-            end
+    self._boosts.TemporaryBoosts = self._boosts.TemporaryBoosts or {}
+
+    for _, boostInfo in pairs(self._boosts.TemporaryBoosts) do
+        if boostInfo.ModifiedStats[stat] then
+            currentModifier = accumulatingFunction(currentModifier, boostInfo.ModifiedStats[stat])
         end
     end
 
-    if self._boosts.PermanentBoosts then
-        for boostName, level: number in pairs(self._boosts.PermanentBoosts) do
-            local boostValue = nil
+    self._boosts.PermanentBoosts = self._boosts.PermanentBoosts or {}
 
-            if PermanentBoosts.Boosts[boostName].IsLevelBased then
-                if not PermanentBoosts.Boosts[boostName].ModifiedStats[level][stat] then continue end
+    for boostName, level: number in pairs(self._boosts.PermanentBoosts) do
+        local boostValue = nil
 
-                boostValue = PermanentBoosts.Boosts[boostName].ModifiedStats[level][stat]
+        if PermanentBoosts.Boosts[boostName].IsLevelBased then
+            if ((not PermanentBoosts.Boosts[boostName].StatsFunctions) or (not PermanentBoosts.Boosts[boostName].StatsFunctions[stat]))
+                and ((not PermanentBoosts.Boosts[boostName].ModifiedStats) or (not PermanentBoosts.Boosts[boostName].ModifiedStats[level][stat])) then
+
+                continue
+            end
+
+            if PermanentBoosts.Boosts[boostName].StatsFunctions then
+                boostValue = PermanentBoosts.Boosts[boostName].StatsFunctions[stat](level)
             else
-                if not PermanentBoosts.Boosts[boostName].ModifiedStats[stat] then continue end
-
-                boostValue = PermanentBoosts.Boosts[boostName].ModifiedStats[stat]
+                boostValue = PermanentBoosts.Boosts[boostName].ModifiedStats[level][stat]
             end
+        else
+            if not PermanentBoosts.Boosts[boostName].ModifiedStats[stat] then continue end
 
-            if boostValue then
-                multiplier = accumulatingFunction(multiplier, boostValue)
-            end
+            boostValue = PermanentBoosts.Boosts[boostName].ModifiedStats[stat]
+        end
+
+        if boostValue then
+            currentModifier = accumulatingFunction(currentModifier, boostValue)
         end
     end
 
-    return multiplier
+    return currentModifier
 end
 
 local function recalculateMultipliers(self: ClientTypes.BoostsController)
-    local cashMultiplier = recalculateMultiplier(self, "Cash")
+    local cashMultiplier = getBonus(self, "Cash")
 
     if cashMultiplier ~= self._cashMultiplier then
         self._cashMultiplier = cashMultiplier

@@ -1,10 +1,16 @@
+local RebirthConfig = require(script.Parent.RebirthConfig)
+
 local PermanentBoosts = {}
 
 PermanentBoosts.Boosts = {
     Rebirth = {
-        ModifiedStats = {
-            Cash = 1.5;
-        }
+        StatsFunctions = {
+            Cash = function(level: number)
+                return RebirthConfig.Bonus.StartValue + (RebirthConfig.Bonus.Step * (level - 1))
+            end;
+        };
+
+        IsLevelBased = true;
     };
     Premium = {
         ModifiedStats = {
@@ -16,11 +22,13 @@ PermanentBoosts.Boosts = {
 PermanentBoosts.UiInfo = {
     Rebirth = {
 		Icon = "rbxassetid://124789088886644";
-        TooltipInfo = {
-            Type = "Default";
-            Text = "<font color='#" .. Color3.fromRGB(41, 250, 48):ToHex() .. "'>+" ..
-            math.round((PermanentBoosts.Boosts.Rebirth.ModifiedStats.Cash - 1) * 100) .. "%</font> Cash";
-        };
+        TooltipInfo = function(level: number)
+            return {
+                Type = "Default";
+                Text = "<font color='#" .. Color3.fromRGB(41, 250, 48):ToHex() .. "'>+" ..
+                math.round((PermanentBoosts.Boosts.Rebirth.StatsFunctions.Cash(level) - 1) * 100) .. "%</font> Cash";
+            }
+        end;
         WidgetOrder = -1;
     };
     Premium = {

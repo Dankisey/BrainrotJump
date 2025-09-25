@@ -39,6 +39,10 @@ local saveLoadableServices = {
 		ServiceName = "PetIndexService";
 		DataName = "PetIndex";
 	};
+	[6] = {
+		ServiceName = "RebirthService";
+		DataName = "RebirthData";
+	};
 }
 
 local playersUsedCodes = {}

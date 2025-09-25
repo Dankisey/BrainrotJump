@@ -1,7 +1,15 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local FormatNumber = require(ReplicatedStorage.Modules.Utils.FormatNumber)
 
-local ProgressBar = {}
+export type Type = {
+	new: (frame: Frame, maxValue: number, useText: boolean?) -> Type;
+	SetCustomText: (Type,  text: string) -> nil;
+	SetValue: (Type, newValue: number) -> nil;
+
+	MaxValue: number;
+}
+
+local ProgressBar = {} :: Type
 
 function ProgressBar:SetCustomText(text: string)
 	if not self._isupdatingText then return end
@@ -12,7 +20,7 @@ end
 function ProgressBar:SetValue(newValue: number)
 	newValue = math.clamp(newValue, 0, self.MaxValue)
 	self._bar.Size = UDim2.fromScale(newValue / self.MaxValue, 1)
-	
+
 	if self._isupdatingText then
 		self._progressLabel.Text = `{FormatNumber(newValue)}/{FormatNumber(self.MaxValue)}`
 	end
@@ -23,19 +31,19 @@ function ProgressBar.new(frame: Frame, maxValue: number, useText: boolean?)
 	self._bar = frame.Bar
 	self.MaxValue = maxValue
 	self._base = frame
-	
+
 	if useText == nil then
 		useText = false
 	end
-	
+
 	self._isupdatingText = useText
-	
+
 	if useText then
 		self._progressLabel = frame:FindFirstChildOfClass("TextLabel")
 	end
-	
+
 	self:SetValue(0)
-	
+
 	return self
 end
 

@@ -9,6 +9,21 @@ export type Analytics = {
 
 } & ServiceTemplate
 
+export type BoostsService = {
+    new: () -> BoostsService;
+
+    TryAddTemporaryBoost: (BoostsService, player: Player, name: string, data: SharedTypes.TemporaryBoostData) -> boolean;
+    CreateOrUpdateLeveledPermanentBoost: (BoostsService, player: Player, name: string) -> nil;
+    AddPermanentBoost: (BoostsService, player: Player, name: string, level: number?) -> boolean;
+    GetBoostLevel: (BoostsService, player: Player, name: string) -> number?;
+    GetBonus: (BoostsService, player: Player, targetStat: string) -> number;
+
+    LoadSave: (BoostsService, player: Player, save: SharedTypes.BoostsSave?) -> nil;
+    UnloadSave: (BoostsService, player: Player) -> SharedTypes.BoostsSave;
+
+    _playerBoosts: {[Player]: SharedTypes.BoostsSave};
+} & ServiceTemplate
+
 export type BrainrotService = {
     LoadSave: (BrainrotService, player: Player, data: table) -> nil;
     UnloadSave: (BrainrotService, player: Player) -> table;
@@ -49,6 +64,21 @@ export type Monetization = {
 
     PromptProduct: (Monetization, player: Player, productId: number) -> nil;
     PromptPass: (Monetization, player: Player, passId: number) -> nil;
+} & ServiceTemplate
+
+export type RebirthSave = {
+    Level: number;
+}
+
+export type RebirthService = {
+    new: () -> RebirthService;
+
+    ApplyRebirthWithSkip: (RebirthService, player: Player) -> nil;
+    LoadSave: (RebirthService, player: Player, save: RebirthSave) -> nil;
+    UnloadSave: (RebirthService, player: Player) -> RebirthSave;
+
+    _playersSaves: {[Player]: RebirthSave};
+    _debounces: {[Player]: boolean};
 } & ServiceTemplate
 
 export type RewardService = {
@@ -116,8 +146,10 @@ export type ZonesService = {
 
 export type Services = {
     Analytics: Analytics;
+    BoostsService: BoostsService;
     InventoryService: InventoryService;
     Monetization: Monetization;
+    RebirthService: RebirthService;
     RewardService: RewardService;
     SavesLoader: SavesLoader;
     ServerMessagesSender: ServerMessagesSender;
