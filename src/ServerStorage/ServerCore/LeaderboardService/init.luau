@@ -32,9 +32,9 @@ local function startUpdating(self)
 
 			local leaderUserId = tonumber(page[1].key)
 
-			for _, dummy in pairs(self._leaderboardDummies[statName]) do
-				dummy:SetPlayer(leaderUserId)
-			end
+			-- for _, dummy in pairs(self._leaderboardDummies[statName]) do
+			-- 	dummy:SetPlayer(leaderUserId)
+			-- end
 		end
 
 		task.wait(updatingTime)
@@ -96,7 +96,11 @@ function LeaderboardService.new()
 	local self = setmetatable(LeaderboardService, {__index = ServiceTemplate})
 	self._physicalLeaderboards = {}
 	self._leaderboardDummies = {}
-	self._dataStores = {}
+	self._dataStores = {
+		HighestJump = DataStoreService:GetOrderedDataStore("HighestJump");
+		TotalCash = DataStoreService:GetOrderedDataStore("TotalCash");
+		TotalWins = DataStoreService:GetOrderedDataStore("TotalWins");
+	}
 
 	for _, leaderboard: Model in pairs(CollectionService:GetTagged("Leaderboard")) do
 		addLeaderboard(self, leaderboard)

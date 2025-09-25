@@ -255,8 +255,8 @@ local function startJumpForPlayer(self: BrainrotService, player: Player)
             CheckpointPassed:FireClient(player, currentCheckpoint)
         end
 
-        if currentHeight > player.Records.MaxHeight.Value then
-            player.Records.MaxHeight.Value = math.round(currentHeight)
+        if currentHeight > player.TotalStats.HighestJump.Value then
+            player.TotalStats.HighestJump.Value = math.round(currentHeight)
         end
 
         model:PivotTo(initialPivot * CFrame.new(0, currentHeight - initialY, 0))
