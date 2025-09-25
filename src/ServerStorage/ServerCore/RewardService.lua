@@ -32,6 +32,14 @@ local rewardsFunctions = {
 		self._services.PetService:GivePet(player, petName, "Normal")
 	end;
 
+	Egg = function(player: Player, eggName: string, self: ServiceTemplate.Type)
+		if not self._services.PetService:CheckAvailableStorage(player, 1) then
+			return false
+		end
+
+		self._services.HatchEggService:OpenEgg(player, eggName, false, false)
+	end;
+
 	Potions = function(player: Player, data: {[string]: number}, self: ServiceTemplate.Type)
 		task.spawn(function()
 			for potionName: string, amount: number in pairs(data) do

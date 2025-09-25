@@ -53,6 +53,7 @@ DevProductsConfig.Wins = {
 DevProductsConfig.Others = {
 	StarterPack = 3407432086;
 	SkipRebirth = 3413785514;
+	SkipWaiting = 3327181263;
 }
 
 return DevProductsConfig

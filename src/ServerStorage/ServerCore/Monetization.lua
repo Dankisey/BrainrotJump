@@ -54,6 +54,10 @@ productFunctions[DevProductsConfig.Others.SkipRebirth] = function(self: ServiceT
 	return true
 end
 
+productFunctions[DevProductsConfig.Others.SkipWaiting] = function(self, player: Player)
+	return self._services.TimeRewardsService:TrySkip(player)
+end
+
 function Monetization:ProcessReciept(receiptInfo)
 	local playerProductKey = receiptInfo.PlayerId .. "_" .. receiptInfo.PurchaseId
 	local success, result, errorMessage

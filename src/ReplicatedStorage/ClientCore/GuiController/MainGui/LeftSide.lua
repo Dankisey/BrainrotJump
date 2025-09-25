@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Counter = require(ReplicatedStorage.Modules.UI.Counter)
+local InfoPin = require(ReplicatedStorage.Modules.UI.InfoPin)
 local BrainrotFed = ReplicatedStorage.Remotes.Brainrots.BrainrotFed :: RemoteEvent
 local TweenService = game:GetService("TweenService")
 
@@ -27,6 +28,23 @@ function LeftSide:AfterPlayerLoaded(player: Player)
     local cash = player:WaitForChild("Currencies"):WaitForChild("Cash") :: IntValue
 	self.Counters.Cash = Counter.new(self._frame.CashCounter, cash)
 
+    player:GetAttributeChangedSignal("FoodCapacity"):Connect(function()
+        self._currentFoodCapacity = player:GetAttribute("FoodCapacity")
+        updateFoodCounter(self)
+    end)
+
+    self._controllers.FoodCounter.Disabled:Subscribe(self, function()
+        updateFoodCounter(self)
+    end)
+
+    BrainrotFed.OnClientEvent:Connect(function()
+        updateFoodCounter(self)
+    end)
+
+    updateFoodCounter(self)
+end
+
+function LeftSide:Initialize()
     local buttons = self._frame.Buttons
 
 	self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.SacksButton, function()
@@ -56,6 +74,15 @@ function LeftSide:AfterPlayerLoaded(player: Player)
         self._controllers.GuiController.DailyRewardsGui:Enable(true)
     end)
 
+    self.TimeRewardsButton = buttons.TimeRewardsButton
+
+    self.TimeRewardsPin = InfoPin.new(self.TimeRewardsButton.Icon.Pin)
+
+    self._controllers.ButtonsInteractionsConnector:ConnectButton(self.TimeRewardsButton, function()
+        self._controllers.GuiController.TimeRewardsGui:Enable(true)
+        self.TimeRewardsPin:TurnOff()
+    end)
+
     self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.WingsButton, function()
         self._controllers.GuiController.WingsGui:Enable(true)
     end)
@@ -67,21 +94,6 @@ function LeftSide:AfterPlayerLoaded(player: Player)
     self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.RebirthButton, function()
         self._controllers.GuiController.RebirthGui:Enable(true)
     end)
-
-    player:GetAttributeChangedSignal("FoodCapacity"):Connect(function()
-        self._currentFoodCapacity = player:GetAttribute("FoodCapacity")
-        updateFoodCounter(self)
-    end)
-
-    self._controllers.FoodCounter.Disabled:Subscribe(self, function()
-        updateFoodCounter(self)
-    end)
-
-    BrainrotFed.OnClientEvent:Connect(function()
-        updateFoodCounter(self)
-    end)
-
-    updateFoodCounter(self)
 end
 
 function LeftSide.new(frame: Frame)
