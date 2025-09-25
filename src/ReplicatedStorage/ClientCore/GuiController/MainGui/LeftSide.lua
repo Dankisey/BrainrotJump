@@ -9,8 +9,8 @@ local LeftSide = {} :: ControllerTemplate.Type
 local function updateFoodCounter(self: ControllerTemplate.Type)
     self._foodCounterLabel.Text = string.format("%s/%s", self._utils.FormatNumber(self._foodValueObject.Value), self._utils.FormatNumber(self._currentFoodCapacity))
     local tweenInfo = TweenInfo.new(0.05, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    local tweenUp = TweenService:Create(self._foodCounterLabel, tweenInfo, {Size = UDim2.fromScale(.8, 1.1)})
-    local tweenDown = TweenService:Create(self._foodCounterLabel, tweenInfo, {Size = UDim2.fromScale(.7, 1)})
+    local tweenUp = TweenService:Create(self._foodCounterLabel, tweenInfo, {Size = UDim2.fromScale(self._foodLabelSize.X + .1, self._foodLabelSize.Y + .1)})
+    local tweenDown = TweenService:Create(self._foodCounterLabel, tweenInfo, {Size = UDim2.fromScale(self._foodLabelSize.X, self._foodLabelSize.Y)})
 
     tweenUp:Play()
     tweenUp.Completed:Wait()
@@ -22,6 +22,7 @@ function LeftSide:AfterPlayerLoaded(player: Player)
     self._foodValueObject = player:WaitForChild("Currencies"):WaitForChild("Food")
     self._currentFoodCapacity = player:GetAttribute("FoodCapacity") or 1
     self._foodCounterLabel = self._frame.FoodCounter.CounterLabel
+    self._foodLabelSize = Vector2.new(self._foodCounterLabel.Size.X.Scale, self._foodCounterLabel.Size.Y.Scale)
 
     local cash = player:WaitForChild("Currencies"):WaitForChild("Cash") :: IntValue
 	self.Counters.Cash = Counter.new(self._frame.CashCounter, cash)
