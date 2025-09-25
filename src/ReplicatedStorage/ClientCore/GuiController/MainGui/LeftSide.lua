@@ -51,6 +51,10 @@ function LeftSide:AfterPlayerLoaded(player: Player)
         self._controllers.GuiController.UpgradesGui:Enable(true)
     end)
 
+    self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.DailyButton, function()
+        self._controllers.GuiController.DailyRewardsGui:Enable(true)
+    end)
+
     self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.WingsButton, function()
         self._controllers.GuiController.WingsGui:Enable(true)
     end)
