@@ -15,6 +15,8 @@ end
 
 function Bottom:AfterPlayerLoaded(player: Player)
 	self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.AutoCollect, function()
+        if self._controllers.BrainrotController.IsJumping then return end
+
 		if not player:GetAttribute("AutoCollect") then
             GamepassRequested:FireServer(GamepassesConfig.Attributes.AutoCollect.GamepassId)
             return
@@ -29,6 +31,8 @@ function Bottom:AfterPlayerLoaded(player: Player)
     end)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.AutoJump, function()
+        if self._controllers.BrainrotController.IsJumping then return end
+
         if player:GetAttribute("AutoFarm") then
             player:SetAttribute("AutoFarm", false)
         end
