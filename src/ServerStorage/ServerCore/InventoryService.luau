@@ -75,6 +75,10 @@ local unlockingFunctions = {
             end
         end
     end;
+
+    Trails = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
+        self._services.TrailsService:TryUnlockTrail(player, itemName)
+    end;
 }
 
 local equipFunctions = {
@@ -138,6 +142,23 @@ local equipFunctions = {
         model:PivotTo(wingsPivot.CFrame)
 		self._equippedItemModels[player].Wings = model
 	end;
+
+    Trails = function(self: ServerTypes.InventoryService, player: Player, itemName: string)
+		if self._equippedItemModels[player].Trail then
+			self._equippedItemModels[player].Trail:Destroy()
+			self._equippedItemModels[player].Trail = nil
+		end
+
+        player.Equipment.Trail.Value = itemName;
+        local trail: Trail = Assets.Trails[itemName]:Clone()
+        local character = player.Character or player.CharacterAdded:Wait()
+
+        trail.Parent = character
+        trail.Attachment0 = character:WaitForChild("attachment0"):WaitForChild("Attachment")
+        trail.Attachment1 = character:WaitForChild("attachment1"):WaitForChild("Attachment")
+
+		self._equippedItemModels[player].Trail = trail
+	end;
 }
 
 local function validateSave(save)
@@ -152,6 +173,7 @@ local function validateSave(save)
     }
 
 	save.Equipment = save.Equipment or {}
+    save.Equipment.Trails = save.Equipment.Trails or {Default = true}
     save.Equipment.Sacks = save.Equipment.Sacks or {BasicSack = true}
     save.Equipment.Wings = save.Equipment.Wings or {}
 

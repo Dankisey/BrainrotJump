@@ -74,6 +74,10 @@ function LeftSide:Initialize()
         self._controllers.GuiController.DailyRewardsGui:Enable(true)
     end)
 
+    self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.TrailsButton, function()
+        self._controllers.GuiController.TrailsGui:Enable(true)
+    end)
+
     self.TimeRewardsButton = buttons.TimeRewardsButton
 
     self.TimeRewardsPin = InfoPin.new(self.TimeRewardsButton.Icon.Pin)
