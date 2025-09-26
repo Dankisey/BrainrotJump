@@ -55,7 +55,7 @@ local function loadAnimations(self: BrainrotService, player: Player)
 
     self._models[player].AnimationTracks = {
         Idle = animator:LoadAnimation(model.AnimSaves.Idle);
-        Jump = animator:LoadAnimation(model.AnimSaves.Jump);
+        -- Jump = animator:LoadAnimation(model.AnimSaves.Jump);
     }
 
     self._models[player].AnimationsLoaded = true
@@ -111,6 +111,9 @@ end
 
 local function startFeedingProcess(self: BrainrotService, player: Player)
     local amount = player.Currencies.Food.Value
+
+    if amount <= 0 then return end
+
     player.Currencies.Food.Value = 0
 
     self._brainrots[player].BrainrotXP += amount
@@ -233,9 +236,9 @@ local function startJumpForPlayer(self: BrainrotService, player: Player)
 
     local currentCheckpoint = 0
 
-    task.spawn(function()
-        playJumpAnimation(self, player)
-    end)
+    -- task.spawn(function()
+    --     playJumpAnimation(self, player)
+    -- end)
 
     local initialPivot = model:GetPivot()
     local initialY = model:GetPivot().Y
