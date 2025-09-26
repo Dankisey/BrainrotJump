@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TrailsConfig = require(ReplicatedStorage.Configs.TrailsConfig)
 local StarterPlayer = game:GetService("StarterPlayer")
 
 local Players = game:GetService("Players")
@@ -9,7 +10,7 @@ local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 local CharacterMovementController = {}
 
 local function getResultSpeed(self) : number
-	return self._defaultSpeed
+	return self._defaultSpeed + TrailsConfig[self._currentTrail].SpeedBonus
 end
 
 local function updateCharacterSpeed(self)
@@ -45,11 +46,24 @@ function CharacterMovementController:Initialize(player: Player)
     self._basicJumpHeight = StarterPlayer.CharacterJumpHeight
     self._jumpHeight = self._basicJumpHeight
 
+    local trail = player:WaitForChild("Equipment"):WaitForChild("Trail")
+    self._currentTrail = trail.Value
+
+    trail.Changed:Connect(function()
+        self._currentTrail = trail.Value
+        self._speed = getResultSpeed(self)
+		updateCharacterSpeed(self)
+    end)
+
     Player.CharacterAdded:Connect(function(character: Model)
 		self._character = character
+        self._speed = getResultSpeed(self)
 		updateCharacterSpeed(self)
 		self._humanoid = self._character:WaitForChild("Humanoid") :: Humanoid
 	end)
+
+    self._speed = getResultSpeed(self)
+	updateCharacterSpeed(self)
 end
 
 function CharacterMovementController.new()
