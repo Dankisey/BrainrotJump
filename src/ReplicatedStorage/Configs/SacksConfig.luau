@@ -115,14 +115,15 @@ SacksConfig.Items = {
 		PriceInCash = 100;
 		Rarity = RaritiesConfig.Divine
 	};
-	EnderSack = {
+	RobuxSack = {
 		PublicName = "Ender Sack";
-		ConfigName = "EnderSack";
+		ConfigName = "RobuxSack";
 		Icon = "rbxassetid://116494883060883";
-        FoodCapacity = 500;
+        FoodCapacity = 1;
 		ProductId = DevProductsConfig.Sacks.RobuxSack;
         PriceInCash = 9999999999; --for ordering needs only
-        Rarity = RaritiesConfig.Divine
+        Rarity = RaritiesConfig.Divine;
+		IsInfiniteCapacity = true
     };
 }
 

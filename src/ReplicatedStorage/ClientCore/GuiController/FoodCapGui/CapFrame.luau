@@ -1,5 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ProductRequested = ReplicatedStorage.Remotes.Monetization.DevProductRequested
 local FoodCollectingConfig = require(ReplicatedStorage.Configs.FoodCollectingConfig)
+local DevProductsConfig = require(ReplicatedStorage.Configs.DevProductsConfig)
 
 local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 local CapFrame = {} :: ControllerTemplate.Type
@@ -29,8 +31,11 @@ function CapFrame:AfterPlayerLoaded()
     end)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.GamepassFrame.PurchaseButton, function()
-        print("Prompt pass here")
+        ProductRequested:FireServer(DevProductsConfig.Sacks.RobuxSack)
     end)
+
+    local productInfo = self._utils.TryGetProductInfo(DevProductsConfig.Sacks.RobuxSack, Enum.InfoType.Product)
+    self._frame.GamepassFrame.PurchaseButton.Label.Text = if productInfo then "" .. productInfo.PriceInRobux else "???"
 
     task.spawn(function()
         while task.wait(1) do

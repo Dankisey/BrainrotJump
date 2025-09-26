@@ -7,7 +7,7 @@ local ControllerTemplate = require(ReplicatedStorage.Modules.ControllerTemplate)
 local LeftSide = {} :: ControllerTemplate.Type
 
 local function updateFoodCounter(self: ControllerTemplate.Type)
-    self._foodCounterLabel.Text = string.format("%s/%s", self._utils.FormatNumber(self._foodValueObject.Value), self._utils.FormatNumber(self._currentFoodCapacity))
+    self._foodCounterLabel.Text = string.format("%s/%s", self._utils.FormatNumber(self._foodValueObject.Value), self._currentFoodCapacity)
     local tweenInfo = TweenInfo.new(0.05, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     local tweenUp = TweenService:Create(self._foodCounterLabel, tweenInfo, {Size = UDim2.fromScale(self._foodLabelSize.X + .1, self._foodLabelSize.Y + .1)})
     local tweenDown = TweenService:Create(self._foodCounterLabel, tweenInfo, {Size = UDim2.fromScale(self._foodLabelSize.X, self._foodLabelSize.Y)})
@@ -20,12 +20,14 @@ end
 
 function LeftSide:AfterPlayerLoaded(player: Player)
     self._foodValueObject = player:WaitForChild("Currencies"):WaitForChild("Food")
-    self._currentFoodCapacity = player:GetAttribute("FoodCapacity") or 1
+    local foodCapacity = player:GetAttribute("FoodCapacity") or 1
+    self._currentFoodCapacity = if player:GetAttribute("IsInfiniteFoodCapacity") then "∞" else self._utils.FormatNumber(foodCapacity)
     self._foodCounterLabel = self._frame.FoodCounter.CounterLabel
     self._foodLabelSize = Vector2.new(self._foodCounterLabel.Size.X.Scale, self._foodCounterLabel.Size.Y.Scale)
 
     player:GetAttributeChangedSignal("FoodCapacity"):Connect(function()
-        self._currentFoodCapacity = player:GetAttribute("FoodCapacity")
+        foodCapacity = player:GetAttribute("FoodCapacity")
+        self._currentFoodCapacity = if player:GetAttribute("IsInfiniteFoodCapacity") then "∞" else self._utils.FormatNumber(foodCapacity)
         updateFoodCounter(self)
     end)
 

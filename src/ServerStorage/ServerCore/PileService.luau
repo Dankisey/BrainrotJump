@@ -91,6 +91,11 @@ function PileService:Initialize()
 
         totalCollectedFood *= UpgradesConfig.Upgrades.FoodMultiplier.Levels[player.Upgrades[UpgradesConfig.Upgrades.FoodMultiplier.LevelObjectName].Value].Value
         local foodLimit = player:GetAttribute("FoodCapacity") or 0
+
+        if player:GetAttribute("IsInfiniteFoodCapacity") then
+            foodLimit = math.huge
+        end
+
         local currentFoodAmount = player.Currencies.Food.Value
         local amountToGive = if currentFoodAmount + totalCollectedFood > foodLimit then math.max(foodLimit - currentFoodAmount, 0) else totalCollectedFood
         FoodCollected:FireClient(player, spots, amountToGive)

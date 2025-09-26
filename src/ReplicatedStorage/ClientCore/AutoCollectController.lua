@@ -126,7 +126,7 @@ function AutoCollectController:SetUpConditions()
 
 	self._conditions["CollectFoodToDepositFood"].TransitionState = self._states["DepositFood"]
 	self._conditions["CollectFoodToDepositFood"].ExitCondition = function()
-		if self._food.Value >= self._player:GetAttribute("FoodCapacity") then
+		if self._food.Value >= self._player:GetAttribute("FoodCapacity") and (not self._player:GetAttribute("IsInfiniteFoodCapacity")) then
 			return true
 		end
 

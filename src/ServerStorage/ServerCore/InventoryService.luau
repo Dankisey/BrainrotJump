@@ -181,6 +181,7 @@ local function validateSave(save)
 end
 
 local function onEquipmentChanged(player: Player)
+    player:SetAttribute("IsInfiniteFoodCapacity", SacksConfig.Items[player.Equipment.Sack.Value].IsInfiniteCapacity ~= nil)
     player:SetAttribute("FoodCapacity", SacksConfig.Items[player.Equipment.Sack.Value].FoodCapacity)
 end
 

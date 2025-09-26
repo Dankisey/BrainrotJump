@@ -71,7 +71,12 @@ function BaseFrame:UpdateInfoFrame(newSelectedItem: string)
     descriptionFrame.ItemName.TextColor3 = SacksConfig.Items[self._currentSelectedName].Rarity.Color
     descriptionFrame.ItemFrame.UIStroke.Color = SacksConfig.Items[self._currentSelectedName].Rarity.Color
     descriptionFrame.ItemFrame.UIGradient.Color = SacksConfig.Items[self._currentSelectedName].Rarity.Gradient
-    descriptionFrame.Capacity.Label.Text = string.format("Capacity: %s", self._utils.FormatNumber(SacksConfig.Items[newSelectedItem].FoodCapacity))
+
+    if SacksConfig.Items[newSelectedItem].IsInfiniteCapacity then
+        descriptionFrame.Capacity.Label.Text = string.format("Capacity: %s", "∞")
+    else
+        descriptionFrame.Capacity.Label.Text = string.format("Capacity: %s", self._utils.FormatNumber(SacksConfig.Items[newSelectedItem].FoodCapacity))
+    end
 
     if self._robuxPrices[newSelectedItem] then
         descriptionFrame.Cost.Icon.Image = "rbxasset://textures/ui/common/robux@3x.png"

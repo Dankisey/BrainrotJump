@@ -83,10 +83,27 @@ function FoodCollectingController:AfterPlayerLoaded(player: Player)
 
     self._pileSpots = self._controllers.ZoneController:GetZone().FoodPileSpots:GetChildren()
 	self._currentSackCapacity = self._player:GetAttribute("FoodCapacity") or 1
+
+    if player:GetAttribute("IsInfiniteFoodCapacity") then
+        self._currentSackCapacity = math.huge
+    end
+
     self._food = self._player:WaitForChild("Currencies"):WaitForChild("Food")
 
     self._player:GetAttributeChangedSignal("FoodCapacity"):Connect(function()
 		self._currentSackCapacity = self._player:GetAttribute("FoodCapacity")
+
+        if player:GetAttribute("IsInfiniteFoodCapacity") then
+            self._currentSackCapacity = math.huge
+        end
+    end)
+
+    self._player:GetAttributeChangedSignal("IsInfiniteFoodCapacity"):Connect(function()
+        self._currentSackCapacity = self._player:GetAttribute("FoodCapacity")
+
+        if player:GetAttribute("IsInfiniteFoodCapacity") then
+            self._currentSackCapacity = math.huge
+        end
     end)
 
     task.spawn(function()
