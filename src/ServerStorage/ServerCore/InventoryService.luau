@@ -224,6 +224,10 @@ function InventoryService:TryAddItem(player: Player, itemType: string, categoryN
     return true
 end
 
+function InventoryService:CountItems(player: Player, itemType: string, categoryName: string): number
+    return #self._utils.GetKeys(self._playersSaves[player][itemType][categoryName])
+end
+
 function InventoryService:ToggleWingsVisibility(player: Player, enable: boolean)
     if not self._equippedItemModels[player].Wings then return end
 

@@ -43,6 +43,10 @@ local saveLoadableServices = {
 		ServiceName = "RebirthService";
 		DataName = "RebirthData";
 	};
+	[7] = {
+		ServiceName = "AchievementsService";
+		DataName = "AchievementsData";
+	};
 }
 
 local playersUsedCodes = {}

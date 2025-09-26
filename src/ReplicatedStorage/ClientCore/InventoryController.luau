@@ -61,7 +61,7 @@ function InventoryController:Initialize()
             end
 
             self._inventory[itemType][categoryName][itemName] = true
-            self.Updated:Invoke()
+            self.Updated:Invoke(itemType, categoryName, itemName)
 		end
     end)
 

@@ -94,6 +94,14 @@ function LeftSide:Initialize()
     self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.RebirthButton, function()
         self._controllers.GuiController.RebirthGui:Enable(true)
     end)
+
+    self.AchievementsButton = buttons.AchievementsButton
+
+    self.AchievementsPin = InfoPin.new(self.AchievementsButton.Icon.Pin)
+
+    self._controllers.ButtonsInteractionsConnector:ConnectButton(self.AchievementsButton, function()
+        self._controllers.GuiController.AchievementsGui:Enable(true)
+    end)
 end
 
 function LeftSide.new(frame: Frame)
