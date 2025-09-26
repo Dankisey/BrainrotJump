@@ -1,5 +1,4 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Counter = require(ReplicatedStorage.Modules.UI.Counter)
 local InfoPin = require(ReplicatedStorage.Modules.UI.InfoPin)
 local BrainrotFed = ReplicatedStorage.Remotes.Brainrots.BrainrotFed :: RemoteEvent
 local TweenService = game:GetService("TweenService")
@@ -24,9 +23,6 @@ function LeftSide:AfterPlayerLoaded(player: Player)
     self._currentFoodCapacity = player:GetAttribute("FoodCapacity") or 1
     self._foodCounterLabel = self._frame.FoodCounter.CounterLabel
     self._foodLabelSize = Vector2.new(self._foodCounterLabel.Size.X.Scale, self._foodCounterLabel.Size.Y.Scale)
-
-    local cash = player:WaitForChild("Currencies"):WaitForChild("Cash") :: IntValue
-	self.Counters.Cash = Counter.new(self._frame.CashCounter, cash)
 
     player:GetAttributeChangedSignal("FoodCapacity"):Connect(function()
         self._currentFoodCapacity = player:GetAttribute("FoodCapacity")
@@ -103,7 +99,6 @@ end
 function LeftSide.new(frame: Frame)
     local self = setmetatable(LeftSide, {__index = ControllerTemplate})
     self._frame = frame
-    self.Counters = {}
 
     return self
 end
