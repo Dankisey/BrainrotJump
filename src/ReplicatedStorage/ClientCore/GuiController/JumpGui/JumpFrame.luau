@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 local GamepassesConfig = require(ReplicatedStorage.Configs.GamepassesConfig)
 local UpgradesConfig = require(ReplicatedStorage.Configs.UpgradesConfig)
 local BrainrotConfig = require(ReplicatedStorage.Configs.BrainrotConfig)
+local TrailsConfig = require(ReplicatedStorage.Configs.TrailsConfig)
 local Remotes = ReplicatedStorage.Remotes.Brainrots
 local StopRequested = Remotes.StopRequested :: RemoteEvent
 local JumpEnded = Remotes.JumpEnded :: RemoteEvent
@@ -153,7 +154,7 @@ function JumpFrame:StartJump(currentModel)
 
         if currentHeight > maxHeight then
             maxHeight = currentHeight
-            cashCounter.Text = currentHeight * cashPerStud * self._petsCashMultiplier * self._boostCashMultiplier * self._upgradeCashMultiplier * self._passCashMultiplier
+            cashCounter.Text = currentHeight * cashPerStud * self._petsCashMultiplier * self._boostCashMultiplier * self._upgradeCashMultiplier * self._passCashMultiplier * self._trailCashMultiplier
         end
 
         updateProgressBar(self)
@@ -210,6 +211,13 @@ function JumpFrame:Initialize(player: Player)
 
     player:GetAttributeChangedSignal(GamepassesConfig.Attributes.DoubleCash.AttributeName):Connect(function()
         self._passCashMultiplier = if player:GetAttribute(GamepassesConfig.Attributes.DoubleCash.AttributeName) then 2 else 1
+    end)
+
+    local trail = player:WaitForChild("Equipment"):WaitForChild("Trail")
+    self._trailCashMultiplier = TrailsConfig[trail.Value].CashMultiplier
+
+    trail.Changed:Connect(function()
+        self._trailCashMultiplier = TrailsConfig[trail.Value].CashMultiplier
     end)
 
     --[[===========================================================================]]

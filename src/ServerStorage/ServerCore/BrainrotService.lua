@@ -7,6 +7,7 @@ local StopRequested = Remotes.StopRequested :: RemoteEvent
 local BrainrotFed = Remotes.BrainrotFed :: RemoteEvent
 local JumpEnded = Remotes.JumpEnded :: RemoteEvent
 
+local TrailsConfig = require(ReplicatedStorage.Configs.TrailsConfig)
 local BrainrotConfig = require(ReplicatedStorage.Configs.BrainrotConfig)
 local WorldsConfig = require(ReplicatedStorage.Configs.WorldsConfig)
 local GamepassesConfig = require(ReplicatedStorage.Configs.GamepassesConfig)
@@ -151,6 +152,7 @@ local function endJumpForPlayer(self: BrainrotService, player: Player, maxReache
     cashAmount *= self._services.PetService:GetPetsCashMultiplier(player)
     cashAmount *= self._services.BoostsService:GetBonus(player, "Cash")
     cashAmount *= UpgradesConfig.Upgrades.CashMultiplier.Levels[player.Upgrades[UpgradesConfig.Upgrades.CashMultiplier.LevelObjectName].Value].Value
+    cashAmount *= TrailsConfig[player.Equipment.Trail.Value].CashMultiplier
 
     if player:GetAttribute(GamepassesConfig.Attributes.DoubleCash.AttributeName) then
         cashAmount *= 2
