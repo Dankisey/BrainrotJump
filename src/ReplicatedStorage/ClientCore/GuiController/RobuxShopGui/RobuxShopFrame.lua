@@ -54,7 +54,7 @@ local function updateCurrencyPacks(self, currencyName)
     for _, frame in currencyFrame:GetChildren() do
         if not frame:IsA("Frame") then continue end
 
-        frame.Button.Label.Text = self._utils.FormatNumber(CurrenciesPacksConfig[currencyName][self.HighestOpenWorld][frame.Name])
+        frame.Title.Text = "x $" .. self._utils.FormatNumber(CurrenciesPacksConfig[currencyName][self.HighestOpenWorld][frame.Name])
     end
 end
 
