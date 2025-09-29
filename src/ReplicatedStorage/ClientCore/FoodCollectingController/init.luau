@@ -67,6 +67,10 @@ function FoodCollectingController:AfterPlayerLoaded(player: Player)
 	self._sackFiller = SackFiller.new(player)
     self._currentRadius = self._player:GetAttribute("CollectingRadius") or 1
 
+    self._player:GetAttributeChangedSignal("CollectingRadius"):Connect(function()
+        self._currentRadius = self._player:GetAttribute("CollectingRadius")
+    end)
+
     self._collectingPiles = self._player:GetAttribute("CollectingPiles") or 1
 
     self._player:GetAttributeChangedSignal("CollectingPiles"):Connect(function()
