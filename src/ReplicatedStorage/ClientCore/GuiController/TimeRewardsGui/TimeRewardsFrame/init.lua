@@ -83,8 +83,8 @@ function TimeRewardsFrame:AfterPlayerLoaded(player: Player)
         self._rewardFrames[i]:Reset(joinTime)
     end
 
-    self._buttonTextLabel = self._controllers.GuiController.MainGui.LeftSide.TimeRewardsButton.Label
-    self._infoPin = self._controllers.GuiController.MainGui.LeftSide.TimeRewardsPin
+    self._buttonTextLabel = self._controllers.GuiController.MainGui.RightSide.TimeRewardsButton.Label
+    self._infoPin = self._controllers.GuiController.MainGui.RightSide.TimeRewardsPin
     self._infoPin:TurnOff()
     updateButton(self)
 

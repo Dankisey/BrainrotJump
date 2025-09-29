@@ -54,55 +54,22 @@ function LeftSide:Initialize()
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self.PetsButton, function()
         self._controllers.GuiController.PetsGui:Enable(true)
         self._controllers.GuiController.PetsGui.PetsFrame:ChangeCategory("Pets")
-
-        -- if self._controllers.TutorialController.CurrentStep == 5 then
-        --     self._controllers.TutorialController:CompleteStep()
-        -- end
-    end)
-
-    self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.InventoryButton, function()
-        self._controllers.GuiController.InventoryGui:Enable(true)
     end)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.UpgradesButton, function()
         self._controllers.GuiController.UpgradesGui:Enable(true)
     end)
 
-    self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.DailyButton, function()
-        self._controllers.GuiController.DailyRewardsGui:Enable(true)
-    end)
-
     self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.TrailsButton, function()
         self._controllers.GuiController.TrailsGui:Enable(true)
-    end)
-
-    self.TimeRewardsButton = buttons.TimeRewardsButton
-
-    self.TimeRewardsPin = InfoPin.new(self.TimeRewardsButton.Icon.Pin)
-
-    self._controllers.ButtonsInteractionsConnector:ConnectButton(self.TimeRewardsButton, function()
-        self._controllers.GuiController.TimeRewardsGui:Enable(true)
-        self.TimeRewardsPin:TurnOff()
     end)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.WingsButton, function()
         self._controllers.GuiController.WingsGui:Enable(true)
     end)
 
-    self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.ShopButton, function()
-        self._controllers.GuiController.RobuxShopGui:Enable(true)
-    end)
-
     self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.RebirthButton, function()
         self._controllers.GuiController.RebirthGui:Enable(true)
-    end)
-
-    self.AchievementsButton = buttons.AchievementsButton
-
-    self.AchievementsPin = InfoPin.new(self.AchievementsButton.Icon.Pin)
-
-    self._controllers.ButtonsInteractionsConnector:ConnectButton(self.AchievementsButton, function()
-        self._controllers.GuiController.AchievementsGui:Enable(true)
     end)
 end
 

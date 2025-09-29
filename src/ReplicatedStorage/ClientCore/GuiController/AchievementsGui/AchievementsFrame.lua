@@ -24,7 +24,7 @@ local function updateCompletitionStatus(self, index, data)
             AchievementRewardRequested:FireServer(index)
         end)
 
-        self._controllers.GuiController.MainGui.LeftSide.AchievementsPin:TurnOn()
+        self._controllers.GuiController.MainGui.RightSide.AchievementsPin:TurnOn()
     elseif data.IsClaimed then
         toggleCompletitionStatusElements(self, frame, "Claimed")
         self._progressBars[index]:SetValue(AchievementsConfig[index].Goal)
@@ -39,7 +39,7 @@ local function updateCompletitionStatus(self, index, data)
         end
 
         if canTurnInfopinOff then
-            self._controllers.GuiController.MainGui.LeftSide.AchievementsPin:TurnOff()
+            self._controllers.GuiController.MainGui.RightSide.AchievementsPin:TurnOff()
         end
     else
         toggleCompletitionStatusElements(self, frame, "Percentage")
