@@ -47,6 +47,36 @@ function ZoneController:GetFeedingPart() : Part
     return self._feedingPart
 end
 
+function ZoneController:GetBrainrotPoint() : Part
+    waitForInitializingEnd(self)
+
+    if not self._brainrotPoint then
+        self._brainrotPoint = self._zone:WaitForChild("BrainrotPoint") :: Part
+    end
+
+    return self._brainrotPoint
+end
+
+function ZoneController:GetSackPromptHolder() : Part
+    waitForInitializingEnd(self)
+
+    if not self._sackPromptHolder then
+        self._sackPromptHolder = self._zone:WaitForChild("SackPromptHolder") :: Part
+    end
+
+    return self._sackPromptHolder
+end
+
+function ZoneController:GetEggsFolder() : Part
+    waitForInitializingEnd(self)
+
+    if not self._eggsFolder then
+        self._eggsFolder = self._zone:WaitForChild("EggSpots") :: Folder
+    end
+
+    return self._eggsFolder
+end
+
 function ZoneController:GetTeleportPart() : Part
     waitForInitializingEnd(self)
 

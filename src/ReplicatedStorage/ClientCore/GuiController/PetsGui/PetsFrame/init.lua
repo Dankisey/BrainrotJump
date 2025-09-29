@@ -105,9 +105,9 @@ function PetsFrame:Initialize()
     self._closeButton = self._frame.CloseButton
 
 	local function closeGui()
-        -- if self._controllers.TutorialController.CurrentStep == 7 then
-        --     self._controllers.TutorialController:CompleteStep()
-        -- end
+        if self._controllers.TutorialController.CurrentStep == 12 then
+            self._controllers.TutorialController:CompleteStep()
+        end
 
 		self._controllers.GuiController.PetsGui:Disable()
 	end

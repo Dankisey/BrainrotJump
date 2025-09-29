@@ -35,6 +35,7 @@ end
 local function tryCollectFood(self)
     if not self._player.Character then return false end
     if self._controllers.BrainrotController.IsJumping then return false end
+    if self._controllers.TutorialController.BlockFoodCollecting then return false end
 
     local playerPosition = self._player.Character:GetPivot().Position :: Vector3
     local availablePiles = getPilesWithFoodInRange(self) :: {Part}

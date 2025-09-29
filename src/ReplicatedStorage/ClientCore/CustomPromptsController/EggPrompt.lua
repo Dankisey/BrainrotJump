@@ -53,9 +53,10 @@ function EggPrompt:OnHatchClicked(_: ProximityPrompt)
         DevProductRequested:FireServer(self._eggData.ProductId)
     end
 
-    -- if self._eggName == "ButterflyEgg" and self._tutorialController.CurrentStep == 4 then
-    --     self._tutorialController:CompleteStep()
-    -- end
+    -- if self._eggName == "ButterflyEgg" and 
+    if self._tutorialController.CurrentStep == 9 then
+        self._tutorialController:CompleteStep()
+    end
 end
 
 function EggPrompt:OnAutoHatchClicked(_: ProximityPrompt)

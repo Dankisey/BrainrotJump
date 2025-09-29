@@ -92,6 +92,10 @@ end
 function BaseFrame:AfterPlayerLoaded(player: Player)
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.CloseButton, function()
         self._controllers.GuiController.SacksGui:Disable()
+
+        if self._controllers.TutorialController.CurrentStep == 6 then
+            self._controllers.TutorialController:CompleteStep()
+        end
     end)
 
     fillItems(self)
@@ -106,6 +110,10 @@ function BaseFrame:AfterPlayerLoaded(player: Player)
             self._controllers.InventoryController:TryEquipItem("Sacks", self._currentSelectedName)
         else
             self._controllers.InventoryController:RequestItemUnlocking("Sacks", self._currentSelectedName)
+
+            if self._controllers.TutorialController.CurrentStep == 5 then
+                self._controllers.TutorialController:CompleteStep()
+            end
         end
     end)
 

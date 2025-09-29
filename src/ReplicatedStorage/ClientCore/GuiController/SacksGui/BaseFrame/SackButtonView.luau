@@ -53,6 +53,10 @@ local function initialize(self: SackButtonView)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self._frame.Button, function()
         self._controllers.GuiController.SacksGui.BaseFrame:UpdateInfoFrame(self._name)
+
+        if self._controllers.TutorialController.CurrentStep == 4 then
+            self._controllers.TutorialController:CompleteStep()
+        end
     end)
 
     self._isOwned = self._controllers.InventoryController:HasEquipment("Sacks", self._name)

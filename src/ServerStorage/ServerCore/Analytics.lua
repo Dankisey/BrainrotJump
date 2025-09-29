@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TutorialConfig = require(ReplicatedStorage.Configs.TutorialConfig)
 local AnalyticsService = game:GetService("AnalyticsService")
 local HttpService = game:GetService("HttpService")
 
@@ -66,6 +67,15 @@ function Analytics:LogCurrencyIncome(player: Player, currencyName: string, amoun
 		transactionType,
 		itemSku
 	)
+end
+
+function Analytics:LogOnboardingFunnel(player: Player, step: number)
+	AnalyticsService:LogOnboardingFunnelStepEvent(
+		player,
+		step,
+		TutorialConfig.FunnelStepNames[step]
+	)
+	print("Log Onboarding Funnel:", step, TutorialConfig.FunnelStepNames[step])
 end
 
 function Analytics:RemovePlayer(player: Player)

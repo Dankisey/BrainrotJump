@@ -47,6 +47,10 @@ local saveLoadableServices = {
 		ServiceName = "AchievementsService";
 		DataName = "AchievementsData";
 	};
+	[8] = {
+		ServiceName = "TutorialService";
+		DataName = "TutorialData";
+	};
 }
 
 local playersUsedCodes = {}

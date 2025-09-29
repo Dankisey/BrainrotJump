@@ -54,6 +54,10 @@ function LeftSide:Initialize()
     self._controllers.ButtonsInteractionsConnector:ConnectButton(self.PetsButton, function()
         self._controllers.GuiController.PetsGui:Enable(true)
         self._controllers.GuiController.PetsGui.PetsFrame:ChangeCategory("Pets")
+
+        if self._controllers.TutorialController.CurrentStep == 10 then
+            self._controllers.TutorialController:CompleteStep()
+        end
     end)
 
     self._controllers.ButtonsInteractionsConnector:ConnectButton(buttons.UpgradesButton, function()
