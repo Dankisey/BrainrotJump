@@ -126,6 +126,9 @@ local function onPlayerAdded(self: ServiceTemplate.Type, player: Player)
 	local isStarterPackPurchased = data.IsStarterPackPurchased or false
 	player:SetAttribute("StarterPackPurchased", isStarterPackPurchased)
 
+	local freePetStatus = data.FreePetStatus or "NotReached"
+	player:SetAttribute("FreePetStatus", freePetStatus)
+
 	player:SetAttribute("IsLoaded", true)
 	self._loadedPlayers[player.Name] = true
 end
@@ -168,6 +171,9 @@ local function onPlayerRemoving(self: ServiceTemplate.Type, player: Player)
 
 	local isStarterPackPurchased = player:GetAttribute("StarterPackPurchased") or false
 	data.IsStarterPackPurchased = isStarterPackPurchased
+
+	local freePetStatus = player:GetAttribute("FreePetStatus") or "NotReached"
+	data.FreePetStatus = freePetStatus
 
 	if not isUsingEmptySave then
 		local success, value = pcall(SavesDataStore.SetAsync, SavesDataStore, player.UserId, data)
