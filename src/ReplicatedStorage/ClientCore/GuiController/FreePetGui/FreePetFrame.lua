@@ -45,7 +45,7 @@ function FreePetFrame:AfterPlayerLoaded(player: Player)
         if self._requirementsReached then
             RedeemRequested:FireServer()
         else
-            self._controllers.ClientMessagesSender:SendMessageToPlayer(self._configs.MessagesConfig.MessagesTypes.Error, "Requirements not reached yet!")
+            self._controllers.ClientMessagesSender:SendMessage(self._configs.MessagesConfig.MessagesTypes.Error, "Requirements not reached yet!")
         end
     end)
 
