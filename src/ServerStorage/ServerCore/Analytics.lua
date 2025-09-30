@@ -75,7 +75,6 @@ function Analytics:LogOnboardingFunnel(player: Player, step: number)
 		step,
 		TutorialConfig.FunnelStepNames[step]
 	)
-	print("Log Onboarding Funnel:", step, TutorialConfig.FunnelStepNames[step])
 end
 
 function Analytics:RemovePlayer(player: Player)

@@ -118,6 +118,11 @@ function BaseFrame:AfterPlayerLoaded(player: Player)
     end)
 
     self._controllers.InventoryController.Updated:Subscribe(self, function()
+        if self._controllers.InventoryController:HasEquipment("Sacks", self._currentSelectedName) then
+            task.wait(.7)
+            self._controllers.InventoryController:TryEquipItem("Sacks", self._currentSelectedName)
+        end
+
         updateDescritionView(self)
     end)
 
