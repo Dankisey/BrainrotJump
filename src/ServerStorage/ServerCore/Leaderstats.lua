@@ -30,7 +30,6 @@ local function onPlayerAdded(self, player: Player)
     table.insert(self._connections[player], HighestJump.Changed:Connect(function()
         leaderstatsJump.Value = HighestJump.Value
     end))
-
 end
 
 function Leaderstats:Initialize()
