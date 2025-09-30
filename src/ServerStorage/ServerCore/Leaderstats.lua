@@ -4,24 +4,33 @@ local Players = game:GetService("Players")
 local Leaderstats = {}
 
 local function onPlayerAdded(self, player: Player)
-    --local Cash = player:WaitForChild("Currencies"):WaitForChild("Cash")
+    local Cash = player:WaitForChild("Currencies"):WaitForChild("Cash")
+    local HighestJump = player:WaitForChild("TotalStats"):WaitForChild("HighestJump")
 
     local leaderstats = Instance.new("Folder")
     leaderstats.Name = "leaderstats"
     leaderstats.Parent = player
 
-    --[[
     local leaderstatsCash = Instance.new("IntValue")
-	leaderstatsCash.Name = "Cash"
+	leaderstatsCash.Name = "Current Cash"
 	leaderstatsCash.Parent = leaderstats
 	leaderstatsCash.Value = Cash.Value
+
+    local leaderstatsJump = Instance.new("IntValue")
+    leaderstatsJump.Name = "Highest Jump"
+    leaderstatsJump.Parent = leaderstats
+    leaderstatsJump.Value = HighestJump.Value
 
     self._connections[player] = {}
 
     table.insert(self._connections[player], Cash.Changed:Connect(function()
         leaderstatsCash.Value = Cash.Value
     end))
-    ]]
+
+    table.insert(self._connections[player], HighestJump.Changed:Connect(function()
+        leaderstatsJump.Value = HighestJump.Value
+    end))
+
 end
 
 function Leaderstats:Initialize()
